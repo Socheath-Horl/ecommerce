@@ -16,17 +16,17 @@
 - [x] Create `.gitignore` (Node.js, NestJS, Vite, Prisma)
 
 ### 1.2 Backend — NestJS Project
-- [ ] Create NestJS project in `backend/`
-- [ ] Install `@nestjs/config` and configure ConfigModule
-- [ ] Install `@nestjs/jwt`, `@nestjs/passport`, `passport`, `passport-jwt`
-- [ ] Install `@prisma/client` and `prisma` (dev)
-- [ ] Install `class-validator`, `class-transformer`
-- [ ] Install `bcrypt` and `@types/bcrypt`
-- [ ] Install `minio`
-- [ ] Install `multer` and `@types/multer`
-- [ ] Create `.env` file with all environment variables
-- [ ] Configure global `ValidationPipe` in `main.ts`
-- [ ] Verify: `npm run build` compiles
+- [x] Create NestJS project in `backend/`
+- [x] Install `@nestjs/config` and configure ConfigModule
+- [x] Install `@nestjs/jwt`, `@nestjs/passport`, `passport`, `passport-jwt`
+- [x] Install `@prisma/client` and `prisma` (dev)
+- [x] Install `class-validator`, `class-transformer`
+- [x] Install `bcrypt` and `@types/bcrypt`
+- [x] Install `minio`
+- [x] Install `multer` and `@types/multer`
+- [x] Create `.env` file with all environment variables
+- [x] Configure global `ValidationPipe` in `main.ts`
+- [x] Verify: `npm run build` compiles
 
 ### 1.3 Backend — Prisma Setup
 - [ ] Initialize Prisma (`npx prisma init`)
