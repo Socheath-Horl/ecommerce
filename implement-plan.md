@@ -29,19 +29,19 @@
 - [x] Verify: `npm run build` compiles
 
 ### 1.3 Backend — Prisma Setup
-- [ ] Initialize Prisma (`npx prisma init`)
-- [ ] Create `User` model in schema
-- [ ] Create `Category` model in schema
-- [ ] Create `Product` model in schema
-- [ ] Create `File` model in schema
-- [ ] Run migration (`npx prisma migrate dev --name init`)
-- [ ] Verify: `npx prisma studio` shows tables
+- [x] Initialize Prisma (`npx prisma init`)
+- [x] Create `User` model in schema
+- [x] Create `Category` model in schema
+- [x] Create `Product` model in schema
+- [x] Create `File` model in schema
+- [x] Run migration (`npx prisma migrate dev --name init`)
+- [x] Verify: `npx prisma studio` shows tables
 
 ### 1.4 Backend — PrismaModule
-- [ ] Create `PrismaService` (`src/prisma/prisma.service.ts`)
-- [ ] Create `PrismaModule` (`src/prisma/prisma.module.ts`)
-- [ ] Register PrismaModule in `AppModule`
-- [ ] Verify: `npm run build` compiles
+- [x] Create `PrismaService` (`src/prisma/prisma.service.ts`)
+- [x] Create `PrismaModule` (`src/prisma/prisma.module.ts`)
+- [x] Register PrismaModule in `AppModule`
+- [x] Verify: `npm run build` compiles
 
 ### 1.5 Backend — Seed File
 - [ ] Create `prisma/seed.ts`
@@ -59,7 +59,7 @@
 - [ ] Verify: `npm run build` compiles
 
 ### 1.7 Backend — Auth DTOs
-- [ ] Create `RegisterDto` (email, password, firstName, lastName)
+- [ ] Create `RegisterDto` (email, password, name)
 - [ ] Create `LoginDto` (email, password)
 - [ ] Create `RefreshTokenDto` (refreshToken)
 - [ ] Create `ChangePasswordDto` (currentPassword, newPassword)
@@ -88,7 +88,7 @@
 - [ ] Add POST `/api/auth/register` route in AuthController
 - [ ] Verify: Register a new user via API
 
-### 1.11 Backend — Login Endpoint
+### 1.11 Backend — Login & Logout Endpoints
 - [ ] Implement `login()` in AuthService
 - [ ] Find user by email
 - [ ] Compare password with bcrypt
@@ -96,7 +96,12 @@
 - [ ] Generate refresh token (JWT)
 - [ ] Return both tokens
 - [ ] Add POST `/api/auth/login` route in AuthController
+- [ ] Implement `logout()` in AuthService
+- [ ] Validate refresh token
+- [ ] Invalidate refresh token (remove from storage)
+- [ ] Add POST `/api/auth/logout` route in AuthController
 - [ ] Verify: Login returns access + refresh tokens
+- [ ] Verify: Logout invalidates refresh token
 
 ### 1.12 Backend — Refresh Token Endpoint
 - [ ] Implement `refreshToken()` in AuthService
@@ -131,8 +136,8 @@
 - [ ] Create `MinioModule` (`src/modules/minio/minio.module.ts`)
 - [ ] Create `MinioService` (`src/modules/minio/minio.service.ts`)
 - [ ] Implement bucket creation on module init
-- [ ] Implement file upload to MinIO
-- [ ] Implement file delete from MinIO
+- [ ] Implement basic file upload to MinIO
+- [ ] Implement basic file delete from MinIO
 - [ ] Implement file URL generation
 - [ ] Register MinioModule in `AppModule`
 - [ ] Verify: MinIO connection works (check MinIO console)
@@ -141,15 +146,12 @@
 - [ ] Create `FilesModule` (`src/modules/files/files.module.ts`)
 - [ ] Create `FilesService` (`src/modules/files/files.service.ts`)
 - [ ] Create `FilesController` (`src/modules/files/files.controller.ts`)
-- [ ] Add File model relations (if needed)
 - [ ] Register FilesModule in `AppModule`
 - [ ] Verify: `npm run build` compiles
 
-### 1.18 Backend — File Upload Endpoint
-- [ ] Create upload DTO (`src/modules/files/dto/upload.dto.ts`)
-- [ ] Create image filter (allow only image MIME types)
-- [ ] Configure multer for file uploads
-- [ ] Implement POST `/api/files/upload` endpoint
+### 1.18 Backend — Basic File Upload Endpoint
+- [ ] Implement basic POST `/api/files/upload` endpoint (single file)
+- [ ] Use simple `multer` memory storage
 - [ ] Save file record in database
 - [ ] Return file data
 - [ ] Verify: Upload image via API, check MinIO + DB
@@ -167,9 +169,9 @@
 - [ ] Verify: Delete removes from MinIO + DB
 
 ### 1.21 Backend — File Link/Unlink Endpoints
-- [ ] Implement POST `/api/files/:id/link` endpoint
+- [ ] Implement PATCH `/api/files/:id/link` endpoint
 - [ ] Link file to entity (entityType + entityId)
-- [ ] Implement POST `/api/files/:id/unlink` endpoint
+- [ ] Implement PATCH `/api/files/:id/unlink` endpoint
 - [ ] Unlink file from entity
 - [ ] Verify: Link/unlink works correctly
 
@@ -228,7 +230,7 @@
 
 ### 1.28 Frontend — Register Page
 - [ ] Create Register page (`src/pages/auth/Register.tsx`)
-- [ ] Add email, password, firstName, lastName fields
+- [ ] Add name, email, password fields
 - [ ] Add submit button
 - [ ] Call register API on submit
 - [ ] Redirect to login on success
@@ -269,16 +271,18 @@
 ### 2.3 Backend — Admin List Users Endpoint
 - [ ] Implement `findAll()` in UsersService
 - [ ] Add pagination support (page, limit)
-- [ ] Return users with total count
-- [ ] Add GET `/api/admin/users` route (admin only)
+- [ ] Add search by name/email
+- [ ] Add filter by role
+- [ ] Return users with total count and order count
+- [ ] Add GET `/api/admin/users` route (ADMIN only)
 - [ ] Apply AdminGuard
 - [ ] Verify: Admin can list users
 
 ### 2.4 Backend — Admin Update Role Endpoint
 - [ ] Implement `updateRole()` in UsersService
-- [ ] Validate role is valid enum value
+- [ ] Validate role is valid enum value (CUSTOMER | USER | ADMIN)
 - [ ] Prevent self-role change
-- [ ] Add PATCH `/api/admin/users/:id/role` route (admin only)
+- [ ] Add PATCH `/api/admin/users/:id/role` route (ADMIN only)
 - [ ] Apply AdminGuard
 - [ ] Verify: Admin can change user role
 
@@ -502,7 +506,7 @@
 
 ### 3.21 Frontend — FilterSidebar Component
 - [ ] Create FilterSidebar (`src/components/products/FilterSidebar.tsx`)
-- [ ] Category filter (checkboxes)
+- [ ] Category filter (single-select radio, matches single `categoryId` param)
 - [ ] Price range filter (min/max inputs)
 - [ ] Clear filters button
 - [ ] Verify: `npm run build` compiles
@@ -608,7 +612,7 @@
 
 ---
 
-## Phase 4: File Upload Service + Entity Linking
+## Phase 4: File Upload Enhancements (Thumbnails + Validation)
 
 **Duration:** 1 day
 
@@ -620,15 +624,19 @@
 
 ### 4.2 Backend — Image Filter
 - [ ] Create image filter (`src/modules/files/filters/image.filter.ts`)
-- [ ] Allow only image MIME types (jpg, png, gif, webp)
+- [ ] Allow only image MIME types (jpg, jpeg, png, webp)
 - [ ] Reject non-image files
 - [ ] Verify: `npm run build` compiles
 
 ### 4.3 Backend — Thumbnail Service
 - [ ] Create thumbnail service (`src/modules/minio/thumbnail.service.ts`)
-- [ ] Generate thumbnail on upload (150x150)
-- [ ] Save thumbnail to MinIO
-- [ ] Return thumbnail URL
+- [ ] Generate thumbnails on upload:
+  - Products: 200x200, 500x500
+  - Avatars: 100x100
+  - Categories: 300x300
+  - Reviews: 200x200
+- [ ] Save thumbnails to MinIO
+- [ ] Return thumbnail URLs
 - [ ] Verify: `npm run build` compiles
 
 ### 4.4 Backend — Multer Config
@@ -641,24 +649,32 @@
 ### 4.5 Backend — Enhanced Upload Endpoint
 - [ ] Update upload endpoint to use interceptor
 - [ ] Apply image filter
-- [ ] Generate thumbnail
-- [ ] Save both original and thumbnail
-- [ ] Verify: Upload generates thumbnail
+- [ ] Generate thumbnails based on entity type
+- [ ] Save both original and thumbnails
+- [ ] Verify: Upload generates thumbnails
 
-### 4.6 Backend — File Validation
+### 4.6 Backend — Multiple Upload Endpoint
+- [ ] Implement POST `/api/files/upload/multiple` endpoint
+- [ ] Accept max 5 files
+- [ ] Validate each file (5MB limit, image types)
+- [ ] Return array of uploaded files
+- [ ] Verify: Multiple file upload works
+
+### 4.7 Backend — File Validation
 - [ ] Validate file size on upload
 - [ ] Validate MIME type on upload
 - [ ] Return meaningful error messages
 - [ ] Verify: Invalid files rejected with clear error
 
-### 4.7 Frontend — Files API (RTK Query)
+### 4.8 Frontend — Files API (RTK Query)
 - [ ] Create filesApi (`src/services/filesApi.ts`)
 - [ ] Add uploadFile mutation
+- [ ] Add uploadMultiple mutation
 - [ ] Add getFiles query
 - [ ] Add deleteFile mutation
 - [ ] Verify: `npm run build` compiles
 
-### 4.8 Frontend — useUpload Hook
+### 4.9 Frontend — useUpload Hook
 - [ ] Create useUpload hook (`src/hooks/useUpload.ts`)
 - [ ] Manage upload state (loading, progress, error)
 - [ ] Handle file selection
@@ -666,7 +682,7 @@
 - [ ] Handle error states
 - [ ] Verify: `npm run build` compiles
 
-### 4.9 Frontend — SingleUpload Component
+### 4.10 Frontend — SingleUpload Component
 - [ ] Create SingleUpload (`src/components/file-upload/SingleUpload.tsx`)
 - [ ] Drag & drop area
 - [ ] Click to browse
@@ -675,26 +691,26 @@
 - [ ] Remove button
 - [ ] Verify: `npm run build` compiles
 
-### 4.10 Frontend — MultiUpload Component
+### 4.11 Frontend — MultiUpload Component
 - [ ] Create MultiUpload (`src/components/file-upload/MultiUpload.tsx`)
-- [ ] Multiple file selection
+- [ ] Multiple file selection (max 5)
 - [ ] Grid preview of selected files
 - [ ] Individual remove buttons
 - [ ] Upload all button
 - [ ] Verify: `npm run build` compiles
 
-### 4.11 Frontend — FileUpload Wrapper Component
+### 4.12 Frontend — FileUpload Wrapper Component
 - [ ] Create FileUpload (`src/components/FileUpload.tsx`)
 - [ ] Wrap SingleUpload and MultiUpload
 - [ ] Accept mode prop (single/multi)
 - [ ] Verify: `npm run build` compiles
 
-### 4.12 Phase 4 — Full Verification
+### 4.13 Phase 4 — Full Verification
 - [ ] Single file upload works
 - [ ] Multi file upload works
-- [ ] Thumbnails auto-generate
-- [ ] File size limit enforced
-- [ ] Invalid file types rejected
+- [ ] Thumbnails auto-generate (correct sizes per entity type)
+- [ ] File size limit enforced (5MB)
+- [ ] Invalid file types rejected (only jpg, jpeg, png, webp)
 - [ ] Drag & drop works
 - [ ] Upload progress shows
 - [ ] Error messages display
@@ -810,17 +826,17 @@
 - [ ] Empty cart message
 - [ ] Verify: Cart page loads correctly
 
-### 5.15 Frontend — MiniCart Component
-- [ ] Create MiniCart (`src/components/cart/MiniCart.tsx`)
-- [ ] Cart icon with count badge
-- [ ] Dropdown with cart preview
+### 5.15 Frontend — CartDrawer Component
+- [ ] Create CartDrawer (`src/components/cart/CartDrawer.tsx`)
+- [ ] Cart icon trigger with count badge
+- [ ] Slide-out drawer (single cart surface — no hover MiniCart)
 - [ ] Item list (name, qty, price)
-- [ ] Total
+- [ ] OrderSummary (subtotal/shipping/tax/total from `GET /api/cart`)
 - [ ] View Cart link
 - [ ] Verify: `npm run build` compiles
 
 ### 5.16 Frontend — Header Integration
-- [ ] Add MiniCart to Header
+- [ ] Add CartDrawer trigger to Header
 - [ ] Update cart count on add/remove
 - [ ] Verify: Cart count updates in real-time
 
@@ -848,10 +864,11 @@
 - [ ] Verify: `npm run build` compiles
 
 ### 6.2 Backend — Stripe Service
-- [ ] Implement `createCheckoutSession()` method
-- [ ] Configure line items from cart
-- [ ] Configure success/cancel URLs
-- [ ] Return session URL
+- [ ] Implement `createCheckoutSession(orderId)` against an existing `PENDING` order (order-first: order was created first by `POST /api/orders`)
+- [ ] Configure session from order fields (amount from order `total`, no cart re-derivation)
+- [ ] Configure success URL with `{CHECKOUT_SESSION_ID}` and cancel URL
+- [ ] Attach `orderId` to the session (client_reference_id/metadata)
+- [ ] Return `{ orderId, sessionId, url }`
 - [ ] Verify: `npm run build` compiles
 
 ### 6.3 Backend — Checkout Module Structure
@@ -862,26 +879,27 @@
 - [ ] Verify: `npm run build` compiles
 
 ### 6.4 Backend — Order Models
-- [ ] Add Order model to schema
-- [ ] Add OrderItem model to schema
+- [ ] Add Order model to schema (id, userId, status, total, shipping, tax, stripeSessionId?, shippingAddress Json)
+- [ ] Add OrderItem model to schema (orderId, productId, quantity, price — price snapshot at creation)
 - [ ] Add Payment model to schema
 - [ ] Add relations
+- [ ] Add shipping/tax Decimal fields to Order (pricing rule: flat $5, free ≥$100; tax 8.25%; snapshot at creation)
 - [ ] Run migration (`npx prisma migrate dev --name add-orders`)
 - [ ] Verify: `npx prisma studio` shows new tables
 
-### 6.5 Backend — Create Checkout Endpoint
-- [ ] Implement `createCheckout()` in CheckoutService
-- [ ] Get cart items
-- [ ] Create Stripe session
-- [ ] Return session URL
-- [ ] Add POST `/api/checkout` route (protected)
-- [ ] Verify: Checkout session creates
+### 6.5 Backend — Order-First Checkout
+- [ ] Implement `POST /api/orders` — creates order as `PENDING` from the user's cart, storing `shipping`, `tax`, `total`, `shippingAddress` (per `system-design.md` §3.4)
+- [ ] Validate cart is not empty, items in stock before creating order
+- [ ] Implement `POST /api/checkout/create-session` — accepts `{ orderId }`, verifies order is the user's own `PENDING`, calls Stripe service, returns `data.url`
+- [ ] Add routes (protected)
+- [ ] Verify: `POST /api/orders` + `create-session` produce a Stripe checkout URL
 
 ### 6.6 Backend — Stripe Webhook Handler
 - [ ] Implement webhook handler in CheckoutController
 - [ ] Verify webhook signature
 - [ ] Handle `checkout.session.completed` event
-- [ ] Create order from session
+- [ ] Resolve the order via `orderId` (client_reference_id/metadata) — do **not** create a new order
+- [ ] Flip order status `PENDING → PAID`
 - [ ] Create payment record
 - [ ] Decrement product stock
 - [ ] Clear user cart
@@ -889,68 +907,68 @@
 - [ ] Verify: Webhook processes correctly
 
 ### 6.7 Backend — Checkout Validation
-- [ ] Validate cart is not empty
-- [ ] Validate all items in stock
-- [ ] Validate shipping address
+- [ ] Validate order exists and belongs to the user
+- [ ] Validate order status is `PENDING` (reject already-paid/cancelled)
+- [ ] Validate order total > 0
 - [ ] Return meaningful errors
 - [ ] Verify: Validation works
 
 ### 6.8 Frontend — Checkout API (RTK Query)
 - [ ] Create checkoutApi (`src/services/checkoutApi.ts`)
-- [ ] Add createCheckout mutation
+- [ ] Add createOrder mutation (`POST /api/orders`)
+- [ ] Add createSession mutation (`POST /api/checkout/create-session`)
 - [ ] Verify: `npm run build` compiles
 
-### 6.9 Frontend — Stripe Integration
-- [ ] Install `@stripe/stripe-js` and `@stripe/react-stripe-js`
-- [ ] Configure Stripe provider in `main.tsx`
-- [ ] Add Stripe publishable key to env
+### 6.9 Frontend — Card Redirect (Stripe Hosted Checkout)
+- [ ] On `[Pay]`: `POST /api/orders` → `POST /api/checkout/create-session` → `window.location = data.url` (redirect, no Stripe Elements/Card Element on our page)
+- [ ] Define success URL `/order/success?session_id={CHECKOUT_SESSION_ID}` and cancel URL `/cart`
 - [ ] Verify: `npm run build` compiles
 
 ### 6.10 Frontend — AddressForm Component
 - [ ] Create AddressForm (`src/components/checkout/AddressForm.tsx`)
-- [ ] Form fields: street, city, state, zipCode, country
+- [ ] Form fields: line1, line2 (optional), city, state, zip, country
+- [ ] Saved-address preselect (`label`, `isDefault`) + "+ New address"
 - [ ] Form validation
 - [ ] Verify: `npm run build` compiles
 
-### 6.11 Frontend — PaymentForm Component
-- [ ] Create PaymentForm (`src/components/checkout/PaymentForm.tsx`)
-- [ ] Stripe Elements integration
-- [ ] Card element
-- [ ] Submit button
+### 6.11 Frontend — Payment Form (Stripe Hosted Checkout)
+- [ ] Radio: Credit/Debit Card (Stripe secure checkout) — hosted, no card fields on our page
+- [ ] `[Pay $..]` button with double-submit lock
+- [ ] Error handling: `422 PAYMENT_FAILED` → error state with retry
 - [ ] Verify: `npm run build` compiles
 
 ### 6.12 Frontend — Checkout OrderSummary Component
 - [ ] Create OrderSummary (`src/components/checkout/OrderSummary.tsx`)
 - [ ] Display cart items
-- [ ] Display subtotal, shipping, tax, total
+- [ ] Display subtotal, shipping, tax, total (from `GET /api/cart`, never computed client-side)
 - [ ] Verify: `npm run build` compiles
 
 ### 6.13 Frontend — Checkout Page
 - [ ] Create Checkout page (`src/pages/customer/Checkout.tsx`)
 - [ ] Step 1: Shipping address (AddressForm)
-- [ ] Step 2: Payment (PaymentForm)
-- [ ] Step 3: Review (OrderSummary)
-- [ ] Submit to create checkout session
-- [ ] Redirect to Stripe
+- [ ] Step 2: Review & Pay (OrderSummary + Payment)
+- [ ] Submit: create order → create session → redirect to Stripe
 - [ ] Verify: Checkout flow works
 
 ### 6.14 Frontend — OrderConfirmation Page
 - [ ] Create OrderConfirmation page (`src/pages/customer/OrderConfirmation.tsx`)
+- [ ] Resolve the order via `?session_id` (+ `orderId` from create-session response) → `GET /api/orders/:id` (owner-gated)
 - [ ] Display success message
 - [ ] Display order number
-- [ ] Display order summary
+- [ ] Display order summary (authoritative snapshot: total, shipping, tax)
 - [ ] Continue shopping button
 - [ ] Verify: Confirmation page displays
 
 ### 6.15 Phase 6 — Full Verification
-- [ ] Complete checkout flow works
+- [ ] Complete checkout flow works (order-first: POST /api/orders → create-session → Stripe redirect)
 - [ ] Stripe test card succeeds (4242...)
 - [ ] Failed card shows error
-- [ ] Order created in database
+- [ ] Order created in database as `PENDING` before redirect, flipped to `PAID` by webhook
 - [ ] Payment record created
 - [ ] Stock decremented
 - [ ] Cart cleared after purchase
-- [ ] Confirmation page displays
+- [ ] Confirmation page displays verified order
+- [ ] Order not found / not PENDING on create-session → `400`
 
 ---
 
@@ -1077,7 +1095,7 @@
 
 ### 7.18 Frontend — AddressForm Component
 - [ ] Create AddressForm (`src/components/profile/AddressForm.tsx`)
-- [ ] Form fields: street, city, state, zipCode, country
+- [ ] Form fields: line1, line2, city, state, zip, country
 - [ ] Form validation
 - [ ] Submit to create/update API
 - [ ] Verify: `npm run build` compiles
@@ -1120,7 +1138,7 @@
 - [ ] Verify: `npm run build` compiles
 
 ### 8.2 Backend — Reviews DTOs
-- [ ] Create `CreateReviewDto` (rating, title, comment)
+- [ ] Create `CreateReviewDto` (rating, comment, imageIds)
 - [ ] Add validation (rating 1-5, required fields)
 - [ ] Verify: `npm run build` compiles
 
@@ -1245,31 +1263,36 @@
 - [ ] Count total products
 - [ ] Count total orders
 - [ ] Calculate total revenue
+- [ ] Count new users this week
+- [ ] Count orders this week
+- [ ] Count low stock products (stock <= 5)
 - [ ] Get recent orders (last 10)
+- [ ] Calculate sales by day (revenue per day)
 - [ ] Add GET `/api/admin/stats` route (admin only)
-- [ ] Verify: Stats endpoint returns data
+- [ ] Verify: Stats endpoint returns all fields
 
 ### 9.3 Backend — Admin Orders Endpoint
 - [ ] Implement `getAllOrders()` in AdminService
 - [ ] Include user info
 - [ ] Include order items
-- [ ] Add pagination
-- [ ] Add filters (status, date range)
+- [ ] Add pagination (page, limit)
+- [ ] Add filters: status, dateFrom, dateTo (ISO dates)
 - [ ] Add GET `/api/admin/orders` route (admin only)
-- [ ] Verify: Admin can list all orders
+- [ ] Verify: Admin can list all orders with filters
 
 ### 9.4 Backend — Admin Products Endpoint
 - [ ] Implement `getAllProducts()` in AdminService
 - [ ] Include category
-- [ ] Include stock info
-- [ ] Add pagination
+- [ ] Include images
+- [ ] Add pagination (page, limit)
+- [ ] Add filters: search (by name), categoryId, stock ("in_stock" | "out_of_stock" | "low")
 - [ ] Add GET `/api/admin/products` route (admin only)
-- [ ] Verify: Admin can list all products
+- [ ] Verify: Admin can list all products with filters
 
 ### 9.5 Frontend — Admin API Updates
 - [ ] Add getStats query to adminApi
-- [ ] Add getAllOrders query to adminApi
-- [ ] Add getAllProducts query to adminApi
+- [ ] Add getAllOrders query to adminApi (with status, dateFrom, dateTo filters)
+- [ ] Add getAllProducts query to adminApi (with search, categoryId, stock filters)
 - [ ] Verify: `npm run build` compiles
 
 ### 9.6 Frontend — StatsCards Component
@@ -1323,10 +1346,11 @@
 - [ ] Verify: Status update works
 
 ### 9.13 Phase 9 — Full Verification
-- [ ] Dashboard shows correct stats
+- [ ] Dashboard shows correct stats (all fields)
 - [ ] Charts render with data
 - [ ] Recent orders display
-- [ ] Admin order list works
+- [ ] Admin order list works with filters (status, date range)
+- [ ] Admin product list works with filters (search, category, stock)
 - [ ] Admin can update order status
 - [ ] All admin pages responsive
 
@@ -1342,7 +1366,7 @@
 - [ ] Navigation links
 - [ ] Search bar
 - [ ] User menu (login/register or profile/logout)
-- [ ] MiniCart
+- [ ] Cart Drawer trigger (opens CartDrawer)
 - [ ] Verify: `npm run build` compiles
 
 ### 10.2 Frontend — Footer Component

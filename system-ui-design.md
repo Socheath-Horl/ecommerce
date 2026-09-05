@@ -66,6 +66,8 @@
 | Small | 12px / 400 | Captions, timestamps, badges |
 | Button | 14px / 500 | All buttons |
 
+**Legibility rule:** product-card **price and rating use Body (14px)** — never the 12px Small tier on a purchase-relevant number. `Small` stays for captions, timestamps, badges, meta only.
+
 ### 2.3 Sizing
 
 | Token | Value |
@@ -76,6 +78,16 @@
 | Max content width | 1280px centered |
 | Header height | 64px (desktop), 56px (mobile) |
 | Sidebar width | 240px (desktop), slide-over on mobile |
+
+### 2.4 Accessibility Contract (all screens)
+
+- **Touch targets ≥ 44px** — buttons, steppers, icon buttons (cart, theme, close), menu rows.
+- **Icon-only controls** (theme, cart ✕, delete, edit) carry `aria-label`; never rely on the emoji/icon alone (see §8).
+- **Focus:** visible `:focus-visible` ring on every interactive element; never remove the outline without a replacement.
+- **Keyboard:** drawer/menu opens on Enter/Space, closes on `Esc` (focus returns to trigger); dropdown selects and star rating are keyboard-operable.
+- **StarRating input** is a radio-group of 5 buttons ("1 star…5 stars"), not a hover-only control; the display variant is a static `☆/★` readout with `aria-label` text (`4.5 / 5`).
+- **Contrast pairs:** every hover/focus/selected state flips both bg + fg together and never drops below 4.5:1 (text) / 3:1 (icons). Disabled is the only state allowed to reduce contrast.
+- **Color not alone:** status badges pair color chip + text label; OOS always shows text, never just a gray image.
 
 ---
 
@@ -121,8 +133,12 @@
    │  Products              │
    │  Search [_________]    │
    │  Login / Register ▾    │
+   │  ─ ─ ─ ─ ─ ─ ─ ─ ─    │
+   │  Theme: Light/Dark toggle │  ← moved into menu on mobile
+   │  Sort (Products page)  │  ← native select inside menu
    └────────────────────────┘
 ```
+**Mobile menu contents:** account (Login/Register or Profile/Orders), **theme toggle**, and **Sort control** (products page) all live inside this slide-out — the 375px bar keeps only logo + cart.
 
 **UserMenu dropdown (user logged in):**
 ```
@@ -206,7 +222,7 @@
 │        │                              │      │
 │        │  Password                    │      │
 │        │  [________________________]  │      │
-│        │  [Forgot password?]   →      │      │
+│        │  (show/hide toggle)          │      │
 │        │                              │      │
 │        │  [    Sign In     ]  (full)  │      │
 │        │                              │      │
@@ -217,6 +233,7 @@
 
 **Composition:** `LoginForm` (centered card, max-w 400px).
 **States:** error toast on 401; spinner in button while loading; `401` → "Invalid email or password", `409`/`400` on register → "Email already exists" / "Validation error".
+**No "Forgot password?":** `system-design.md` defines no reset flow (auth surface is register/login/refresh/logout + authed `PATCH /api/auth/password`). Password recovery is out of scope for v1; the sign-in card shows a show/hide password toggle instead of a dead link.
 
 ### 5.2 Auth — Register (`/auth/register`)
 
@@ -242,7 +259,8 @@ On failure: inline field errors + error toast.
 │ [HeroBanner — full width, h=420]                                │
 │  Fresh finds, fast delivery                      (bg image)     │
 │  Headline 36-48px bold                                          │
-│  [  Shop Now  ]  [ Browse Categories ]                        │
+│  [  Shop Now  ]      (single primary CTA → /products)          │
+│  (Categories are browsed via CategoryGrid below — no duplicate) │
 ├────────────────────────────────────────────────────────────────┤
 │ CategoryGrid (4/2/1 cols)     Section: "Shop by Category"      │
 │ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐                │
@@ -264,15 +282,27 @@ On failure: inline field errors + error toast.
 **Composition:** `HeroBanner` + `CategoryGrid` + `ProductGrid` (`ProductCard`).
 **States:** skeleton cards while loading; empty state ("No products yet").
 **ProductCard (detail):**
+
+Default (in stock):
 ```
 ┌────────────┐
 │  image 1:1  │
 │ Name        │
-│ $99.99      │
-│ ★ 4.5 (12)  │
+│ $99.99      │   ← price 14px/600
+│ ★ 4.5 (12)  │   ← rating 14px (≥3:1 on light & dark)
 └────────────┘
 ```
-Card: hover shadow + image zoom; whole card links to `/products/:slug`.
+Out of stock (`stock = 0`):
+```
+┌────────────┐
+│ image 1:1  ├  "Out of stock" badge (destructive) over
+│ OOS badge  │  image top-left; price kept, image 60% opacity.
+│ Name        │
+│ $99.99      │
+└────────────┘
+   Card still links to `/products/:slug` (details viewable).
+```
+Card: hover shadow + image zoom; whole card links to `/products/:slug`; the card has **no add-to-cart button** — out-of-stock is signaled by badge + dimming, never by hiding the product.
 (Image: 200×200 thumb from `products/…`, see §6.3.)
 
 ### 5.4 Products (`/products`)
@@ -283,10 +313,10 @@ Card: hover shadow + image zoom; whole card links to `/products/:slug`.
 │ (w=260)     │ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐            │
 │             │ │ Card  │ │ Card  │ │ Card  │ │ Card  │            │
 │ Category    │ └───────┘ └───────┘ └───────┘ └───────┘            │
-│ ☑ Electronics│ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐            │
-│ ☑ Clothing  │ │       │ │       │ │       │ │       │            │
-│ ☐ Books     │ └───────┘ └───────┘ └───────┘ └───────┘            │
-│ ☐ Toys      │ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐            │
+│ ○ Electronics│ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐            │
+│ ○ Clothing  │ │       │ │       │ │       │ │       │            │
+│ ○ Books     │ └───────┘ └───────┘ └───────┘ └───────┘            │
+│ ○ Toys      │ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐            │
 │             │ │       │ │       │ │       │ │       │            │
 │ Price       │ └───────┘ └───────┘ └───────┘ └───────┘            │
 │ $[___] - $[___]  [Apply]  │                                      │
@@ -296,14 +326,17 @@ Card: hover shadow + image zoom; whole card links to `/products/:slug`.
 ```
 
 **Composition:** `FilterSidebar` + `SortSelect` + `ProductGrid` + `Pagination`.
-**Responsive:** mobile → filters collapse behind "Filters" button (drawer).
-**Query sync:** URL params drive state (search, categoryId, minPrice, maxPrice, rating, sort, page).
+**Responsive:** mobile → filters collapse behind "Filters" button (drawer); SortSelect moves into the drawer as a native select (no desktop dropdown on ≤640px).
+**Query sync:** URL params drive state (search, categoryId, minPrice, maxPrice, rating, sort, page). Category is **single-select** (radio list, one entry active) — matches the spec's single `categoryId` param; there is **no multi-category mode**.
+**Price validation:** `minPrice ≤ maxPrice` enforced inline before `[Apply]` (swap or error message); range inputs are start/end pairs, not two independent filters.
 **Sort options:** `newest` (default), `price_asc`, `price_desc`, `popular`.
+**Search states:** see §6.4 — suggestions (loading/empty/error) + submitted query state.
 
 ### 5.5 ProductDetail (`/products/:slug`)
 
 ```
 ┌───────────────────────────────────────────┬─────────────────────┐
+│ Home / Products / Clothing / Top T-Shirt  │  (Breadcrumb)       │
 │ ImageGallery (w=560)                      │ ProductInfo (w=420) │
 │                                           │                     │
 │        [     Main Image      ]            │  Top T-Shirt         │
@@ -315,10 +348,11 @@ Card: hover shadow + image zoom; whole card links to `/products/:slug`.
 │                                           │  Stock: 24 in stock  │
 │                                           │  (or: Out of stock)  │
 │                                           │                     │
-│                                           │  Quantity            │
+│                                           │  Quantity (max stock)│
 │                                           │   [−]  2  [+]        │
-│                                           │                     │
+│                                           │   [+ disabled @ stock]│
 │                                           │  [  Add to Cart  ]   │
+│                                           │   (disabled @ 0/OOS) │
 │                                           │                     │
 ├───────────────────────────────────────────┴─────────────────────┤
 │ Description (full width, reads under image column)              │
@@ -343,14 +377,17 @@ Card: hover shadow + image zoom; whole card links to `/products/:slug`.
 ```
 
 **Composition:** `ImageGallery`, `ProductInfo`, `QuantitySelector`, `ReviewSection` (`StarRating`, `ReviewForm`, `ReviewList`→`ReviewCard`+`ReviewImages`), `RelatedProducts`.
-**Review rules (from spec):** only logged-in users who purchased can review; one review per user per product (`409` otherwise); rating 1–5; ≤5 images.
+**Review eligibility (product rule):** authenticated **and** has purchased the product **and** has not already reviewed it. `ReviewForm` is only rendered when eligible; rating 1–5; ≤5 images.
+**Review errors:** `400` validation · `401` unauth · `403` not purchased · `404` product or file · `409` already reviewed.
+**Contract (now in `system-design.md` §3.6):** the purchase gate is enforced server-side — `403 Not purchased` when no `PAID`/`DELIVERED` order contains the product.
 **Behavior:** Add to Cart → toast + header badge bump; if not authed → redirect login with `next` param.
+**Quantity cap:** stepper `[−] [+]` bounded 1…`stock`; `[+]` disabled at `stock`; **`[Add to Cart]` disabled when `stock = 0` or `qty ≥ stock`** (mirrors server `409 stock`). Helper hint "Only N left" when `stock ≤ 5`.
 
 ### 5.6 Cart (`/cart`)
 
 ```
 ┌──────────────────────────────────────────────┬──────────────────┐
-│ Cart (3 items)                               │ OrderSummary (w=320)
+│ Cart (3 items)  [Clear cart]                 │ OrderSummary (w=320)
 │                                              │                  │
 │ ┌──────────────────────────────────────────┐ │  Subtotal   $149.99
 │ │ [IMG] Product A         $25.00  [− 2 +] ✕│ │  Shipping    $10.00
@@ -359,27 +396,18 @@ Card: hover shadow + image zoom; whole card links to `/products/:slug`.
 │ └──────────────────────────────────────────┘ │  Total       $171.99
 │ + update quantity via PATCH /api/cart/:id    │                  │
 │ stock exceeded → 409 toast                   │  [ Checkout ]    │
-│                                              │  [ Continue shopping ]
+│ + [Clear cart] → confirm dialog →            │  [ Continue shopping ]
+│     DELETE /api/cart                         │                  │
 ├──────────────────────────────────────────────┴──────────────────┤
 │ Empty state: [🛒 illustration] "Your cart is empty"              │
 │              [ Start shopping ]                                  │
 └────────────────────────────────────────────────────────────────┘
 ```
 
-**Composition:** `CartItem` × n + `OrderSummary`; also `MiniCart` in header.
-**MiniCart dropdown (desktop, hover from header cart icon):**
-```
-     ┌───────────────────────────────┐
-     │  Cart (3)                     │
-     │  Product A  ×2       $50.00   │
-     │  Product B  ×1       $99.99   │
-     │  ─────────────────────────    │
-     │  Total                $149.99 │
-     │  [ View Cart ]  [ Checkout ]  │
-     └───────────────────────────────┘
-```
+**Composition:** `CartItem` × n + `OrderSummary`.
+**OrderSummary data source:** subtotal, shipping, tax, and total render from `GET /api/cart` (`shipping`, `tax`, `total` — server-computed estimate, `system-design.md` §3.3), never computed client-side.
 
-**Cart Drawer (slide-over):** header cart icon **click** sets `ui.isCartOpen = true` → right slide-over panel (w=400, full-height). Same components as Cart page, compacted; empty state inside drawer.
+**Cart Drawer is the single cart surface:** header cart icon **click** (desktop) or **tap** (mobile) sets `ui.isCartOpen = true` → right slide-over panel (w=400, full-height). Same components as Cart page, compacted; empty state inside drawer. One icon, one trigger, one surface — **no separate hover dropdown**. Matches `system-design.md` §4.1 `ui.isCartOpen`.
 
 ```
 ┌──────────┐
@@ -424,16 +452,24 @@ Click overlay/✕ → `isCartOpen = false`. On mobile: full-width drawer.
 │ │  ◉ Credit/Debit Card (Stripe secure checkout)│                │
 │ │  (  Card fields handled by Stripe page )    │                │
 │ │    "You'll be redirected to Stripe."        │                │
-│ │  [  Pay $171.99  ]   ← POST /checkout/create-session         │
+│ │  [  Pay $171.99  ]   ← (1) POST /api/orders                  │
+│ │                         (2) POST /api/checkout/create-session │
 │ │  Test card: 4242 4242 4242 4242                             │
 │ └──────────────────────────────────────────────────────────────┘│
 └──────────────────────────────────────────────────────────────────┘
 ```
 
 **Composition:** `AddressForm` + `PaymentForm` + `OrderSummary` (read-only, always visible on right).
-**Flow:** Address → OrderSummary review → `[Pay $..]` → POST `/api/checkout/create-session` → `data.url` → redirect to Stripe hosted checkout → back to `/order/success?session_id=…` (success) or `/cart` (cancel).
-**Guard:** cart empty on page load → redirect to `/cart`; Continue disabled until address valid.
-**Errors:** `400` cart empty → toast; `422 PAYMENT_FAILED` (Stripe side) → error state on Checkout with retry.
+**Pricing rule (now defined in `system-design.md` §2):** `subtotal = Σ price×qty`; **shipping** = flat fee ($5 free ≥ $100) and **tax** = state rate on subtotal (8.25%), both computed server-side. `GET /api/cart` returns the estimate for the cart and checkout-step-① summary; `POST /api/orders` stores the authoritative snapshot (`shipping`, `tax`, `total`) that surfaces on OrderConfirmation, Orders, and OrderDetail — later order views never re-derive from live product prices.
+**Flow (order-first — matches `system-design.md` §3.4/§3.5):** Address → OrderSummary review → `[Pay $..]` →
+1. `POST /api/orders` `{ shippingAddress }` → creates the order as **`PENDING`**, returns `orderId`
+2. `POST /api/checkout/create-session` `{ orderId }` → `data.url`
+3. Redirect to Stripe hosted checkout → back to `/order/success?session_id=…` (success) or `/cart` (cancel)
+
+> **Contract (now in `system-design.md` §3.5):** `create-session` accepts `{ orderId }` and returns `data.orderId` so the success page can resolve the order. Order stays `PENDING` until the Stripe webhook flips it to `PAID`.
+
+**Guard:** cart empty on page load → redirect to `/cart`; Continue disabled until address valid; `[Pay $..]` double-submit lock while requests are in flight.
+**Errors:** `400` cart empty or order validation → toast, stay on page; `400/409` order-creation conflict → toast; `422 PAYMENT_FAILED` (Stripe side) → error state on Checkout with retry.
 
 ### 5.8 OrderConfirmation (`/order/success`)
 
@@ -453,10 +489,22 @@ Click overlay/✕ → `isCartOpen = false`. On mobile: full-width drawer.
 └──────────────────────────────────────────────┘
 ```
 
+**Resolve:** entry URL carries `?session_id=…` (+ `orderId` from the create-session response). Fetch `GET /api/orders/:id` (owner-gated) to render this screen; never fabricate the order in the client.
+
+**States:**
+- *Resolving* — spinner "Confirming your order…".
+- *`PENDING`* — success header shown, but **no PAID chip**; "Payment processing — we'll confirm shortly." Poll `GET /api/orders/:id` every 2s (max ~10 attempts) until it flips to `PAID`.
+- *`PAID`* — full success block with PAID chip + payment card (as in the wireframe above).
+- *Fetch fails (`403`/`404`) or payment was cancelled* — error block "Payment didn't go through" + `[ Back to Cart ]` (do not show a fake success).
+- *Webhook still unprocessed after poll timeout* — keep `PENDING` view with "We'll email your confirmation"; do not block the user.
+
+**Composition:** `OrderConfirmation` (success icon, summary, CTAs).
+
 ### 5.9 Orders (`/orders`)
 
 ```
 ┌──────────────────────────────────────────────┐
+│  Home / My Orders   (Breadcrumb)               │
 │  My Orders                                    │
 │  [Status filter: [All][PENDING][PAID]… ▾]     │
 │ ┌────────────────────────────────────────────┐│
@@ -475,11 +523,12 @@ Click overlay/✕ → `isCartOpen = false`. On mobile: full-width drawer.
 
 ```
 ┌──────────────────────────────────────────────┐
+│  Home / My Orders / #10f2c8ab  (Breadcrumb)   │
 │  Order #10f2c8ab    [PAID]  (badge, top-right)│
 ├──────────────────────────────────────────────┤
-│  Items                                     │
-│  [IMG] Product A ×2  $25.00   → $50.00       │
-│  [IMG] Product B ×1  $99.99   → $99.99       │
+│  Items (per item)                          │
+│  [IMG] Product A ×2  $25.00 → $50.00  [Review]│
+│  [IMG] Product B ×1  $99.99 → $99.99  [Review]│
 │ ─────────────────────────────────────────────┤
 │  Shipping Address                            │
 │    Jane Doe                                  │
@@ -489,9 +538,10 @@ Click overlay/✕ → `isCartOpen = false`. On mobile: full-width drawer.
 │    Visa •••• 4242     $171.99   PAID         │
 ├──────────────────────────────────────────────┤
 │  Total: $171.99                              │
-│  [ Review this product ] (if delivered)      │
 └──────────────────────────────────────────────┘
 ```
+
+**Per-item review CTA:** each order row shows `[Review]` when the order is **DELIVERED** and the user is eligible (§5.5) — links to `/products/:slug` review composer (or modal) in the delivered/not-yet-reviewed state. Rows already reviewed show `✓ Reviewed` (disabled). Multi-item orders no longer collapse into a single "review this product" button.
 
 ### 5.11 Profile (`/profile`)
 
@@ -544,6 +594,7 @@ Click overlay/✕ → `isCartOpen = false`. On mobile: full-width drawer.
 ```
 
 **Composition:** `StatsCards` ×4 + `SalesChart` + `RecentOrders`.
+**Data:** cards map 1:1 to `GET /api/admin/stats` (`system-design.md` §3.7): Revenue = `totalRevenue`, Orders = `totalOrders` + `ordersThisWeek`, Users = `totalUsers` + `newUsersThisWeek`, Products = `totalProducts` + `lowStockProducts`; Chart = `salesByDay`, RecentOrders = `recentOrders`. No client-side derivation.
 
 ### 5.13 Admin — Products (`/admin/products`)
 
@@ -562,6 +613,8 @@ Click overlay/✕ → `isCartOpen = false`. On mobile: full-width drawer.
 ```
 
 **Composition:** `ProductTable` + pagination; delete → confirm dialog → toast.
+**Breadcrumb:** `Admin / Products` (Sentinel `Home` optional).
+**Data:** `GET /api/admin/products` — `?search=&categoryId=&stock=&page=&limit=` where `stock` ∈ `in_stock | out_of_stock | low` (low = stock ≤ 5). Defined in `system-design.md` §3.7.
 
 ### 5.14 Admin — ProductForm (`/admin/products/new`, `/admin/products/:id/edit`)
 
@@ -581,7 +634,7 @@ Click overlay/✕ → `isCartOpen = false`. On mobile: full-width drawer.
 └────────────────────────────────────────────────────────────────┘
 ```
 
-**Composition:** form + `MultiUpload` (5MB/file, jpg|png|webp).
+**Composition:** form + `MultiUpload` (5MB/file, jpg|jpeg|png|webp).
 **Validation:** price ≥ 0, stock ≥ 0, name required; category select required.
 
 ### 5.15 Admin — Categories (`/admin/categories`)
@@ -618,6 +671,17 @@ Click overlay/✕ → `isCartOpen = false`. On mobile: full-width drawer.
 ```
 
 **Composition:** `OrderTable` (inline `OrderStatus` select) + pagination + detail drawer/page.
+**Data:** `GET /api/admin/orders` — `?status=&dateFrom=&dateTo=&page=&limit=`. Defined in `system-design.md` §3.7.
+
+**Status transitions (legal):**
+```
+PENDING   → PAID | CANCELLED
+PAID      → SHIPPED | CANCELLED
+SHIPPED   → DELIVERED | CANCELLED
+DELIVERED → (terminal)
+CANCELLED → (terminal)
+```
+- `PENDING → PAID` is normally set by the Stripe webhook; the admin dropdown should only present the currently legal transitions and disable others (`400 Invalid status transition` → toast on violation).
 
 ### 5.17 Admin — Users (`/admin/users`) — ADMIN only
 
@@ -656,7 +720,7 @@ Click overlay/✕ → `isCartOpen = false`. On mobile: full-width drawer.
 SingleUpload                          MultiUpload
 ┌────────────────────────────┐       ┌──────────────────────────────┐
 │ ⬆ Drag & drop or click     │       │ ⬆ Drag & drop or click      │
-│ (jpg, png, webp ≤5MB)      │       │ add many (jpeg, png, webp)   │
+│(jpg, jpeg, png, webp)      │       │ add many (jpg, jpeg, png, webp)  │
 │ ┌────────┐                 │       │ ┌─────┐ ┌─────┐ ┌─────┐     │
 │ │ IMG    │  [Replace][✕]   │       │ │ IMG │ │ IMG │ │ IMG │     │
 │ └────────┘                 │       │ └─────┘ └─────┘ └─────┘     │
@@ -664,12 +728,14 @@ SingleUpload                          MultiUpload
                                      └──────────────────────────────┘
 ```
 Upload progress % per file; error toast for invalid type/size (`400`).
+**Size limits per entity (from `system-design.md` §8):** products/reviews ≤5MB · avatars/categories ≤2MB. The shared component enforces the limit matching the attached entity.
 
 ### 6.2 Feedback / Loading primitives
 
 | Component | Usage |
 |-----------|-------|
 | `Skeleton` | Product grids, detail page, tables (pulse animation) |
+| `Breadcrumb` | Products, ProductDetail, Orders, OrderDetail, Admin pages — `Home / {section} / {current}`; last crumb is the page title (not a link). Sentinel `Home` optional in Admin. |
 | `Spinner` | Button submissions, page transitions |
 | `Toast` | Success (green), error (red), info (blue); auto-dismiss 3s |
 | `ErrorBoundary` | Wraps App; fallback + Retry |
@@ -681,10 +747,12 @@ Upload progress % per file; error toast for invalid type/size (`400`).
 | ProductGrid / ProductCard | 200×200 thumb (srcset 500 for ≤2x) | `products/…` |
 | ProductDetail main image | 500×500 | `products/…` |
 | ImageGallery thumbnails | 200×200 | `products/…` |
-| MiniCart / CartItem / OrderSummary row | 200×200 | `products/…` |
+| Cart Drawer / CartItem / OrderSummary row | 200×200 | `products/…` |
 | CategoryGrid / CategoryTable | 300×300 | `categories/…` |
 | UserMenu / UserInfo avatar | 100×100 | `avatars/…` |
 | ReviewImages / ReviewCard | 200×200 | `reviews/…` |
+
+> **Contract (now in `system-design.md` §8):** the review-image pipeline generates a 200×200 thumbnail (in addition to the existing product/category/avatar sizes) so this row is servable.
 
 All images served via `File.url`; `alt` = product/category/user name. Fallback placeholder (`product-placeholder.svg`) when image missing.
 
@@ -694,6 +762,8 @@ All images served via `File.url`; `alt` = product/category/user name. Fallback p
 |------|---------|-------|-------|
 | Home | 8 skeleton cards | — (keeps CategoryGrid) | "Couldn't load products" + Retry, no banner error |
 | Products | 8 skeleton cards | "No products match your filters" + Clear filters | toast + Retry |
+| Products — Search (query submitted) | inline "Searching…" | "No results for \`query\`" + Clear search | toast + Retry |
+| Products — Search suggestions (pre-enter) | 3–5 suggestion skeletons | show recent/empty → hint "Type to search" | toast only |
 | ProductDetail | 2-col skeleton | — | 404 view ("Product not found") + Back to products |
 | Cart | skeleton rows | "Your cart is empty" + Start shopping | toast + Retry |
 | Checkout | spinner on button | redirect to `/cart` | toast (400/422) + stays on page |
@@ -701,7 +771,8 @@ All images served via `File.url`; `alt` = product/category/user name. Fallback p
 | OrderDetail | skeleton | — | redirect `/orders` on 403/404 |
 | Profile | skeleton | — | toast + Retry |
 | Admin pages (all) | table skeletons | "No records found" | toast + Retry |
-| Reviews (product page) | 3 review skeletons | "No reviews yet. Be the first!" | toast only |
+| Reviews (product page) | 3 review skeletons | "No reviews yet. Be the first!" | toast; `403` → hide ReviewForm |
+| Review submit (product page) | spinner in `[Post Review]` | — | inline errors per §5.5 (`400/401/403/404/409`); success → toast "Review submitted" + list refresh |
 
 ---
 
@@ -726,3 +797,35 @@ All images served via `File.url`; `alt` = product/category/user name. Fallback p
 - Export any raster placeholders directly in Penpot; never hand-pick colors not in the token set.
 - Render **dark variants** as paired boards (`Home-Dark`, `Dashboard-Dark`) for the key pages; all tokens from §2.1 dark palette.
 - Image placeholders use the thumbnail aspect ratios listed in §6.3 (square 200/300/500).
+
+---
+
+## 9. Reconciliation with `system-design.md`
+
+All contract gaps identified while writing this UI spec are now folded into `system-design.md`. Status column = where each landed there.
+
+| # | Gap (UI depended on it) | Resolved in `system-design.md` |
+|---|-------------------------|--------------------------------|
+| 1 | Order-first checkout: `create-session` accepts `{ orderId }`, returns `data.orderId` + `sessionId` | §3.5 `POST /api/checkout/create-session` (request body + response updated) |
+| 2 | `GET /api/admin/orders` — `?status=&dateFrom=&dateTo=&page=&limit=` | §3.7 `GET /api/admin/orders` (added) |
+| 3 | `GET /api/admin/products` — `?search=&categoryId=&stock=&page=&limit=` | §3.7 `GET /api/admin/products` (added) |
+| 4 | Review purchase gate `403` | §3.6 `POST /api/products/:id/reviews` (+ gate note) |
+| 5 | `STRIPE_SUCCESS_URL` includes `{CHECKOUT_SESSION_ID}` | §11 env var (updated) |
+| 6 | 200×200 review-image thumbnail | §8 Review Images (added) |
+| 7 | Order snapshot fields `shipping`/`tax` + cart estimate | §2 `Order` model; §3.3 `GET /api/cart`; §3.4 order responses |
+| 8 | Legal status-transition matrix for admin PATCH | §3.4 PATCH `/api/admin/orders/:id/status` (added) |
+| 9 | Admin stats keys for all four dashboard cards | §3.7 `GET /api/admin/stats` (added `newUsersThisWeek`, `ordersThisWeek`, `lowStockProducts`) |
+
+> **Already satisfied (no change needed):** MIME allow-list `jpg, jpeg, png, webp` was already uniform (§8) · `DELETE /api/cart` · `GET /api/orders` + `?status=` · `GET /api/admin/users` + role PATCH · `GET /api/cart` PATCH/DELETE `403`/`409` · avatar/category 2MB + product/review 5MB limits (§8) · `File.url` serving (all §6.3 rows servable).
+
+---
+
+## Next Step
+
+Both specs are now in agreement; reconciliation items #1–#9 are folded into `system-design.md`, and `implement-plan.md` has been aligned:
+- §6 rewritten for the order-first flow (`POST /api/orders` → `POST /api/checkout/create-session` → webhook flips `PENDING → PAID`; webhook no longer creates orders)
+- Register DTO/page use a single `name` (spec has no `firstName`/`lastName`)
+- `MiniCart` replaced by the `CartDrawer` (single cart surface); category filter is a single-select radio; address fields are `line1/line2/city/state/zip/country`; Order model includes `shipping`/`tax`
+- Stripe frontend is hosted-checkout redirect only (no Elements/Card Element)
+
+Optional (not required for consistency): drop `Role.GUEST` from the `Role` enum — it encodes "logged out", which the UI models via request state, not a DB role.

@@ -123,6 +123,8 @@ model Order {
   user            User        @relation(fields: [userId], references: [id])
   status          OrderStatus @default(PENDING)
   total           Decimal
+  shipping        Decimal
+  tax             Decimal
   stripeSessionId String?     @unique
   shippingAddress Json
   createdAt       DateTime    @default(now())
@@ -139,6 +141,15 @@ enum OrderStatus {
   DELIVERED
   CANCELLED
 }
+```
+
+**Pricing rule (server-computed, never client-side):**
+- `subtotal = Σ (OrderItem.price × quantity)`, where `price` is the **product price at order creation** (snapshot against future price changes; orders are never re-priced)
+- `shipping = $5.00` flat, **free when subtotal ≥ $100`
+- `tax = subtotal × 0.0825` (state rate, fixed for v1)
+- `total = subtotal + shipping + tax`
+
+`Order.shipping`, `Order.tax`, and `Order.total` are written once at creation (`POST /api/orders`) and returned thereafter by every order-reading endpoint. `GET /api/cart` returns the same computation as live estimates so cart and checkout totals can render before the order exists.
 
 model OrderItem {
   id        String  @id @default(uuid())
@@ -563,7 +574,10 @@ Authorization: Bearer <accessToken>
       quantity,
       product: { id, name, slug, price, images[0], stock }
     }],
-    subtotal: number
+    subtotal: number,
+    shipping: number,   // estimate (same pricing rule as order creation)
+    tax: number,        // estimate
+    total: number       // subtotal + shipping + tax
   }
 }
 
@@ -687,6 +701,8 @@ Authorization: Bearer <accessToken>
     id,
     status: "PENDING",
     total,
+    shipping,   // snapshot, computed at creation (delta: extends Order model)
+    tax,        // snapshot, computed at creation
     shippingAddress,
     items: [{
       id, quantity, price,
@@ -716,7 +732,7 @@ Authorization: Bearer <accessToken>
 {
   success: true,
   data: [{
-    id, status, total, createdAt,
+    id, status, total, shipping, tax, createdAt,
     items: [{ quantity, product: { name, images[0] } }]
   }],
   pagination: { page, limit, total, totalPages }
@@ -735,7 +751,7 @@ Authorization: Bearer <accessToken>
 {
   success: true,
   data: {
-    id, status, total, shippingAddress, createdAt,
+    id, status, total, shipping, tax, shippingAddress, createdAt,
     items: [{
       id, quantity, price,
       product: { id, name, slug, images[0] }
@@ -779,6 +795,16 @@ Role: USER | ADMIN
 404 - Order not found
 ```
 
+**Legal status transitions (enforced by `400 Invalid status transition`):**
+```
+PENDING   → PAID | CANCELLED
+PAID      → SHIPPED | CANCELLED
+SHIPPED   → DELIVERED | CANCELLED
+DELIVERED → (terminal)
+CANCELLED → (terminal)
+```
+`PENDING → PAID` is normally applied by the Stripe webhook, not the admin endpoint.
+
 ---
 
 ### 3.5 Checkout
@@ -788,10 +814,16 @@ Role: USER | ADMIN
 // Headers
 Authorization: Bearer <accessToken>
 
+// Request
+{
+  orderId: string  // order created via POST /api/orders (status PENDING)
+}
+
 // Response 200
 {
   success: true,
   data: {
+    orderId: string
     sessionId: string
     url: string  // Stripe checkout URL
   }
@@ -799,7 +831,7 @@ Authorization: Bearer <accessToken>
 
 // Errors
 401 - Unauthorized
-400 - Cart is empty
+400 - Order not found or not PENDING
 ```
 
 #### POST `/api/webhook/stripe`
@@ -866,10 +898,13 @@ Authorization: Bearer <accessToken>
 // Errors
 400 - Validation error
 401 - Unauthorized
+403 - Not purchased (order must be PAID/DELIVERED and contain the product)
 404 - Product not found
 404 - File not found
 409 - Already reviewed this product
 ```
+
+> **Purchase gate:** `POST /api/products/:id/reviews` verifies the authenticated user has a `PAID` or `DELIVERED` order containing the product before accepting a review; otherwise `403`.
 
 #### DELETE `/api/reviews/:id`
 ```typescript
@@ -906,6 +941,9 @@ Role: USER | ADMIN
     totalOrders: number
     totalUsers: number
     totalProducts: number
+    newUsersThisWeek: number
+    ordersThisWeek: number
+    lowStockProducts: number   // products with stock ≤ 5
     recentOrders: [{
       id, total, status, createdAt,
       user: { name }
@@ -915,6 +953,65 @@ Role: USER | ADMIN
       revenue: number
     }]
   }
+}
+
+// Errors
+401 - Unauthorized
+403 - Not admin portal user
+```
+
+#### GET `/api/admin/products`
+```typescript
+// Headers
+Authorization: Bearer <accessToken>
+Role: USER | ADMIN
+
+// Query Params
+?search=string          // search by name
+?categoryId=string      // filter by category
+?stock=string           // "in_stock" | "out_of_stock" | "low" (low = stock ≤ 5)
+?page=number
+?limit=number
+
+// Response 200
+{
+  success: true,
+  data: [{
+    id, name, slug, description, price, stock,
+    category: { id, name, slug },
+    images: [{ id, url, order }],
+    createdAt, updatedAt
+  }],
+  pagination: { page, limit, total, totalPages }
+}
+
+// Errors
+401 - Unauthorized
+403 - Not admin portal user
+```
+
+#### GET `/api/admin/orders`
+```typescript
+// Headers
+Authorization: Bearer <accessToken>
+Role: USER | ADMIN
+
+// Query Params
+?status=OrderStatus
+?dateFrom=string   // ISO date
+?dateTo=string     // ISO date
+?page=number
+?limit=number
+
+// Response 200
+{
+  success: true,
+  data: [{
+    id, status, total, shipping, tax, createdAt,
+    user: { id, name, email },
+    items: [{ quantity, product: { name, images[0] } }]
+  }],
+  pagination: { page, limit, total, totalPages }
 }
 
 // Errors
@@ -1524,6 +1621,7 @@ Limits:
 - Max 5MB per image
 - Max 5 images per review
 - Types: jpg, jpeg, png, webp
+- Thumbnail: 200x200 (auto-generated)
 ```
 
 ### NestJS MinIO Config
@@ -1713,7 +1811,7 @@ REFRESH_TOKEN_SECRET=your-refresh-secret
 REFRESH_TOKEN_EXPIRATION=7d
 STRIPE_SECRET_KEY=sk_test_xxx
 STRIPE_WEBHOOK_SECRET=whsec_xxx
-STRIPE_SUCCESS_URL=http://localhost:5173/order/success
+STRIPE_SUCCESS_URL=http://localhost:5173/order/success?session_id={CHECKOUT_SESSION_ID}
 STRIPE_CANCEL_URL=http://localhost:5173/cart
 MINIO_ENDPOINT=localhost
 MINIO_PORT=9000
