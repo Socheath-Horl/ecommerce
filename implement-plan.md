@@ -46,7 +46,8 @@
 ### 1.5 Backend — Seed File
 - [ ] Create `prisma/seed.ts`
 - [ ] Seed admin user (email, hashed password, ADMIN role)
-- [ ] Seed sample categories (Electronics, Clothing, Books)
+- [ ] Seed sample categories (brand = Horizon Supply Co. — match `ux-ui/`): Outerwear, Travel, Carry & Desk, Drinkware
+- [ ] Seed sample products per category (use the SKUs from `ux-ui/`: FLT-04 Field Jacket, WKD-09 Weekender Duffel, FLK-24 Stainless Flask, FGT-02 Flight Tote, DSR-01 Desk Roll, ZPL-L4 Zip Pouch, TMB-16 Tumbler, MRN-HV Merino Crew)
 - [ ] Add seed script to `package.json`
 - [ ] Run seed (`npx prisma db seed`)
 - [ ] Verify: `npx prisma studio` shows seed data
@@ -184,6 +185,8 @@
 - [ ] Configure Tailwind in `vite.config.ts`
 - [ ] Initialize shadcn/ui
 - [ ] Add shadcn/ui components: button, input, card, label
+- [ ] Set up token CSS (globals.css) from `ux-ui/brand-spec.md` (OKLCH zinc values, light + dark) and `ux-ui/shadcn-component-library.html` slot-bridge table
+- [ ] Set up theme strategy: `darkMode: ['class']`, `html.dark` class, persisted `ui.theme` in localStorage, first load follows `prefers-color-scheme`
 - [ ] Verify: `npm run build` compiles
 
 ### 1.23 Frontend — Redux Store
@@ -218,23 +221,23 @@
 - [ ] Verify: `npm run build` compiles
 
 ### 1.27 Frontend — Login Page
-- [ ] Create Login page (`src/pages/auth/Login.tsx`)
+- [ ] Create Login page (`src/pages/auth/Login.tsx`) — follow `ux-ui/login-page.html`
 - [ ] Add email input field
-- [ ] Add password input field
+- [ ] Add password input field with show/hide toggle
 - [ ] Add submit button
 - [ ] Call login API on submit
 - [ ] Redirect to home on success
-- [ ] Show error message on failure
+- [ ] Show error message on failure (401 → "Invalid email or password" toast)
 - [ ] Add link to register page
 - [ ] Verify: Login works end-to-end
 
 ### 1.28 Frontend — Register Page
-- [ ] Create Register page (`src/pages/auth/Register.tsx`)
-- [ ] Add name, email, password fields
+- [ ] Create Register page (`src/pages/auth/Register.tsx`) — follow `ux-ui/register-page.html`
+- [ ] Add name, email, password fields (password ≥ 6 chars, show/hide toggle)
 - [ ] Add submit button
 - [ ] Call register API on submit
-- [ ] Redirect to login on success
-- [ ] Show error message on failure
+- [ ] Redirect to login on success (409 → "Email already exists" toast)
+- [ ] Show error message on failure (inline field errors + toast)
 - [ ] Add link to login page
 - [ ] Verify: Register works end-to-end
 
@@ -498,22 +501,24 @@
 - [ ] Verify: `npm run build` compiles
 
 ### 3.20 Frontend — ProductCard Component
-- [ ] Create ProductCard (`src/components/ProductCard.tsx`)
-- [ ] Display product image
-- [ ] Display product name, price
-- [ ] Link to product detail page
+- [ ] Create ProductCard (`src/components/ProductCard.tsx`) — follow `ux-ui/products-page.html` + shadcn library `ProductCard`
+- [ ] Display product image (200×200 thumb, srcset 500 for ≤2x)
+- [ ] Display product name, price (14px/600), rating (14px — legibility rule: purchase numbers never drop to Small tier)
+- [ ] Whole-card link to `/products/:slug`
+- [ ] Out-of-stock (stock 0): destructive badge over 55%-dimmed media, price kept, card still links — **no add-to-cart button on the card**
 - [ ] Verify: `npm run build` compiles
 
 ### 3.21 Frontend — FilterSidebar Component
-- [ ] Create FilterSidebar (`src/components/products/FilterSidebar.tsx`)
-- [ ] Category filter (single-select radio, matches single `categoryId` param)
+- [ ] Create FilterSidebar (`src/components/products/FilterSidebar.tsx`) — follow `ux-ui/products-page.html` (All/Outerwear/Travel/Carry & Desk/Drinkware)
+- [ ] Category filter (single-select radio, matches single `categoryId` param, count per category)
 - [ ] Price range filter (min/max inputs)
 - [ ] Clear filters button
+- [ ] Mobile (≤768px): collapse to slide-over filter drawer launching from "Filters" button
 - [ ] Verify: `npm run build` compiles
 
 ### 3.22 Frontend — SortSelect Component
-- [ ] Create SortSelect (`src/components/products/SortSelect.tsx`)
-- [ ] Options: Price Low-High, Price High-Low, Newest, Oldest
+- [ ] Create SortSelect (`src/components/products/SortSelect.tsx`) — follow `ux-ui/products-page.html`
+- [ ] Options (values must match backend `sort` param): `newest`, `price_asc` "Price: Low to High", `price_desc` "Price: High to Low", `popular` "Most popular"
 - [ ] Verify: `npm run build` compiles
 
 ### 3.23 Frontend — Pagination Component
@@ -531,22 +536,27 @@
 - [ ] Verify: `npm run build` compiles
 
 ### 3.25 Frontend — Products Page
-- [ ] Create Products page (`src/pages/customer/Products.tsx`)
+- [ ] Create Products page (`src/pages/customer/Products.tsx`) — follow `ux-ui/products-page.html`
 - [ ] Fetch products with productsApi
 - [ ] Display product grid (ProductCard)
-- [ ] Add FilterSidebar
+- [ ] Add FilterSidebar (desktop sidebar 260px; mobile filter drawer)
 - [ ] Add SortSelect
 - [ ] Add Pagination
+- [ ] Add results count + "Filters (n)" active count
+- [ ] Add search banner ("Results for "q"" + "Clear search ×") when query present
+- [ ] Add empty state (no results → "Clear filters" button)
 - [ ] Verify: Products page loads with data
 
 ### 3.26 Frontend — ProductDetail Page
-- [ ] Create ProductDetail page (`src/pages/customer/ProductDetail.tsx`)
+- [ ] Create ProductDetail page (`src/pages/customer/ProductDetail.tsx`) — follow `ux-ui/product-detail-page.html`
 - [ ] Fetch product by slug
-- [ ] Display ImageGallery
+- [ ] Display ImageGallery (main + thumbnail row)
 - [ ] Display product info (name, price, description)
-- [ ] Display category
-- [ ] Display stock status
-- [ ] Add to Cart button
+- [ ] Display category (breadcrumb to products page)
+- [ ] Display stock status (In stock / "Only N left" hint / Out of stock)
+- [ ] Quantity stepper (1–stock max, disabled out of stock)
+- [ ] Add to Cart button (disabled when out of stock)
+- [ ] Display reviews section (list + per-item Review CTA / "Reviewed" state)
 - [ ] Verify: Product detail page loads correctly
 
 ### 3.27 Frontend — Admin Product API (RTK Query)
@@ -827,9 +837,9 @@
 - [ ] Verify: Cart page loads correctly
 
 ### 5.15 Frontend — CartDrawer Component
-- [ ] Create CartDrawer (`src/components/cart/CartDrawer.tsx`)
+- [ ] Create CartDrawer (`src/components/cart/CartDrawer.tsx`) — follow `ux-ui/` drawer (`min(420px, 100vw)` right slide-over)
 - [ ] Cart icon trigger with count badge
-- [ ] Slide-out drawer (single cart surface — no hover MiniCart)
+- [ ] Slide-out drawer (quick-access surface next to the full `/cart` page — no hover MiniCart)
 - [ ] Item list (name, qty, price)
 - [ ] OrderSummary (subtotal/shipping/tax/total from `GET /api/cart`)
 - [ ] View Cart link

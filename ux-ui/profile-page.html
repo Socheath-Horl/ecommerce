@@ -1,0 +1,1558 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Horizon Supply Co. · My Profile</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ui.theme');
+        if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (t === 'dark') document.documentElement.classList.add('dark');
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    /* ─── tokens ─────────────────────────────────────────────────────────
+       Identical values to brand-spec.md (source of truth). Selector is
+       html.dark to match shadcn/ui's `darkMode: ['class']` strategy.
+       Reference hexes: light fg #09090B · bg #FFFFFF · border #E4E4E7 ·
+       muted #71717A · accent/dark-fg #FAFAFA · dark bg #09090B ·
+       dark surface #18181B · dark border #27272A. */
+    :root {
+      --bg:      oklch(1 0 89.9);
+      --surface: oklch(1 0 89.9);
+      --fg:      oklch(0.1408 0.0044 285.8);
+      --muted:   oklch(0.5517 0.0138 285.9);
+      --border:  oklch(0.9197 0.004 286.3);
+      --accent:  oklch(0.2103 0.0059 285.9);
+
+      --accent-soft: color-mix(in oklch, var(--accent) 14%, transparent);
+      --fg-soft:     color-mix(in oklch, var(--fg) 6%, transparent);
+      --shadow-soft: 0 1px 2px color-mix(in oklch, var(--fg) 8%, transparent),
+                      0 16px 40px -18px color-mix(in oklch, var(--fg) 14%, transparent);
+      --on-accent:  oklch(0.9851 0 89.9);
+      --hover-fill: oklch(0.9674 0.0013 286.4);
+      --success:     oklch(0.6271 0.1699 149.2);
+      --warning:     oklch(0.6806 0.1423 75.8);
+      --info:        oklch(0.5461 0.2152 262.9);
+      --destructive: oklch(0.5771 0.2152 27.3);
+      --success-soft:     color-mix(in oklch, var(--success) 14%, transparent);
+      --warning-soft:     color-mix(in oklch, var(--warning) 14%, transparent);
+      --info-soft:        color-mix(in oklch, var(--info) 14%, transparent);
+      --destructive-soft: color-mix(in oklch, var(--destructive) 14%, transparent);
+
+      --font-display: 'Iowan Old Style', 'Charter', Georgia, 'Times New Roman', serif;
+      --font-body:    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono:    ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+
+      --fs-h1: clamp(42px, 6vw, 64px);
+      --fs-h2: clamp(30px, 4vw, 44px);
+      --fs-h3: 20px;
+      --fs-lead: 18px;
+      --fs-body: 16px;
+      --fs-meta: 13px;
+
+      --gap-xs: 8px;
+      --gap-sm: 12px;
+      --gap-md: 20px;
+      --gap-lg: 32px;
+      --gap-xl: 56px;
+      --gap-2xl: 88px;
+      --container: 1280px;
+      --gutter: 32px;
+      --radius: 10px;
+      --radius-lg: 16px;
+
+      color-scheme: light;
+    }
+
+    .dark {
+      --bg:      oklch(0.1408 0.0044 285.8);
+      --surface: oklch(0.2103 0.0059 285.9);
+      --fg:      oklch(0.9851 0 89.9);
+      --muted:   oklch(0.7118 0.0129 286.1);
+      --border:  oklch(0.2739 0.0055 286);
+      --accent:  oklch(0.9851 0 89.9);
+      --on-accent:  oklch(0.2103 0.0059 285.9);
+      --hover-fill: oklch(0.2103 0.0059 285.9);
+      --success:     oklch(0.7227 0.192 149.6);
+      --warning:     oklch(0.8606 0.1731 91.9);
+      --info:        oklch(0.6231 0.188 259.8);
+      --destructive: oklch(0.6368 0.2078 25.3);
+      color-scheme: dark;
+    }
+
+    /* ─── reset & base ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+    [hidden] { display: none !important; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: var(--fs-body);
+      line-height: 1.55;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+    p { text-wrap: pretty; }
+    h1, h2, h3, h4 { text-wrap: balance; }
+
+    /* ─── layout primitives ─────────────────────────────────────────── */
+    .container { max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+
+    /* ─── type ──────────────────────────────────────────────────────── */
+    h1 { font-family: var(--font-display); font-size: var(--fs-h1); line-height: 1.06; letter-spacing: -0.02em; margin: 0; }
+    h2 { font-family: var(--font-display); font-size: var(--fs-h2); line-height: 1.12; letter-spacing: -0.015em; margin: 0; }
+    h3 { font-size: var(--fs-h3); font-weight: 600; line-height: 1.3; letter-spacing: -0.005em; margin: 0; }
+    .eyebrow {
+      font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent); margin: 0 0 var(--gap-md);
+    }
+    .meta { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--muted); }
+    .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+    /* ─── chrome ────────────────────────────────────────────────────── */
+    .topnav {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in oklch, var(--bg) 92%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topnav-inner { display: flex; align-items: center; gap: 28px; padding-block: 13px; }
+    .topnav .logo { font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; color: var(--fg); flex: none; }
+    .topnav nav { display: flex; align-items: center; gap: 24px; }
+    .topnav nav a {
+      position: relative;
+      font-size: 15px; font-weight: 500; color: var(--fg);
+      padding: 6px 2px;
+    }
+    .topnav nav a::after {
+      content: ""; position: absolute; left: 2px; right: 2px; bottom: 0; height: 1px;
+      background: var(--accent);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.18s ease;
+    }
+    .topnav nav a:hover { color: var(--fg); }
+    .topnav nav a:hover::after { transform: scaleX(1); }
+    .topnav .cluster { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .topnav .cluster .searchbar { width: min(320px, 100%); }
+    .nav-cart { position: relative; }
+    .cart-badge {
+      position: absolute; top: -2px; right: -2px; min-width: 16px; height: 16px;
+      padding: 0 4px; border-radius: 999px;
+      background: var(--accent); color: var(--on-accent);
+      font-family: var(--font-mono); font-size: 10px; line-height: 16px; text-align: center;
+    }
+    .theme-toggle { display: inline-flex; align-items: center; gap: 8px; }
+    .theme-toggle .theme-icon { display: grid; place-items: center; }
+    .theme-toggle .moon { display: none; }
+    html.dark .theme-toggle .sun  { display: none; }
+    html.dark .theme-toggle .moon { display: block; }
+    .topnav .menu-btn { display: none; }
+    @media (max-width: 1100px) {
+      .topnav .cluster .searchbar,
+      .topnav .usermenu { display: none; }
+    }
+    @media (max-width: 900px) {
+      .topnav nav { display: none; }
+      .topnav .menu-btn { display: inline-grid; }
+    }
+
+    /* ─── searchbar (composite) ─────────────────────────────────────── */
+    .searchbar {
+      display: flex; align-items: center; gap: 6px;
+      height: 44px;
+      border: 1px solid var(--border); border-radius: 999px;
+      background: var(--surface);
+      padding: 0 6px 0 16px;
+      width: min(420px, 100%);
+      transition: border-color 0.15s ease;
+    }
+    .searchbar:focus-within { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+    .searchbar input { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--fg); font: inherit; font-size: 14px; padding: 10px 0; }
+    .searchbar input:focus { outline: none; }
+    .searchbar input::placeholder { color: var(--muted); }
+    .searchbar .icon-btn { width: 40px; height: 40px; }
+
+    /* ─── breadcrumb ────────────────────────────────────────────────── */
+    .crumbs { padding: 18px 0 4px; }
+    .crumbs ol { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; list-style: none; margin: 0; padding: 0; }
+    .crumbs li { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.03em; color: var(--muted); }
+    .crumbs li + li::before { content: "/"; color: var(--muted); }
+    .crumbs a { color: var(--muted); }
+    .crumbs a:hover { color: var(--fg); }
+
+    /* ─── user menu (header dropdown) ──────────────────────────────── */
+    .usermenu { position: relative; }
+    .usermenu-panel {
+      position: absolute; right: 0; top: calc(100% + 10px);
+      width: 236px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 8px;
+      z-index: 30;
+    }
+    .usermenu-head { padding: 10px 12px 10px; margin-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .usermenu-head p { margin: 0; font-size: 13px; }
+    .usermenu-head .meta { font-size: 11px; }
+    .menu-item {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 10px 12px;
+      border: 0; border-radius: 8px;
+      background: transparent; color: var(--fg);
+      font: inherit; font-size: 14px; text-align: left;
+    }
+    .menu-item:hover { background: var(--hover-fill); }
+    .menu-item + .menu-item { margin-top: 2px; }
+
+    /* ─── slide-over panels (mobile menu) ───────────────────────────── */
+    .menu-overlay { position: fixed; inset: 0; background: color-mix(in oklch, var(--fg) 35%, transparent); z-index: 80; }
+    .menu-panel {
+      position: fixed; left: 0; top: 0; bottom: 0;
+      width: min(320px, 86vw);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      z-index: 81;
+      display: flex; flex-direction: column;
+      gap: 20px; padding: 14px 20px 24px;
+      overflow-y: auto;
+      box-shadow: var(--shadow-soft);
+    }
+    .menu-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .menu-links { display: flex; flex-direction: column; gap: 4px; }
+    .menu-links a { padding: 10px 12px; border-radius: 8px; font-size: 15px; color: var(--fg); }
+    .menu-links a:hover { background: var(--hover-fill); }
+    .menu-sec-label {
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); margin: 0 0 8px;
+    }
+    .menu-account { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .menu-theme .theme-toggle { width: 100%; justify-content: flex-start; }
+    .theme-label { font-size: 14px; }
+
+    .pagefoot { padding-block: var(--gap-xl); border-top: 1px solid var(--border); }
+    .foot-grid { display: grid; grid-template-columns: 1.7fr 1fr 1fr 1.2fr; gap: var(--gap-xl); }
+    @media (max-width: 920px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+    .foot-brand p { color: var(--muted); font-size: 14px; max-width: 40ch; margin: 12px 0 0; }
+    .foot-col h3 { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 var(--gap-sm); }
+    .foot-col h3 + h3 { margin-top: 20px; }
+    .foot-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+    .foot-col a { font-size: 14px; color: var(--muted); }
+    .foot-col a:hover { color: var(--fg); }
+    .foot-social { display: flex; gap: 8px; }
+    .foot-social .icon-btn { font-family: var(--font-mono); font-size: 12px; }
+    .foot-social .icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
+    .foot-pay { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pay-chip {
+      display: inline-flex; align-items: center;
+      padding: 5px 12px;
+      border: 1px solid var(--border); border-radius: 8px;
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em;
+      color: var(--muted); background: var(--surface);
+    }
+    .foot-bar {
+      margin-top: var(--gap-xl); padding-top: var(--gap-md);
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; gap: var(--gap-md); flex-wrap: wrap;
+    }
+
+    /* ─── button (shadcn anatomy) ───────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 11px 20px;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      font-size: 15px; font-weight: 500; letter-spacing: -0.005em; line-height: 1.4;
+      white-space: nowrap;
+      transition: transform 0.05s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn[data-variant="default"]     { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+    .btn[data-variant="default"]:hover { background: color-mix(in oklch, var(--accent) 86%, black); }
+    .btn[data-variant="secondary"]   { background: var(--hover-fill); color: var(--fg); border-color: transparent; }
+    .btn[data-variant="secondary"]:hover { background: color-mix(in oklch, var(--hover-fill) 88%, var(--fg)); }
+    .btn[data-variant="outline"]     { background: var(--surface); color: var(--fg); border-color: var(--border); }
+    .btn[data-variant="outline"]:hover { background: var(--hover-fill); border-color: var(--fg); }
+    .btn[data-variant="ghost"]       { background: transparent; color: var(--fg); border-color: transparent; padding-inline: 8px; }
+    .btn[data-variant="ghost"]:hover { background: var(--hover-fill); }
+    .btn[data-variant="link"]        { background: transparent; color: var(--fg); border-color: transparent; padding: 0; text-decoration: underline; text-underline-offset: 4px; }
+    .btn[data-size="sm"]  { padding: 7px 14px; font-size: 13px; }
+    .btn[data-size="lg"]  { padding: 14px 28px; font-size: 16px; }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--accent); outline-offset: 2px;
+    }
+    .icon-btn {
+      width: 44px; height: 44px;
+      display: inline-grid; place-items: center;
+      border: 1px solid transparent; border-radius: 999px;
+      background: transparent; color: var(--fg);
+    }
+    .icon-btn:hover { background: var(--hover-fill); }
+    .icon-btn--bordered { border-color: var(--border); border-radius: var(--radius); }
+    .icon-btn svg { width: 18px; height: 18px; }
+    .btn--block { width: 100%; justify-content: center; }
+
+    /* ─── badge ─────────────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+    .badge[data-variant="default"]     { background: var(--accent); color: var(--on-accent); }
+    .badge[data-variant="secondary"]   { background: var(--hover-fill); color: var(--muted); border: 1px solid var(--border); }
+    .badge[data-variant="destructive"] { background: var(--destructive-soft); color: color-mix(in oklch, var(--destructive) 55%, var(--fg)); }
+    .badge[data-variant="success"]     { background: var(--success-soft); color: color-mix(in oklch, var(--success) 42%, var(--fg)); }
+    .badge[data-variant="warning"]     { background: var(--warning-soft); color: color-mix(in oklch, var(--warning) 42%, var(--fg)); }
+    .badge[data-variant="info"]        { background: var(--info-soft); color: color-mix(in oklch, var(--info) 45%, var(--fg)); }
+    .badge .bg-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+    /* ─── order summary rows (shared) ───────────────────────────────── */
+    .sum-row { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; padding: 6px 0; text-align: left; }
+    .sum-row--total { margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--border); font-weight: 600; }
+
+    /* ─── sheet (cart drawer) ───────────────────────────────────────── */
+    .sheet-overlay { position: fixed; inset: 0; background: color-mix(in oklch, var(--fg) 35%, transparent); z-index: 50; }
+    .sheet {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: min(420px, 100vw);
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      z-index: 51;
+      display: flex; flex-direction: column;
+      box-shadow: var(--shadow-soft);
+    }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+    .sheet-head h3 { font-size: 18px; }
+    .sheet-body { flex: 1; overflow-y: auto; padding: 8px 20px; }
+    .sheet-foot { padding: 16px 20px; border-top: 1px solid var(--border); }
+    .cart-line { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .cart-line-thumb {
+      width: 56px; height: 56px; flex: none;
+      border-radius: 8px; border: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--accent-soft), var(--fg-soft)), var(--surface);
+      display: grid; place-items: center;
+      color: var(--muted); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.03em;
+    }
+    .cart-line-body { flex: 1; min-width: 0; }
+    .cart-line-name { font-size: 14px; font-weight: 600; margin: 0 0 2px; }
+    .cart-line-meta { color: var(--muted); font-size: 12px; margin: 0 0 6px; }
+    .cart-line-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .cart-line-price { font-family: var(--font-mono); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+    .cart-empty { text-align: center; padding: 40px 0 48px; }
+    .cart-empty p { color: var(--muted); font-size: 14px; margin: 8px 0 20px; }
+
+    /* ─── toasts (sonner anatomy) ───────────────────────────────────── */
+    .toast-stack {
+      position: fixed; right: 16px; bottom: 16px; z-index: 60;
+      display: flex; flex-direction: column; gap: 10px;
+      max-width: min(360px, calc(100vw - 32px));
+      width: 100%;
+    }
+    .toast {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 12px 14px;
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
+    .toast--out { opacity: 0; transform: translateY(4px); transition: opacity 0.2s ease, transform 0.2s ease; }
+    .toast-icon {
+      width: 20px; height: 20px; flex: none; border-radius: 50%;
+      display: grid; place-items: center;
+      font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+    }
+    .toast--success .toast-icon { background: var(--success-soft); color: color-mix(in oklch, var(--success) 45%, var(--fg)); }
+    .toast--info    .toast-icon { background: var(--info-soft);    color: color-mix(in oklch, var(--info) 50%, var(--fg)); }
+    .toast--error   .toast-icon { background: var(--destructive-soft); color: color-mix(in oklch, var(--destructive) 60%, var(--fg)); }
+    .toast-body { display: block; }
+    .toast-title { display: block; font-size: 14px; font-weight: 600; }
+    .toast-msg { display: block; color: var(--muted); font-size: 13px; margin-top: 1px; }
+
+    /* ─── auth gate (AuthGuard, §4 route matrix) ────────────────────── */
+    .auth-gate { padding-block: var(--gap-lg) var(--gap-2xl); }
+    .gate-card {
+      max-width: 460px; margin-inline: auto;
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      background: var(--surface); box-shadow: var(--shadow-soft);
+      padding: 40px 32px; text-align: center;
+    }
+    .gate-icon {
+      width: 60px; height: 60px; margin-inline: auto;
+      border-radius: 50%;
+      background: var(--accent-soft); color: var(--accent);
+      display: grid; place-items: center;
+    }
+    .gate-icon--bad { background: var(--destructive-soft); color: color-mix(in oklch, var(--destructive) 60%, var(--fg)); }
+    .gate-icon svg { width: 30px; height: 30px; }
+    .gate-card h2 { font-family: var(--font-display); font-size: 24px; margin: var(--gap-md) 0 4px; }
+    .gate-card p { color: var(--muted); font-size: 14px; margin: 0; }
+    .gate-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: var(--gap-lg); }
+
+    /* ─── form field (shadcn input anatomy) ─────────────────────────── */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 13px; font-weight: 500; }
+    .field .req { color: var(--destructive); }
+    .field input, .field select, .field textarea {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--surface); color: var(--fg);
+      font: inherit; font-size: 14px;
+      padding: 0 12px;
+      transition: border-color 0.15s ease;
+    }
+    .field input, .field select { height: 44px; }
+    .field textarea { padding-block: 10px; min-height: 84px; resize: vertical; }
+    .field select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) 19px, calc(100% - 13px) 19px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 34px; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+    .field input::placeholder, .field textarea::placeholder { color: var(--muted); }
+    .field .hint { font-size: 12px; color: var(--muted); }
+    .field input[aria-invalid="true"], .field select[aria-invalid="true"], .field textarea[aria-invalid="true"] { border-color: var(--destructive); }
+    .field .err { font-size: 12px; color: var(--destructive); min-height: 16px; }
+    .check {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px;
+    }
+    .check input {
+      width: 18px; height: 18px; flex: none;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-sm); }
+    @media (max-width: 620px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: var(--gap-sm); }
+
+    /* ─── dialog (alert-dialog composite) ───────────────────────────── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: color-mix(in oklch, var(--fg) 35%, transparent);
+      display: grid; place-items: center;
+      z-index: 50; padding: 16px;
+    }
+    .dialog {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 26px;
+      max-width: 480px; width: 100%;
+      max-height: 86vh; overflow-y: auto;
+    }
+    .dialog h3 { margin-bottom: 8px; }
+    .dialog p { color: var(--muted); font-size: 14px; margin: 0 0 22px; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+
+    /* ─── profile (§5.11) ───────────────────────────────────────────── */
+    .profile-section { padding-block: var(--gap-md) var(--gap-2xl); }
+    .profile-head-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: var(--gap-md); }
+    .profile-head-row h1 { font-size: clamp(28px, 4vw, 40px); margin: 0; }
+    .profile-head-row p { color: var(--muted); font-size: 14px; margin: 4px 0 0; }
+
+    .profile-grid { display: grid; grid-template-columns: 360px 1fr; gap: var(--gap-lg); align-items: start; }
+    @media (max-width: 940px) { .profile-grid { grid-template-columns: 1fr; } }
+
+    .panel {
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      background: var(--surface); box-shadow: var(--shadow-soft);
+    }
+    .panel-head { padding: 20px 24px; border-bottom: 1px solid var(--border); }
+    .panel-head h3 { font-size: 18px; }
+    .panel-head .meta { font-size: 12px; margin-top: 3px; }
+    .panel-body { padding: 24px; }
+
+    .userinfo { text-align: center; }
+    .avatar-wrap {
+      width: 108px; height: 108px; margin: 0 auto var(--gap-md);
+      position: relative;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent-soft), var(--fg-soft)), var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-fallback {
+      width: 100%; height: 100%;
+      display: grid; place-items: center;
+      font-family: var(--font-display); font-size: 42px; color: var(--muted);
+    }
+    .avatar-cam {
+      position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%);
+      width: 40px; height: 40px;
+      border: 1px solid var(--border); border-radius: 999px;
+      background: var(--surface);
+      display: grid; place-items: center;
+      color: var(--fg);
+    }
+    .avatar-cam svg { width: 18px; height: 18px; }
+    .userinfo-name { font-size: 20px; font-weight: 600; margin: 0; }
+    .userinfo-email { color: var(--muted); font-size: 14px; margin: 2px 0 0; }
+    .userinfo-phone { color: var(--muted); font-family: var(--font-mono); font-size: 13px; margin: 4px 0 0; }
+    .userinfo-badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: var(--gap-md) 0 0; }
+    .userinfo-actions { display: flex; flex-direction: column; gap: 6px; margin-top: var(--gap-lg); }
+
+    .addr-empty { text-align: center; padding: 28px 0 36px; color: var(--muted); }
+    .addr-empty svg { width: 34px; height: 34px; margin: 0 auto 10px; opacity: 0.5; }
+    .addr-empty p { font-size: 14px; margin: 0 0 18px; }
+    .addr-list { display: flex; flex-direction: column; }
+    .addr-card { display: flex; gap: 14px; align-items: flex-start; padding: 18px 24px; border-bottom: 1px solid var(--border); }
+    .addr-card:last-child { border-bottom: 0; }
+    .addr-main { flex: 1; min-width: 0; }
+    .addr-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+    .addr-title { font-weight: 600; font-size: 15px; }
+    .addr-lines { color: var(--muted); font-size: 14px; margin: 0; line-height: 1.6; }
+    .addr-actions { display: flex; flex-direction: column; gap: 6px; flex: none; }
+    @media (max-width: 560px) { .addr-actions { flex-direction: row; } }
+
+    .sk-avatar { width: 108px; height: 108px; border-radius: 999px; margin-inline: auto; }
+    .sk-line { height: 14px; border-radius: 6px; background: var(--hover-fill); }
+    .sk-card {
+      max-width: 760px; margin-inline: auto;
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      background: var(--surface);
+      padding: 24px 28px;
+      display: flex; flex-direction: column; gap: 18px;
+    }
+    @keyframes skpulse { 50% { opacity: 0.5; } }
+    .sk-card *, .sk-card { animation: skpulse 1.4s ease-in-out infinite; }
+
+    .retry-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: var(--gap-md); }
+    .retry-bar p { color: var(--muted); font-size: 14px; margin: 0; }
+  </style>
+</head>
+<body>
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav-inner">
+      <a class="logo" href="home-page.html" data-od-id="logo" aria-label="Horizon Supply Co. — home">Horizon Supply Co.</a>
+      <nav aria-label="Primary">
+        <a href="home-page.html#collections">Collections</a>
+        <a href="home-page.html#featured">New in</a>
+      </nav>
+      <div class="cluster">
+        <button class="icon-btn icon-btn--bordered menu-btn" type="button" id="menu-open" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <form class="searchbar search-form" role="search" id="search-form">
+          <input type="search" placeholder="Search products…" aria-label="Search products" />
+          <button class="icon-btn" type="submit" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+        </form>
+        <button class="icon-btn icon-btn--bordered theme-toggle" type="button" id="theme-toggle" aria-label="Toggle light and dark theme">
+          <span class="theme-icon">
+            <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          </span>
+        </button>
+        <div class="usermenu" data-od-id="usermenu">
+          <button class="icon-btn icon-btn--bordered" type="button" id="user-toggle" aria-label="Account menu" aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>
+          </button>
+          <div class="usermenu-panel" id="user-panel" hidden>
+            <div class="usermenu-head" id="user-head">
+              <p>Guest</p>
+              <p class="meta">sign in to manage your profile</p>
+            </div>
+            <div id="user-links">
+              <a class="menu-item" href="orders-page.html">My Orders</a>
+              <a class="menu-item" href="profile-page.html">My Profile</a>
+              <a class="menu-item" href="login-page.html">Sign in</a>
+              <a class="menu-item" href="register-page.html">Create account</a>
+            </div>
+          </div>
+        </div>
+        <a class="icon-btn icon-btn--bordered nav-cart" href="cart-page.html" id="cart-open" aria-label="Cart, 0 items">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          <span class="cart-badge" id="cart-count" hidden>0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div class="menu-overlay" id="menu-overlay" hidden></div>
+  <nav class="menu-panel" id="menu-panel" hidden aria-label="Mobile">
+    <div class="menu-head">
+      <span class="logo" style="font-family: var(--font-display); font-size: 19px; font-weight: 600;">Horizon Supply Co.</span>
+      <button class="icon-btn" type="button" id="menu-close" aria-label="Close menu">×</button>
+    </div>
+    <form class="searchbar search-form" role="search" id="search-form-menu">
+      <input type="search" placeholder="Search products…" aria-label="Search products" />
+      <button class="icon-btn" type="submit" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+    </form>
+    <div class="menu-links">
+      <a href="home-page.html#collections">Collections</a>
+      <a href="home-page.html#featured">New in</a>
+    </div>
+    <hr style="height: 1px; background: var(--border); border: 0; margin: 0;" />
+    <div>
+      <p class="menu-sec-label">Account</p>
+      <div class="menu-account" id="menu-account">
+        <a class="btn" data-variant="outline" data-size="sm" href="login-page.html">Sign in</a>
+        <a class="btn" data-variant="default" data-size="sm" href="register-page.html">Create account</a>
+      </div>
+    </div>
+    <div class="menu-theme">
+      <p class="menu-sec-label">Theme</p>
+      <button class="btn theme-toggle" type="button" data-variant="outline" aria-label="Toggle light and dark theme">
+        <span class="theme-icon">
+          <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </span>
+        <span class="theme-label">Light</span>
+      </button>
+    </div>
+  </nav>
+
+  <main id="content">
+    <!-- BREADCRUMB -->
+    <nav class="container crumbs" aria-label="Breadcrumb" data-od-id="breadcrumb">
+      <ol>
+        <li><a href="home-page.html">Home</a></li>
+        <li aria-current="page">My Profile</li>
+      </ol>
+    </nav>
+
+    <!-- SKELETON (§6.4) -->
+    <section class="profile-section" id="skeleton-view" hidden data-od-id="skeleton-state" aria-label="Loading profile">
+      <div class="container">
+        <div class="sk-card">
+          <div class="sk-avatar"></div>
+          <div class="sk-line" style="width: 40%; margin-inline: auto;"></div>
+          <div class="sk-line" style="width: 30%; margin-inline: auto;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE (§5.11) -->
+    <section class="profile-section" id="profile-view" hidden data-od-id="profile">
+      <div class="container">
+        <div class="profile-head-row">
+          <div>
+            <h1>My Profile</h1>
+            <p>Manage your account, password, and saved addresses.</p>
+          </div>
+          <span class="badge" data-variant="secondary">Member since 2024</span>
+        </div>
+
+        <div class="profile-grid">
+          <!-- USER INFO -->
+          <div class="panel panel--userinfo" data-od-id="user-info">
+            <div class="panel-body userinfo">
+              <div class="avatar-wrap" id="avatar-wrap">
+                <div class="avatar-fallback" id="avatar-fallback" aria-hidden="true">JD</div>
+                <img id="avatar-img" alt="" hidden />
+                <button class="avatar-cam" type="button" id="avatar-cam" aria-label="Upload profile photo" title="Upload photo">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h3l2-2h6l2 2h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.2"/></svg>
+                </button>
+              </div>
+              <h2 class="userinfo-name" id="ui-name">Jane Doe</h2>
+              <p class="userinfo-email" id="ui-email">jane@mail.com</p>
+              <p class="userinfo-phone" id="ui-phone">+1 555 0100</p>
+              <div class="userinfo-badges">
+                <span class="badge" data-variant="success"><span class="bg-dot"></span>Verified</span>
+              </div>
+              <div class="userinfo-actions">
+                <button class="btn" data-variant="outline" type="button" id="edit-profile">Edit Profile</button>
+                <button class="btn" data-variant="ghost" type="button" id="avatar-upload-btn">Change photo</button>
+                <input type="file" accept="image/*" id="avatar-input" hidden />
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: var(--gap-lg); min-width: 0;">
+            <!-- PASSWORD FORM -->
+            <div class="panel" data-od-id="password-form">
+              <div class="panel-head">
+                <h3>Password</h3>
+                <p class="meta">Update your password</p>
+              </div>
+              <div class="panel-body">
+                <form id="password-form" novalidate>
+                  <div class="field" style="margin-bottom: 12px;">
+                    <label for="pw-current">Current password</label>
+                    <input type="password" id="pw-current" autocomplete="current-password" placeholder="••••••••" />
+                    <span class="err" id="err-current"></span>
+                  </div>
+                  <div class="form-grid">
+                    <div class="field">
+                      <label for="pw-new">New password</label>
+                      <input type="password" id="pw-new" autocomplete="new-password" placeholder="New password" />
+                      <span class="hint">Min 8 characters.</span>
+                      <span class="err" id="err-new"></span>
+                    </div>
+                    <div class="field">
+                      <label for="pw-confirm">Confirm password</label>
+                      <input type="password" id="pw-confirm" autocomplete="new-password" placeholder="Repeat new password" />
+                      <span class="err" id="err-confirm"></span>
+                    </div>
+                  </div>
+                  <div class="form-actions">
+                    <button class="btn" data-variant="default" type="submit" id="pw-submit">Update Password</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- ADDRESS LIST -->
+            <div class="panel" data-od-id="address-list">
+              <div class="panel-head" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                <div>
+                  <h3>Addresses</h3>
+                  <p class="meta">Saved shipping addresses</p>
+                </div>
+                <button class="btn" data-variant="outline" data-size="sm" type="button" id="addr-add">+ Add Address</button>
+              </div>
+              <div class="panel-body" style="padding: 0;">
+                <div class="addr-empty" id="addr-empty" hidden>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <p>No saved addresses yet. Add one to speed up checkout.</p>
+                  <button class="btn" data-variant="default" type="button" id="addr-add-empty">Add Address</button>
+                </div>
+                <div class="addr-list" id="addr-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="retry-bar" id="retry-bar" hidden data-od-id="retry-state">
+          <p>Something went wrong loading your profile.</p>
+          <button class="btn" data-variant="outline" data-size="sm" type="button" id="retry-load">Retry</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTH GATE (§4: /profile guarded by AuthGuard) -->
+    <section class="auth-gate" id="gate-view" hidden data-od-id="auth-gate">
+      <div class="container">
+        <div class="gate-card">
+          <div class="gate-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>
+          </div>
+          <h2>Sign in to manage your profile</h2>
+          <p>Your profile lives behind AuthGuard — the <code style="font-family: var(--font-mono);">/profile</code> route requires an account. Sign in or create one to continue.</p>
+          <div class="gate-actions">
+            <button class="btn" data-variant="default" type="button" id="gate-signin">Sign in</button>
+            <button class="btn" data-variant="outline" type="button" id="gate-signup">Create account</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="pagefoot" data-od-id="pagefoot">
+    <!-- Photography: Pexels · Pexels License (free to use, attribution not required). Social brand logos: Simple Icons · CC0. -->
+    <div class="container">
+      <div class="foot-grid">
+        <div class="foot-brand">
+          <a class="logo" href="home-page.html" style="font-family: var(--font-display); font-size: 19px; font-weight: 600;">Horizon Supply Co.</a>
+          <p>Objects with a point of view, made to outlast the route. Designed against the shadcn/ui blueprint — tokens from brand-spec.md.</p>
+        </div>
+        <div class="foot-col">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="home-page.html">Home</a></li>
+            <li><a href="products-page.html">Products</a></li>
+            <li><a href="orders-page.html">My Orders</a></li>
+            <li><a href="profile-page.html">My Profile</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <h3>Support</h3>
+          <ul>
+            <li><a href="404-page.html">Help Center</a></li>
+            <li><a href="404-page.html">Contact Us</a></li>
+            <li><a href="home-page.html#top">Shipping</a></li>
+            <li><a href="404-page.html">Returns</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <h3>Follow us</h3>
+          <div class="foot-social">
+            <a class="icon-btn icon-btn--bordered" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Follow us on Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12C0 18.01 4.388 22.945 10.125 23.854V15.56H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+            <a class="icon-btn icon-btn--bordered" href="https://x.com" target="_blank" rel="noopener" aria-label="Follow us on X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
+            <a class="icon-btn icon-btn--bordered" href="https://instagram.com" target="_blank" rel="noopener" aria-label="Follow us on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg></a>
+          </div>
+          <h3>Payment</h3>
+          <div class="foot-pay">
+            <span class="pay-chip">VISA</span>
+            <span class="pay-chip">MASTERCARD</span>
+          </div>
+        </div>
+      </div>
+      <div class="foot-bar">
+        <span class="meta">Copyright © 2026 Horizon Supply Co. — All rights reserved.</span>
+        <span class="meta">Light + dark via <code style="font-family: var(--font-mono);">html.dark</code> · OKLCH tokens · serif display</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CART SHEET -->
+  <div class="sheet-overlay" id="cart-overlay" hidden></div>
+  <div class="sheet" id="cart-sheet" hidden role="dialog" aria-modal="true" aria-label="Your cart" data-od-id="cart-sheet">
+    <div class="sheet-head">
+      <h3>Your cart</h3>
+      <button class="icon-btn" type="button" id="cart-close" aria-label="Close cart">×</button>
+    </div>
+    <div class="sheet-body">
+      <div id="cart-lines"></div>
+      <div class="cart-empty" id="cart-empty" hidden>
+        <h3 style="font-size: 17px;">Your cart is empty.</h3>
+        <p>Start with the new-in drop, or pick a category above.</p>
+        <button class="btn" data-variant="outline" type="button" id="empty-shop">Shop the collection</button>
+      </div>
+      <div id="cart-summary" hidden>
+        <div class="sum-row"><span class="meta">Shipping</span><span class="num" id="cart-shipping">$0.00</span></div>
+        <div class="sum-row"><span class="meta">Tax</span><span class="num" id="cart-tax">$0.00</span></div>
+        <hr style="height: 1px; background: var(--border); border: 0; margin: 10px 0;" />
+        <div class="sum-row sum-row--total"><span>Total</span><span class="num" id="cart-total">$0.00</span></div>
+      </div>
+    </div>
+    <div class="sheet-foot" id="cart-foot-actions" hidden>
+      <a class="btn" data-variant="default" href="checkout-page.html" style="width: 100%; justify-content: center;" id="sheet-checkout">Checkout</a>
+    </div>
+  </div>
+
+  <!-- ADDRESS FORM MODAL (AddressForm) -->
+  <div class="overlay" id="addr-dialog" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="addr-dialog-title" tabindex="-1" data-od-id="address-form">
+      <h3 id="addr-dialog-title" style="font-size: 18px;">Add Address</h3>
+      <p id="addr-dialog-sub">Save a shipping address for faster checkout.</p>
+      <form id="addr-form" novalidate>
+        <div class="field" style="margin-bottom: 12px;">
+          <label for="addr-label">Label <span class="req">*</span></label>
+          <input type="text" id="addr-label" placeholder="Work" aria-invalid="false" />
+          <span class="err" id="err-label"></span>
+        </div>
+        <div class="form-grid">
+          <div class="field" style="margin-bottom: 12px;">
+            <label for="addr-name">Recipient <span class="req">*</span></label>
+            <input type="text" id="addr-name" placeholder="Jane Doe" aria-invalid="false" />
+            <span class="err" id="err-name"></span>
+          </div>
+          <div class="field" style="margin-bottom: 12px;">
+            <label for="addr-phone">Phone <span class="req">*</span></label>
+            <input type="tel" id="addr-phone" placeholder="+1 555 0100" aria-invalid="false" />
+            <span class="err" id="err-phone"></span>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom: 12px;">
+          <label for="addr-line1">Address <span class="req">*</span></label>
+          <input type="text" id="addr-line1" placeholder="123 Main St" aria-invalid="false" />
+          <span class="err" id="err-line1"></span>
+        </div>
+        <div class="form-grid">
+          <div class="field" style="margin-bottom: 12px;">
+            <label for="addr-city">City <span class="req">*</span></label>
+            <input type="text" id="addr-city" placeholder="Springfield" aria-invalid="false" />
+            <span class="err" id="err-city"></span>
+          </div>
+          <div class="field" style="margin-bottom: 12px;">
+            <label for="addr-state">State <span class="req">*</span></label>
+            <input type="text" id="addr-state" placeholder="IL" aria-invalid="false" />
+            <span class="err" id="err-state"></span>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field" style="margin-bottom: 20px;">
+            <label for="addr-zip">ZIP <span class="req">*</span></label>
+            <input type="text" id="addr-zip" placeholder="62704" aria-invalid="false" />
+            <span class="err" id="err-zip"></span>
+          </div>
+          <div class="field" style="margin-bottom: 20px;">
+            <label for="addr-country">Country <span class="req">*</span></label>
+            <select id="addr-country" aria-invalid="false">
+              <option value="US" selected>United States</option>
+              <option value="CA">Canada</option>
+              <option value="UK">United Kingdom</option>
+              <option value="AU">Australia</option>
+            </select>
+            <span class="err" id="err-country"></span>
+          </div>
+        </div>
+        <label class="check" style="margin-bottom: 20px;">
+          <input type="checkbox" id="addr-default" />
+          <span>Make this my default address</span>
+        </label>
+        <div class="dialog-actions">
+          <button class="btn" data-variant="ghost" type="button" id="addr-cancel">Cancel</button>
+          <button class="btn" data-variant="default" type="submit" id="addr-save">Save Address</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONFIRM DELETE DIALOG -->
+  <div class="overlay" id="del-dialog" hidden>
+    <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="del-title" tabindex="-1" data-od-id="delete-dialog">
+      <h3 id="del-title" style="font-size: 18px;">Delete this address?</h3>
+      <p><span id="del-addr-name"></span> will be removed from your saved addresses.</p>
+      <div class="dialog-actions">
+        <button class="btn" data-variant="outline" type="button" id="del-cancel">Cancel</button>
+        <button class="btn" data-variant="default" type="button" id="del-confirm">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE EDIT MODAL (UserInfo edit) -->
+  <div class="overlay" id="edit-dialog" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="edit-title" tabindex="-1" data-od-id="edit-profile-dialog">
+      <h3 id="edit-title" style="font-size: 18px;">Edit Profile</h3>
+      <p>Update your name, phone, and email address.</p>
+      <form id="edit-form" novalidate>
+        <div class="field" style="margin-bottom: 12px;">
+          <label for="edit-name">Name <span class="req">*</span></label>
+          <input type="text" id="edit-name" aria-invalid="false" />
+          <span class="err" id="err-edit-name"></span>
+        </div>
+        <div class="field" style="margin-bottom: 12px;">
+          <label for="edit-email">Email <span class="req">*</span></label>
+          <input type="email" id="edit-email" aria-invalid="false" />
+          <span class="err" id="err-edit-email"></span>
+        </div>
+        <div class="field" style="margin-bottom: 20px;">
+          <label for="edit-phone">Phone</label>
+          <input type="tel" id="edit-phone" aria-invalid="false" />
+          <span class="err" id="err-edit-phone"></span>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn" data-variant="ghost" type="button" id="edit-cancel">Cancel</button>
+          <button class="btn" data-variant="default" type="submit" id="edit-save">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="false"></div>
+
+  <script>
+    (function () {
+      var PRODUCTS = {
+        p1: { name: 'Field Jacket — Waxed Cotton', price: 189.00, code: 'FLT-04', stock: 24, slug: '/products/field-jacket-waxed-cotton', img: 'assets/prod-jacket.jpg' },
+        p2: { name: 'Weekender Duffel №04',        price: 120.00, code: 'WKD-09', stock: 6,  slug: '/products/weekender-duffel-04',        img: 'assets/prod-duffel.jpg' },
+        p3: { name: 'Stainless Flask 24oz',        price: 42.00,  code: 'FLK-24', stock: 4,  slug: '/products/stainless-flask-24oz',       img: 'assets/prod-flask.jpg' },
+        p4: { name: 'Flight Tote — Recycled Nylon',price: 78.00,  code: 'FGT-02', stock: 12, slug: '/products/flight-tote-recycled-nylon',   img: 'assets/prod-tote.jpg' },
+        p5: { name: 'Desk Roll — Waxed Canvas',    price: 54.00,  code: 'DSR-01', stock: 9,  slug: '/products/canvas-desktop-roll',         img: 'assets/prod-deskroll.jpg' },
+        p6: { name: 'Zip Pouch — Large',           price: 26.00,  code: 'ZPL-L4', stock: 30, slug: '/products/zip-pouch-large',             img: 'assets/prod-pouch.jpg' },
+        p7: { name: 'Insulated Tumbler — 16oz',    price: 34.00,  code: 'TMB-16', stock: 18, slug: '/products/insulated-tumbler-16oz',     img: 'assets/prod-tumbler.jpg' },
+        p8: { name: 'Merino Crew — Heavy',         price: 88.00,  code: 'MRN-HV', stock: 0,  slug: '/products/merino-crew-heavy',          img: 'assets/prod-crew.jpg' }
+      };
+      var fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+      var SHIP_FLAT = 5;
+      var SHIP_FREE_MIN = 100;
+      var TAX_RATE = 0.0825;
+
+      function store(key, val) {
+        try { localStorage.setItem(key, val); } catch (e) {}
+      }
+      function read(key, fallback) {
+        try { return localStorage.getItem(key) || fallback; } catch (e) { return fallback; }
+      }
+
+      /* ─── theme ─────────────────────────────────────────────────────── */
+      var themeBtns = document.querySelectorAll('.theme-toggle');
+      function applyTheme() {
+        var dark = document.documentElement.classList.contains('dark');
+        themeBtns.forEach(function (b) {
+          b.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+          var lbl = b.querySelector('.theme-label');
+          if (lbl) lbl.textContent = dark ? 'Dark' : 'Light';
+        });
+      }
+      themeBtns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var dark = document.documentElement.classList.toggle('dark');
+          store('ui.theme', dark ? 'dark' : 'light');
+          applyTheme();
+        });
+      });
+      applyTheme();
+
+      /* ─── toasts ────────────────────────────────────────────────────── */
+      var toastStack = document.getElementById('toast-stack');
+      function toast(type, title, msg) {
+        var el = document.createElement('div');
+        el.className = 'toast toast--' + (type === '' ? 'info' : type);
+        var icon = document.createElement('span');
+        icon.className = 'toast-icon';
+        icon.textContent = type === 'success' ? '✓' : type === 'error' ? '!' : 'i';
+        el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+        var body = document.createElement('span');
+        body.className = 'toast-body';
+        var t = document.createElement('span');
+        t.className = 'toast-title';
+        t.textContent = title;
+        var m = document.createElement('span');
+        m.className = 'toast-msg';
+        m.textContent = msg;
+        body.appendChild(t); body.appendChild(m);
+        el.appendChild(icon); el.appendChild(body);
+        toastStack.appendChild(el);
+        setTimeout(function () {
+          el.classList.add('toast--out');
+          setTimeout(function () { el.remove(); }, 220);
+        }, 3400);
+      }
+
+      /* ─── auth (AuthGuard, §4:195) ─────────────────────────────────── */
+      var authed = false;
+      var userName = null;
+      var userEmail = null;
+      try {
+        authed = !!localStorage.getItem('ui.token');
+        var parsedUser = JSON.parse(localStorage.getItem('ui.user') || 'null');
+        if (parsedUser) { userName = parsedUser.name; userEmail = parsedUser.email; }
+      } catch (e) {}
+
+      var userHead = document.getElementById('user-head');
+      var userLinks = document.getElementById('user-links');
+      var menuAccount = document.getElementById('menu-account');
+      var profileView = document.getElementById('profile-view');
+      var gateView = document.getElementById('gate-view');
+      var skeletonView = document.getElementById('skeleton-view');
+      var retryBar = document.getElementById('retry-bar');
+
+      function signOutAction() {
+        try { localStorage.removeItem('ui.token'); localStorage.removeItem('ui.user'); } catch (e) {}
+        authed = false;
+        userName = null;
+        userEmail = null;
+        setUserMenu(false);
+        applyUserMenu();
+        showGate();
+        toast('info', 'Signed out', 'Sign in again to reach your profile.');
+      }
+      function applyUserMenu() {
+        if (authed) {
+          userHead.innerHTML = '<p>' + (userName || 'Customer') + '</p>' +
+            '<p class="meta">' + (userEmail || 'signed in') + '</p>';
+          userLinks.innerHTML =
+            '<a class="menu-item" href="orders-page.html">My Orders</a>' +
+            '<a class="menu-item" href="profile-page.html">My Profile</a>' +
+            '<button class="menu-item" type="button" id="sign-out">Sign out</button>';
+          menuAccount.innerHTML =
+            '<button class="btn" data-variant="outline" data-size="sm" type="button" id="menu-signout">Sign out</button>' +
+            '<button class="btn" data-variant="default" data-size="sm" type="button" id="menu-profile-btn">My Profile</button>';
+          var signOut = document.getElementById('sign-out');
+          if (signOut) signOut.addEventListener('click', signOutAction);
+          var menuSignout = document.getElementById('menu-signout');
+          if (menuSignout) menuSignout.addEventListener('click', function () { setMenu(false); signOutAction(); });
+        } else {
+          userHead.innerHTML = '<p>Guest</p>' +
+            '<p class="meta">sign in to manage your profile</p>';
+          userLinks.innerHTML =
+            '<a class="menu-item" href="orders-page.html">My Orders</a>' +
+            '<a class="menu-item" href="profile-page.html">My Profile</a>' +
+            '<a class="menu-item" href="login-page.html">Sign in</a>' +
+            '<a class="menu-item" href="register-page.html">Create account</a>';
+          menuAccount.innerHTML =
+            '<a class="btn" data-variant="outline" data-size="sm" href="login-page.html">Sign in</a>' +
+            '<a class="btn" data-variant="default" data-size="sm" href="register-page.html">Create account</a>';
+        }
+      }
+      function showGate() {
+        profileView.hidden = true;
+        skeletonView.hidden = true;
+        retryBar.hidden = true;
+        gateView.hidden = false;
+      }
+      function showProfile() {
+        gateView.hidden = true;
+        skeletonView.hidden = true;
+        profileView.hidden = false;
+      }
+      applyUserMenu();
+
+      /* ─── chrome: cart badge + drawer ───────────────────────────────── */
+      var countEl = document.getElementById('cart-count');
+      var linesEl = document.getElementById('cart-lines');
+      var emptyEl = document.getElementById('cart-empty');
+      var summaryEl = document.getElementById('cart-summary');
+      var footEl = document.getElementById('cart-foot-actions');
+      var shippingEl = document.getElementById('cart-shipping');
+      var taxEl = document.getElementById('cart-tax');
+      var totalEl = document.getElementById('cart-total');
+      var sheet = document.getElementById('cart-sheet');
+      var cartOverlay = document.getElementById('cart-overlay');
+
+      var cartSeed = null;
+      try {
+        cartSeed = JSON.parse(localStorage.getItem('ui.cart') || 'null');
+      } catch (e) {}
+      if (!cartSeed || typeof cartSeed !== 'object' || !Object.keys(cartSeed).length) {
+        cartSeed = { p1: 2, p4: 1, p3: 1 };
+      }
+
+      function renderCart() {
+        var count = 0;
+        Object.keys(cartSeed).forEach(function (sku) { count += cartSeed[sku]; });
+        countEl.textContent = String(count);
+        countEl.hidden = count === 0;
+        countEl.parentElement.setAttribute('aria-label', count === 0 ? 'Cart, empty' : 'Cart, ' + count + ' items');
+
+        linesEl.textContent = '';
+        var subtotal = 0;
+        Object.keys(cartSeed).forEach(function (sku) {
+          var p = PRODUCTS[sku];
+          var qty = cartSeed[sku];
+          if (!p || qty < 1) return;
+          subtotal += p.price * qty;
+          var line = document.createElement('div');
+          line.className = 'cart-line';
+          var th = document.createElement('div');
+          th.className = 'cart-line-thumb';
+          th.textContent = p.code;
+          var body = document.createElement('div');
+          body.className = 'cart-line-body';
+          var nm = document.createElement('p');
+          nm.className = 'cart-line-name';
+          nm.textContent = p.name;
+          var meta = document.createElement('p');
+          meta.className = 'cart-line-meta';
+          meta.textContent = 'Qty ' + qty + ' · Sitewide free shipping';
+          var foot = document.createElement('div');
+          foot.className = 'cart-line-foot';
+          var price = document.createElement('span');
+          price.className = 'cart-line-price num';
+          price.textContent = fmt.format(p.price * qty);
+          foot.appendChild(price);
+          body.appendChild(nm); body.appendChild(meta); body.appendChild(foot);
+          line.appendChild(th); line.appendChild(body);
+          linesEl.appendChild(line);
+        });
+
+        if (subtotal === 0) {
+          emptyEl.hidden = false;
+          summaryEl.hidden = true;
+          footEl.hidden = true;
+          shippingEl.textContent = fmt.format(0);
+          taxEl.textContent = fmt.format(0);
+          totalEl.textContent = fmt.format(0);
+          return;
+        }
+        emptyEl.hidden = true;
+        summaryEl.hidden = false;
+        footEl.hidden = false;
+        var ship = subtotal >= SHIP_FREE_MIN ? 0 : SHIP_FLAT;
+        var tax = subtotal * TAX_RATE;
+        shippingEl.textContent = ship === 0 ? 'Free' : fmt.format(ship);
+        taxEl.textContent = fmt.format(Math.round(tax * 100) / 100);
+        totalEl.textContent = fmt.format(subtotal + ship + Math.round(tax * 100) / 100);
+      }
+      renderCart();
+
+      function openCart() { sheet.hidden = false; cartOverlay.hidden = false; document.getElementById('cart-close').focus(); }
+      function closeCart() { sheet.hidden = true; cartOverlay.hidden = true; document.getElementById('cart-open').focus(); }
+      document.getElementById('cart-open').addEventListener('click', function () { window.location.href = 'cart-page.html'; });
+      document.getElementById('cart-close').addEventListener('click', closeCart);
+      cartOverlay.addEventListener('click', closeCart);
+      document.getElementById('empty-shop').addEventListener('click', function () { closeCart(); window.location.href = 'products-page.html'; });
+
+      /* ─── user menu ─────────────────────────────────────────────────── */
+      var userToggle = document.getElementById('user-toggle');
+      var userPanel = document.getElementById('user-panel');
+      function setUserMenu(open) {
+        userPanel.hidden = !open;
+        userToggle.setAttribute('aria-expanded', String(open));
+      }
+      userToggle.addEventListener('click', function () { setUserMenu(userPanel.hidden); });
+      document.addEventListener('click', function (e) {
+        if (!userPanel.hidden && !userPanel.contains(e.target) && !userToggle.contains(e.target)) setUserMenu(false);
+      });
+
+      /* ─── mobile menu ──────────────────────────────────────────────── */
+      var menuPanelEl = document.getElementById('menu-panel');
+      var menuOverlayEl = document.getElementById('menu-overlay');
+      var menuOpenBtn = document.getElementById('menu-open');
+      var menuCloseBtn = document.getElementById('menu-close');
+      function setMenu(open) {
+        menuPanelEl.hidden = !open;
+        menuOverlayEl.hidden = !open;
+        menuOpenBtn.setAttribute('aria-expanded', String(open));
+      }
+      menuOpenBtn.addEventListener('click', function () { setMenu(true); menuCloseBtn.focus(); });
+      menuCloseBtn.addEventListener('click', function () { setMenu(false); menuOpenBtn.focus(); });
+      menuOverlayEl.addEventListener('click', function () { setMenu(false); menuOpenBtn.focus(); });
+      menuPanelEl.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+
+      /* ─── search ────────────────────────────────────────────────────── */
+      document.querySelectorAll('.search-form').forEach(function (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var q = form.querySelector('input').value.trim();
+          setMenu(false);
+          window.location.href = 'products-page.html' + (q ? '?q=' + encodeURIComponent(q) : '');
+        });
+      });
+
+      /* ─── §5.11 profile data (seed) ─────────────────────────────────── */
+      // GET /api/profile (AuthGuard). Loaded once, then edited in memory.
+      var USER = { name: 'Jane Doe', email: 'jane@mail.com', phone: '+1 555 0100' };
+      var ADDRESSES = [
+        { id: 'a1', label: 'Home', name: 'Jane Doe', phone: '+1 555 0100',
+          line1: '123 Main St', city: 'Springfield', state: 'IL', zip: '62704', country: 'US', isDefault: true },
+        { id: 'a2', label: 'Work', name: 'Jane Doe', phone: '+1 555 0180',
+          line1: '45 Oak Ave', city: 'Chicago', state: 'IL', zip: '60601', country: 'US', isDefault: false }
+      ];
+
+      var COUNTRY_LABEL = { US: 'United States', CA: 'Canada', UK: 'United Kingdom', AU: 'Australia' };
+
+      var uiNameEl = document.getElementById('ui-name');
+      var uiEmailEl = document.getElementById('ui-email');
+      var uiPhoneEl = document.getElementById('ui-phone');
+      var avatarImg = document.getElementById('avatar-img');
+      var avatarFallback = document.getElementById('avatar-fallback');
+      var addrListEl = document.getElementById('addr-list');
+      var addrEmptyEl = document.getElementById('addr-empty');
+
+      function initials(name) {
+        var parts = name.trim().split(/\s+/);
+        return (parts[0] ? parts[0][0] : '') + (parts[1] ? parts[1][0] : '');
+      }
+
+      function renderUser() {
+        uiNameEl.textContent = USER.name;
+        uiEmailEl.textContent = USER.email;
+        uiPhoneEl.textContent = USER.phone;
+        avatarFallback.textContent = initials(USER.name);
+      }
+
+      function renderAddresses() {
+        addrListEl.textContent = '';
+        if (!ADDRESSES.length) {
+          addrEmptyEl.hidden = false;
+          return;
+        }
+        addrEmptyEl.hidden = true;
+        ADDRESSES.forEach(function (a, idx) {
+          var card = document.createElement('div');
+          card.className = 'addr-card';
+          card.setAttribute('data-od-id', 'address-card');
+          card.setAttribute('data-idx', String(idx));
+
+          var main = document.createElement('div');
+          main.className = 'addr-main';
+          var titleRow = document.createElement('div');
+          titleRow.className = 'addr-title-row';
+          var title = document.createElement('span');
+          title.className = 'addr-title';
+          title.textContent = a.label;
+          titleRow.appendChild(title);
+          if (a.isDefault) {
+            var defBadge = document.createElement('span');
+            defBadge.className = 'badge';
+            defBadge.setAttribute('data-variant', 'secondary');
+            defBadge.textContent = 'Default';
+            titleRow.appendChild(defBadge);
+          }
+          main.appendChild(titleRow);
+          var lines = document.createElement('p');
+          lines.className = 'addr-lines';
+          lines.textContent = a.name + ' — ' + a.line1 + ', ' + a.city + ', ' + a.state + ' ' + a.zip;
+          main.appendChild(lines);
+          card.appendChild(main);
+
+          var actions = document.createElement('div');
+          actions.className = 'addr-actions';
+          var editBtn = document.createElement('button');
+          editBtn.className = 'btn';
+          editBtn.setAttribute('data-variant', 'ghost');
+          editBtn.setAttribute('data-size', 'sm');
+          editBtn.type = 'button';
+          editBtn.textContent = 'Edit';
+          var delBtn = document.createElement('button');
+          delBtn.className = 'btn';
+          delBtn.setAttribute('data-variant', 'ghost');
+          delBtn.setAttribute('data-size', 'sm');
+          delBtn.type = 'button';
+          delBtn.textContent = 'Delete';
+          delBtn.style.color = 'color-mix(in oklch, var(--destructive) 75%, var(--fg))';
+          actions.appendChild(editBtn); actions.appendChild(delBtn);
+          card.appendChild(actions);
+
+          editBtn.addEventListener('click', function () { openAddrForm(a.id); });
+          delBtn.addEventListener('click', function () { openDelDialog(a.id); });
+          addrListEl.appendChild(card);
+        });
+      }
+
+      /* ─── modals (address form / delete / edit profile) ─────────────── */
+      var addrDialog = document.getElementById('addr-dialog');
+      var delDialog = document.getElementById('del-dialog');
+      var editDialog = document.getElementById('edit-dialog');
+
+      var editingAddrId = null;
+
+      function openAddrForm(id) {
+        editingAddrId = id;
+        addrDialogForm.reset();
+        clearFields();
+        if (id) {
+          var a = ADDRESSES.find(function (x) { return x.id === id; });
+          if (a) {
+            document.getElementById('addr-dialog-title').textContent = 'Edit Address';
+            document.getElementById('addr-dialog-sub').textContent = 'Update this saved shipping address.';
+            document.getElementById('addr-label').value = a.label;
+            document.getElementById('addr-name').value = a.name;
+            document.getElementById('addr-phone').value = a.phone;
+            document.getElementById('addr-line1').value = a.line1;
+            document.getElementById('addr-city').value = a.city;
+            document.getElementById('addr-state').value = a.state;
+            document.getElementById('addr-zip').value = a.zip;
+            document.getElementById('addr-country').value = a.country;
+            document.getElementById('addr-default').checked = a.isDefault;
+          }
+        } else {
+          document.getElementById('addr-dialog-title').textContent = 'Add Address';
+          document.getElementById('addr-dialog-sub').textContent = 'Save a shipping address for faster checkout.';
+        }
+        addrDialog.hidden = false;
+        document.getElementById('addr-label').focus();
+      }
+      var addrDialogForm = document.getElementById('addr-form');
+
+      function clearFields() {
+        document.querySelectorAll('#addr-form [aria-invalid="true"]').forEach(function (el) {
+          el.setAttribute('aria-invalid', 'false');
+        });
+        document.querySelectorAll('#addr-form .err').forEach(function (el) { el.textContent = ''; });
+      }
+      function setFieldErr(id, msg) {
+        var el = document.getElementById(id);
+        if (el) el.setAttribute('aria-invalid', 'true');
+        document.getElementById('err-' + id.replace('addr-', '')).textContent = msg;
+      }
+
+      document.getElementById('addr-add').addEventListener('click', function () { openAddrForm(null); });
+      document.getElementById('addr-add-empty').addEventListener('click', function () { openAddrForm(null); });
+
+      function closeAddr() { addrDialog.hidden = true; editingAddrId = null; }
+      document.getElementById('addr-cancel').addEventListener('click', closeAddr);
+      addrDialog.addEventListener('click', function (e) { if (e.target === addrDialog) closeAddr(); });
+
+      addrDialogForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearFields();
+        var label = document.getElementById('addr-label').value.trim();
+        var name = document.getElementById('addr-name').value.trim();
+        var phone = document.getElementById('addr-phone').value.trim();
+        var line1 = document.getElementById('addr-line1').value.trim();
+        var city = document.getElementById('addr-city').value.trim();
+        var state = document.getElementById('addr-state').value.trim();
+        var zip = document.getElementById('addr-zip').value.trim();
+        var country = document.getElementById('addr-country').value;
+        var isDefault = document.getElementById('addr-default').checked;
+        var ok = true;
+        if (!label) { setFieldErr('addr-label', 'Label is required.'); ok = false; }
+        if (!name) { setFieldErr('addr-name', 'Recipient is required.'); ok = false; }
+        if (!phone) { setFieldErr('addr-phone', 'Phone is required.'); ok = false; }
+        if (!line1) { setFieldErr('addr-line1', 'Address is required.'); ok = false; }
+        if (!city) { setFieldErr('addr-city', 'City is required.'); ok = false; }
+        if (!state) { setFieldErr('addr-state', 'State is required.'); ok = false; }
+        if (!zip) { setFieldErr('addr-zip', 'ZIP is required.'); ok = false; }
+        if (!country) { setFieldErr('addr-country', 'Country is required.'); ok = false; }
+        if (!ok) return;
+        var savedId;
+        if (editingAddrId) {
+          var target = ADDRESSES.find(function (x) { return x.id === editingAddrId; });
+          if (target) {
+            target.label = label; target.name = name; target.phone = phone;
+            target.line1 = line1; target.city = city; target.state = state; target.zip = zip;
+            target.country = country; target.isDefault = isDefault;
+            savedId = target.id;
+          }
+        } else {
+          savedId = 'a' + Date.now().toString(36);
+          ADDRESSES.push({
+            id: savedId,
+            label: label, name: name, phone: phone,
+            line1: line1, city: city, state: state, zip: zip, country: country, isDefault: isDefault
+          });
+        }
+        if (isDefault) {
+          ADDRESSES.forEach(function (a) { a.isDefault = a.id === savedId; });
+        }
+        closeAddr();
+        renderAddresses();
+        toast('success', editingAddrId ? 'Address updated' : 'Address saved', (editingAddrId ? 'Updated' : 'Added') + ' "' + label + '".');
+      });
+
+      var addrToDelete = null;
+      function openDelDialog(id) {
+        addrToDelete = id;
+        var a = ADDRESSES.find(function (x) { return x.id === id; });
+        document.getElementById('del-addr-name').textContent = a ? a.label : 'This address';
+        delDialog.hidden = false;
+        document.getElementById('del-cancel').focus();
+      }
+      document.getElementById('del-cancel').addEventListener('click', function () { delDialog.hidden = true; addrToDelete = null; });
+      delDialog.addEventListener('click', function (e) { if (e.target === delDialog) { delDialog.hidden = true; addrToDelete = null; } });
+      document.getElementById('del-confirm').addEventListener('click', function () {
+        if (addrToDelete) {
+          var wasDefault = false;
+          ADDRESSES = ADDRESSES.filter(function (a) {
+            if (a.id === addrToDelete) { wasDefault = a.isDefault; return false; }
+            return true;
+          });
+          if (wasDefault && ADDRESSES.length) { ADDRESSES[0].isDefault = true; }
+          toast('success', 'Address deleted', 'Removed from your saved addresses.');
+          addrToDelete = null;
+        }
+        delDialog.hidden = true;
+        renderAddresses();
+      });
+
+      /* ─── avatar upload (SingleUpload, 2MB, in-file validation) ─────── */
+      var avatarInput = document.getElementById('avatar-input');
+      var avatarCam = document.getElementById('avatar-cam');
+      document.getElementById('avatar-upload-btn').addEventListener('click', function () { avatarInput.click(); });
+      avatarCam.addEventListener('click', function () { avatarInput.click(); });
+
+      function readFileAsDataURL(file, cb) {
+        var reader = new FileReader();
+        reader.onload = function () { cb(reader.result); };
+        reader.readAsDataURL(file);
+      }
+      avatarInput.addEventListener('change', function () {
+        var file = avatarInput.files && avatarInput.files[0];
+        if (!file) return;
+        // SingleUpload validation: type + 2MB cap (§4 SingleUpload contract).
+        if (!/^image\/(jpe?g|png|gif|webp)$/.test(file.type)) {
+          toast('error', 'Unsupported file', 'Please choose a JPG, PNG, GIF, or WebP image.');
+          avatarInput.value = '';
+          return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+          toast('error', 'File too large', 'Max upload size is 2MB.');
+          avatarInput.value = '';
+          return;
+        }
+        readFileAsDataURL(file, function (dataUrl) {
+          avatarImg.src = dataUrl;
+          avatarImg.alt = 'Profile photo';
+          avatarImg.hidden = false;
+          avatarFallback.hidden = true;
+          toast('success', 'Photo updated', 'Your profile photo was updated.');
+        });
+      });
+
+      /* ─── password form validation (§5.11 PasswordForm) ─────────────── */
+      var pwForm = document.getElementById('password-form');
+      pwForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var current = document.getElementById('pw-current').value;
+        var pwNew = document.getElementById('pw-new').value;
+        var confirm = document.getElementById('pw-confirm').value;
+        var ok = true;
+        var fc = document.getElementById('err-current');
+        var fn = document.getElementById('err-new');
+        var fco = document.getElementById('err-confirm');
+        fc.textContent = ''; fn.textContent = ''; fco.textContent = '';
+        document.getElementById('pw-current').setAttribute('aria-invalid', 'false');
+        document.getElementById('pw-new').setAttribute('aria-invalid', 'false');
+        document.getElementById('pw-confirm').setAttribute('aria-invalid', 'false');
+        if (!current) { fc.textContent = 'Enter your current password.'; document.getElementById('pw-current').setAttribute('aria-invalid', 'true'); ok = false; }
+        if (pwNew.length < 8) { fn.textContent = 'Password must be at least 8 characters.'; document.getElementById('pw-new').setAttribute('aria-invalid', 'true'); ok = false; }
+        if (pwNew !== confirm) { fco.textContent = 'Passwords do not match.'; document.getElementById('pw-confirm').setAttribute('aria-invalid', 'true'); ok = false; }
+        if (!ok) return;
+        toast('success', 'Password updated', 'Your password was changed.');
+        pwForm.reset();
+      });
+
+      /* ─── edit profile modal (§5.11 UserInfo → Edit Profile) ────────── */
+      var editForm = document.getElementById('edit-form');
+      function openEdit() {
+        document.getElementById('edit-name').value = USER.name;
+        document.getElementById('edit-email').value = USER.email;
+        document.getElementById('edit-phone').value = USER.phone;
+        document.querySelectorAll('#edit-form [aria-invalid="true"]').forEach(function (el) { el.setAttribute('aria-invalid', 'false'); });
+        document.querySelectorAll('#edit-form .err').forEach(function (el) { el.textContent = ''; });
+        editDialog.hidden = false;
+        document.getElementById('edit-name').focus();
+      }
+      document.getElementById('edit-profile').addEventListener('click', openEdit);
+      document.getElementById('edit-cancel').addEventListener('click', function () { editDialog.hidden = true; });
+
+      function setEditErr(id, msg) {
+        var el = document.getElementById(id);
+        if (el) el.setAttribute('aria-invalid', 'true');
+        document.getElementById('err-' + id.replace('edit-', '')).textContent = msg;
+      }
+      editForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var nm = document.getElementById('edit-name').value.trim();
+        var em = document.getElementById('edit-email').value.trim();
+        var ph = document.getElementById('edit-phone').value.trim();
+        var ok = true;
+        document.querySelectorAll('#edit-form .err').forEach(function (el) { el.textContent = ''; });
+        if (!nm) { setEditErr('edit-name', 'Name is required.'); ok = false; }
+        if (!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { setEditErr('edit-email', 'Enter a valid email.'); ok = false; }
+        if (!ok) return;
+        USER.name = nm; USER.email = em; USER.phone = ph;
+        uiNameEl.textContent = nm; uiEmailEl.textContent = em; uiPhoneEl.textContent = ph;
+        avatarFallback.textContent = initials(nm);
+        editDialog.hidden = true;
+        toast('success', 'Profile updated', 'Your details were saved.');
+      });
+
+      /* ─── §6.4 load simulation + gate ───────────────────────────────── */
+      function loadProfile() {
+        // Simulated GET /api/profile latency; gate resolved before render.
+        setTimeout(function () {
+          skeletonView.hidden = true;
+          retryBar.hidden = true;
+          if (!authed) { showGate(); return; }
+          renderUser();
+          renderAddresses();
+          showProfile();
+        }, 450);
+      }
+
+      document.getElementById('retry-load').addEventListener('click', function () {
+        skeletonView.hidden = false;
+        retryBar.hidden = true;
+        toast('info', 'Retrying', 'Loading your profile…');
+        loadProfile();
+      });
+
+      /* ─── gate: demo sign-in / create-account (in place, no reload) ─── */
+      function gateSignIn() {
+        try {
+          localStorage.setItem('ui.token', 'demo-token');
+          localStorage.setItem('ui.user', JSON.stringify({ name: 'Jane Doe', email: 'jane@mail.com' }));
+        } catch (err) {}
+        authed = true;
+        userName = 'Jane Doe';
+        userEmail = 'jane@mail.com';
+        applyUserMenu();
+        setUserMenu(false);
+        showProfile();
+        renderUser();
+        renderAddresses();
+        toast('success', 'Signed in', 'Welcome back, Jane.');
+      }
+      var gateSignInBtn = document.getElementById('gate-signin');
+      var gateSignUpBtn = document.getElementById('gate-signup');
+      if (gateSignInBtn) gateSignInBtn.addEventListener('click', gateSignIn);
+      if (gateSignUpBtn) gateSignUpBtn.addEventListener('click', gateSignIn);
+
+      if (!authed) {
+        applyUserMenu();
+        showGate();
+      } else {
+        skeletonView.hidden = false;
+        loadProfile();
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>404 · Page not found — Horizon Supply Co.</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ui.theme');
+        if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (t === 'dark') document.documentElement.classList.add('dark');
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root {
+      --bg:      oklch(1 0 89.9);
+      --surface: oklch(1 0 89.9);
+      --fg:      oklch(0.1408 0.0044 285.8);
+      --muted:   oklch(0.5517 0.0138 285.9);
+      --border:  oklch(0.9197 0.004 286.3);
+      --accent:  oklch(0.2103 0.0059 285.9);
+
+      --accent-soft: color-mix(in oklch, var(--accent) 14%, transparent);
+      --shadow-soft: 0 1px 2px color-mix(in oklch, var(--fg) 8%, transparent),
+                      0 16px 40px -18px color-mix(in oklch, var(--fg) 14%, transparent);
+      --on-accent:  oklch(0.9851 0 89.9);
+      --hover-fill: oklch(0.9674 0.0013 286.4);
+
+      --font-display: 'Iowan Old Style', 'Charter', Georgia, 'Times New Roman', serif;
+      --font-body:    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono:    ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+
+      --gap-md: 20px;
+      --gap-lg: 32px;
+      --radius-lg: 16px;
+
+      color-scheme: light;
+    }
+
+    .dark {
+      --bg:      oklch(0.1408 0.0044 285.8);
+      --surface: oklch(0.2103 0.0059 285.9);
+      --fg:      oklch(0.9851 0 89.9);
+      --muted:   oklch(0.7118 0.0129 286.1);
+      --border:  oklch(0.2739 0.0055 286);
+      --accent:  oklch(0.9851 0 89.9);
+      --on-accent:  oklch(0.2103 0.0059 285.9);
+      --hover-fill: oklch(0.2103 0.0059 285.9);
+      color-scheme: dark;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body {
+      margin: 0; background: var(--bg); color: var(--fg);
+      font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+      min-height: 100vh;
+      display: grid; place-items: center;
+      padding: var(--gap-lg);
+      text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    p { text-wrap: pretty; }
+
+    .n404 {
+      max-width: 440px; width: 100%;
+      text-align: center;
+    }
+    .n404-mark {
+      font-family: var(--font-display);
+      font-size: clamp(96px, 20vw, 168px);
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      background: linear-gradient(160deg, var(--accent), color-mix(in oklch, var(--accent) 45%, var(--muted)));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .n404 h1 { font-family: var(--font-display); font-size: 26px; margin: var(--gap-md) 0 6px; letter-spacing: -0.01em; }
+    .n404 p { color: var(--muted); font-size: 15px; margin: 0; }
+    .n404 .meta { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.05em; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: var(--gap-lg);
+      padding: 13px 26px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--accent);
+      background: var(--accent); color: var(--on-accent);
+      font-size: 15px; font-weight: 500; letter-spacing: -0.005em; line-height: 1.4;
+    }
+    .btn:hover { background: color-mix(in oklch, var(--accent) 86%, black); }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <main class="n404" data-od-id="not-found">
+    <p class="n404-mark" aria-hidden="true">404</p>
+    <h1>Page not found</h1>
+    <p>The route you tried doesn’t exist on this prototype.</p>
+    <a class="btn" href="home-page.html">← Back to Home</a>
+  </main>
+</body>
+</html>

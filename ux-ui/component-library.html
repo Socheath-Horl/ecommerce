@@ -1,0 +1,1639 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>E-Commerce · Component Library</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ui.theme');
+        if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+      } catch (e) {
+        document.documentElement.dataset.theme = 'light';
+      }
+    })();
+  </script>
+  <style>
+    /* ─── tokens ─────────────────────────────────────────────────────────
+       Bound from system-ui-design.md §2 — identical to brand-spec.md.
+       These six tokens plus the documented extensions are the ONLY colors. */
+    :root {
+      --bg:      oklch(1 0 89.9);            /* #FFFFFF  app background   */
+      --surface: oklch(1 0 89.9);            /* #FFFFFF  cards, modals     */
+      --fg:      oklch(0.1408 0.0044 285.8); /* #09090B text default       */
+      --muted:   oklch(0.5517 0.0138 285.9); /* #71717A secondary text     */
+      --border:  oklch(0.9197 0.004 286.3);  /* #E4E4E7 hairlines          */
+      --accent:  oklch(0.2103 0.0059 285.9); /* #18181B primary (interact) */
+
+      /* derived — do not change */
+      --accent-soft: color-mix(in oklch, var(--accent) 14%, transparent);
+      --fg-soft:     color-mix(in oklch, var(--fg) 6%, transparent);
+      --shadow-soft: 0 1px 2px color-mix(in oklch, var(--fg) 8%, transparent),
+                     0 16px 40px -18px color-mix(in oklch, var(--fg) 14%, transparent);
+
+      /* documented extensions */
+      --on-accent:  oklch(0.9851 0 89.9);          /* #FAFAFA text on primary */
+      --hover-fill: oklch(0.9674 0.0013 286.4);    /* #F4F4F5 secondary/badges*/
+      --success:     oklch(0.6271 0.1699 149.2);   /* #16A34A */
+      --warning:     oklch(0.6806 0.1423 75.8);    /* #CA8A04 */
+      --info:        oklch(0.5461 0.2152 262.9);   /* #2563EB */
+      --destructive: oklch(0.5771 0.2152 27.3);    /* #DC2626 */
+      --success-soft:     color-mix(in oklch, var(--success) 14%, transparent);
+      --warning-soft:     color-mix(in oklch, var(--warning) 14%, transparent);
+      --info-soft:        color-mix(in oklch, var(--info) 14%, transparent);
+      --destructive-soft: color-mix(in oklch, var(--destructive) 14%, transparent);
+
+      /* type */
+      --font-display: 'Iowan Old Style', 'Charter', Georgia, 'Times New Roman', serif;
+      --font-body:    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono:    ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+
+      /* scale */
+      --fs-h1: clamp(40px, 5.5vw, 60px);
+      --fs-h2: clamp(28px, 3.6vw, 40px);
+      --fs-h3: 20px;
+      --fs-lead: 18px;
+      --fs-body: 16px;
+      --fs-meta: 13px;
+
+      /* spacing */
+      --gap-xs: 8px;
+      --gap-sm: 12px;
+      --gap-md: 20px;
+      --gap-lg: 32px;
+      --gap-xl: 56px;
+      --gap-2xl: 88px;
+      --container: 1280px;
+      --gutter: 32px;
+
+      --radius: 10px;
+      --radius-lg: 16px;
+
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg:      oklch(0.1408 0.0044 285.8);
+      --surface: oklch(0.2103 0.0059 285.9);
+      --fg:      oklch(0.9851 0 89.9);
+      --muted:   oklch(0.7118 0.0129 286.1);
+      --border:  oklch(0.2739 0.0055 286);
+      --accent:  oklch(0.9851 0 89.9);
+      --on-accent:  oklch(0.2103 0.0059 285.9);
+      --hover-fill: oklch(0.2103 0.0059 285.9);
+      --success:     oklch(0.7227 0.192 149.6);
+      --warning:     oklch(0.8606 0.1731 91.9);
+      --info:        oklch(0.6231 0.188 259.8);
+      --destructive: oklch(0.6368 0.2078 25.3);
+      color-scheme: dark;
+    }
+
+    /* ─── reset & base ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    [hidden] { display: none !important; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: var(--fs-body);
+      line-height: 1.55;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+    p { text-wrap: pretty; }
+    h1, h2, h3, h4 { text-wrap: balance; }
+
+    /* ─── layout primitives ─────────────────────────────────────────── */
+    .container { max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+    .section { padding-block: clamp(48px, 8vw, var(--gap-2xl)); }
+    .section + .section { border-top: 1px solid var(--border); }
+    .stack { display: flex; flex-direction: column; }
+    .stack > * + * { margin-top: var(--gap-md); }
+    .row { display: flex; align-items: center; gap: var(--gap-md); }
+    .row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-md); }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap-lg); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap-lg); }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap-md); }
+    .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: var(--gap-xl); align-items: start; }
+    .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: var(--gap-xl); align-items: start; }
+    @media (max-width: 920px) {
+      .grid-2, .grid-3, .grid-4, .grid-2-1, .grid-1-2 { grid-template-columns: 1fr; }
+    }
+
+    /* ─── type ──────────────────────────────────────────────────────── */
+    .h1, h1 { font-family: var(--font-display); font-size: var(--fs-h1); line-height: 1.06; letter-spacing: -0.02em; margin: 0; }
+    .h2, h2 { font-family: var(--font-display); font-size: var(--fs-h2); line-height: 1.12; letter-spacing: -0.015em; margin: 0; }
+    .h3, h3 { font-size: var(--fs-h3); font-weight: 600; line-height: 1.3; letter-spacing: -0.005em; margin: 0; }
+    .lead { font-size: var(--fs-lead); line-height: 1.55; color: var(--muted); max-width: 60ch; margin: 0; }
+    .eyebrow {
+      font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent); margin: 0 0 var(--gap-md);
+    }
+    .inner-eyebrow { color: var(--muted); }
+    .meta { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--muted); }
+    .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+    /* ─── chrome: nav + footer ──────────────────────────────────────── */
+    .topnav {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in oklch, var(--bg) 92%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topnav-inner { display: flex; align-items: center; justify-content: space-between; padding-block: 12px; gap: var(--gap-md); }
+    .topnav .logo { font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+    .topnav nav { display: flex; gap: var(--gap-lg); }
+    .topnav nav a { font-size: 14px; color: var(--muted); }
+    .topnav nav a:hover { color: var(--fg); }
+    .theme-toggle { display: inline-flex; align-items: center; gap: 8px; }
+    .theme-toggle .theme-icon { display: grid; place-items: center; }
+    .theme-toggle .moon { display: none; }
+    html[data-theme="dark"] .theme-toggle .sun  { display: none; }
+    html[data-theme="dark"] .theme-toggle .moon { display: block; }
+    @media (max-width: 640px) {
+      .topnav-inner { flex-wrap: wrap; row-gap: 8px; }
+      .topnav nav { order: 3; width: 100%; justify-content: space-between; gap: var(--gap-md); }
+    }
+    .pagefoot { padding-block: var(--gap-xl); color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
+    .pagefoot .row-between { flex-wrap: wrap; gap: var(--gap-md); }
+
+    /* ─── buttons ───────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 20px;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: -0.005em;
+      line-height: 1.4;
+      transition: transform 0.05s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+    .btn-primary:hover { background: color-mix(in oklch, var(--accent) 86%, black); }
+    .btn-secondary { background: transparent; color: var(--fg); border-color: var(--border); }
+    .btn-secondary:hover { border-color: var(--fg); }
+    .btn-ghost { background: transparent; color: var(--fg); border-color: transparent; padding-inline: 8px; }
+    .btn-ghost:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 4px; }
+    .btn-danger {
+      background: transparent;
+      color: color-mix(in oklch, var(--destructive) 48%, var(--fg));
+      border-color: color-mix(in oklch, var(--destructive) 42%, var(--border));
+    }
+    .btn-danger:hover {
+      background: var(--destructive-soft);
+      border-color: color-mix(in oklch, var(--destructive) 50%, var(--fg));
+      color: var(--fg);
+    }
+    .btn-arrow::after { content: '→'; transition: transform 0.15s ease; }
+    .btn-arrow:hover::after { transform: translateX(2px); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid currentColor; border-right-color: transparent;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* ─── icon controls ─────────────────────────────────────────────── */
+    .icon-btn {
+      width: 44px; height: 44px;
+      display: inline-grid; place-items: center;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--fg);
+    }
+    .icon-btn:hover { background: var(--hover-fill); }
+    .icon-btn--bordered { border-color: var(--border); border-radius: var(--radius); }
+    .icon-btn svg { width: 18px; height: 18px; }
+
+    /* ─── card / surface ────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-soft);
+    }
+    .card-flat { background: transparent; border: 0; padding: 0; box-shadow: none; }
+
+    /* ─── pill / badge / tag ────────────────────────────────────────── */
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .tag {
+      display: inline-flex; align-items: center;
+      padding: 4px 10px;
+      background: var(--hover-fill);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px 4px 10px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+      background: var(--chip-bg, var(--hover-fill));
+      color: var(--chip-fg, var(--muted));
+    }
+    .status-chip::before {
+      content: ""; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--chip-dot, var(--muted));
+    }
+    .status-chip--success    { --chip-dot: var(--success); --chip-fg: color-mix(in oklch, var(--success) 42%, var(--fg)); --chip-bg: var(--success-soft); }
+    .status-chip--warning    { --chip-dot: var(--warning); --chip-fg: color-mix(in oklch, var(--warning) 42%, var(--fg)); --chip-bg: var(--warning-soft); }
+    .status-chip--info       { --chip-dot: var(--info);    --chip-fg: color-mix(in oklch, var(--info) 45%, var(--fg));    --chip-bg: var(--info-soft); }
+    .status-chip--destructive{ --chip-dot: var(--destructive); --chip-fg: color-mix(in oklch, var(--destructive) 55%, var(--fg)); --chip-bg: var(--destructive-soft); }
+
+    /* ─── form field ────────────────────────────────────────────────── */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 13px; color: var(--muted); }
+    .input, .textarea, .select-wrap select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--fg);
+      font: inherit;
+      font-size: 15px;
+    }
+    .input::placeholder, .textarea::placeholder { color: var(--muted); }
+    .input:focus, .textarea:focus, .select-wrap select:focus {
+      outline: 2px solid var(--accent-soft);
+      border-color: var(--accent);
+    }
+    .textarea { min-height: 96px; resize: vertical; line-height: 1.55; }
+    .select-wrap { position: relative; }
+    .select-wrap select { appearance: none; padding-right: 40px; }
+    .select-wrap::after {
+      content: "⌄"; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); pointer-events: none; font-size: 14px;
+    }
+    .field-hint { color: var(--muted); font-size: 12px; }
+    .has-error .input { border-color: var(--destructive); }
+    .field-error { color: var(--destructive); font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+    .check, .radio { display: inline-flex; align-items: center; gap: 10px; }
+    .check input, .radio input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+    .check label, .radio label { font-size: 14px; cursor: pointer; }
+
+    /* ─── table ─────────────────────────────────────────────────────── */
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .ds-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .ds-table th, .ds-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+    .ds-table th { color: var(--muted); font-weight: 500; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .ds-table tbody tr:hover { background: var(--fg-soft); }
+    .ds-table .num-col { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
+    .ds-table .stock-low { color: color-mix(in oklch, var(--warning) 42%, var(--fg)); }
+    .ds-table .stock-out { color: color-mix(in oklch, var(--destructive) 55%, var(--fg)); }
+
+    /* ─── image placeholder (anatomy scaffold for media slots) ──────── */
+    .ph-img {
+      background: linear-gradient(135deg, var(--accent-soft), var(--fg-soft)), var(--hover-fill);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      aspect-ratio: 16 / 10;
+      display: grid; place-items: center;
+      color: var(--muted);
+      font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em;
+    }
+    .ph-img.square   { aspect-ratio: 1 / 1; }
+    .ph-img.portrait { aspect-ratio: 3 / 4; }
+    .ph-img.wide     { aspect-ratio: 16 / 9; }
+
+    /* ─── stepper ───────────────────────────────────────────────────── */
+    .stepper { display: inline-flex; align-items: stretch; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+    .stepper button { width: 46px; height: 46px; display: grid; place-items: center; background: transparent; border: 0; font-size: 18px; line-height: 1; color: var(--fg); }
+    .stepper button:hover:not(:disabled) { background: var(--hover-fill); }
+    .stepper button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .stepper .stepper-qty { min-width: 52px; display: grid; place-items: center; font-size: 15px; border-inline: 1px solid var(--border); }
+
+    /* ─── star rating ───────────────────────────────────────────────── */
+    .rating { display: inline-flex; gap: 6px; }
+    .rating button {
+      width: 40px; height: 40px;
+      display: grid; place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 17px; line-height: 1;
+      transition: border-color 0.12s ease, color 0.12s ease;
+    }
+    .rating button:hover { border-color: var(--fg); color: var(--fg); }
+    .rating button.is-on { color: var(--accent); border-color: var(--accent); }
+    .rating-read { font-size: 14px; color: var(--muted); letter-spacing: 0.04em; }
+
+    /* ─── pagination ────────────────────────────────────────────────── */
+    .pager { display: inline-flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .pager button {
+      min-width: 40px; height: 40px;
+      display: grid; place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--fg);
+      font-size: 14px;
+    }
+    .pager button:hover:not(:disabled):not(.is-cur) { border-color: var(--fg); }
+    .pager button.is-cur { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+    .pager button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .pager .pager-ellipsis { color: var(--muted); padding: 0 2px; }
+
+    /* ─── demo frame + headers ──────────────────────────────────────── */
+    .compo-head { margin: 0 0 var(--gap-sm); }
+    .compo-block { border-top: 1px solid var(--border); padding-top: var(--gap-xl); }
+    .demo-row { display: flex; flex-wrap: wrap; gap: var(--gap-sm); align-items: center; }
+    .compo-caption { color: var(--muted); font-size: 13px; margin: 14px 0 0; max-width: 68ch; }
+    .dev-frame { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-top: var(--gap-md); background: var(--surface); }
+    .dev-pad { padding: 20px; }
+  </style>
+  <style>
+    /* ─── section intro ──────────────────────────────────────────────── */
+    .sec-head { max-width: 46ch; margin-bottom: 48px; }
+    .sec-head .lead { margin-top: 16px; }
+
+    /* ─── storefront header (sticky 64px / 56px mobile) ─────────────── */
+    .site-header {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in oklch, var(--bg) 92%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .dev-frame .site-header { position: static; }
+    .site-header-inner { display: flex; align-items: center; gap: 20px; height: 64px; }
+    .site-header .logo { font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; margin-right: auto; }
+    .hdr-nav { display: flex; gap: 18px; }
+    .hdr-nav a { font-size: 14px; color: var(--muted); }
+    .hdr-nav a:hover, .hdr-nav a.is-active { color: var(--fg); }
+    .searchbar {
+      display: flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); border-radius: 999px;
+      background: var(--surface);
+      padding: 0 6px 0 16px;
+      width: min(320px, 100%);
+    }
+    .searchbar:hover { border-color: var(--fg); }
+    .searchbar:focus-within { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+    .searchbar input { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--fg); font: inherit; font-size: 14px; padding: 10px 0; }
+    .searchbar input:focus { outline: none; }
+    .searchbar .icon-btn { width: 38px; height: 38px; }
+    .cart-btn { position: relative; }
+    .cart-badge {
+      position: absolute; top: 2px; right: 2px;
+      min-width: 18px; height: 18px; padding: 0 5px;
+      display: grid; place-items: center;
+      border-radius: 999px;
+      background: var(--accent); color: var(--on-accent);
+      font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+      border: 2px solid var(--bg);
+    }
+    .avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--hover-fill); border: 1px solid var(--border);
+      display: grid; place-items: center;
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em;
+      color: var(--muted); flex: none;
+    }
+    @media (max-width: 720px) {
+      .site-header-inner { height: 56px; }
+      .searchbar { display: none; }
+      .hdr-nav { display: none; }
+    }
+
+    /* ─── admin shell: 240px sidebar + content ──────────────────────── */
+    .admin-layout { display: grid; grid-template-columns: 240px 1fr; min-height: 360px; }
+    .admin-sidebar { border-right: 1px solid var(--border); background: var(--surface); padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .admin-sidebar .side-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 14px 12px 6px; }
+    .admin-nav-link {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 12px; border-radius: 8px;
+      color: var(--muted); font-size: 14px; font-weight: 500;
+    }
+    .admin-nav-link:hover { color: var(--fg); background: var(--fg-soft); }
+    .admin-nav-link.is-active { background: var(--accent-soft); color: var(--accent); }
+    .admin-nav-link svg { width: 18px; height: 18px; flex: none; }
+    .admin-main { padding: 32px; min-width: 0; }
+    @media (max-width: 920px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .admin-sidebar { border-right: 0; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; }
+      .admin-sidebar .side-label { width: 100%; }
+      .admin-main { padding: 20px; }
+    }
+
+    /* ─── storefront footer shell ───────────────────────────────────── */
+    .foot-shell { border-top: 1px solid var(--border); padding-top: 40px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: var(--gap-lg); }
+    .foot-shell .foot-brand { max-width: 24ch; }
+    .foot-shell h4 { font-size: 12px; font-family: var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+    .foot-shell ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    .foot-shell li a { font-size: 14px; color: var(--muted); }
+    .foot-shell li a:hover { color: var(--fg); }
+    .foot-base { border-top: 1px solid var(--border); margin-top: 32px; padding-top: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    @media (max-width: 900px) { .foot-shell { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .foot-shell { grid-template-columns: 1fr; } }
+
+    /* ─── cart drawer ───────────────────────────────────────────────── */
+    .drawer-overlay { position: fixed; inset: 0; background: color-mix(in oklch, var(--fg) 35%, transparent); z-index: 50; }
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: min(420px, 100vw);
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      z-index: 51;
+      display: flex; flex-direction: column;
+      box-shadow: var(--shadow-soft);
+    }
+    .drawer-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+    .drawer-head h3 { font-size: 18px; }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 8px 20px; }
+    .drawer-foot { padding: 16px 20px; border-top: 1px solid var(--border); }
+    .cart-line { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .cart-line-thumb {
+      width: 56px; height: 56px; flex: none;
+      border-radius: 8px; border: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--accent-soft), var(--fg-soft)), var(--surface);
+      display: grid; place-items: center;
+      color: var(--muted); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.03em;
+    }
+    .cart-line-body { flex: 1; min-width: 0; }
+    .cart-line-name { font-size: 14px; font-weight: 600; margin: 0 0 2px; }
+    .cart-line-meta { color: var(--muted); font-size: 12px; margin: 0 0 6px; }
+    .cart-line-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .cart-line-price { font-family: var(--font-mono); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+    .cart-ledger { border-top: 1px solid var(--border); margin-top: 8px; padding-top: 10px; }
+
+    /* ─── confirm dialog ────────────────────────────────────────────── */
+    .overlay { position: fixed; inset: 0; background: color-mix(in oklch, var(--fg) 35%, transparent); display: grid; place-items: center; z-index: 50; padding: 16px; }
+    .dialog {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 26px;
+      max-width: 420px; width: 100%;
+    }
+    .dialog h3 { margin-bottom: 8px; }
+    .dialog p { color: var(--muted); font-size: 14px; margin: 0 0 22px; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+
+    /* ─── toasts ────────────────────────────────────────────────────── */
+    .toast-stack {
+      position: fixed; right: 16px; bottom: 16px; z-index: 60;
+      display: flex; flex-direction: column; gap: 10px;
+      max-width: min(360px, calc(100vw - 32px));
+    }
+    .toast {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 12px 14px;
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+      animation: toast-in 0.18s ease;
+    }
+    .toast--out { opacity: 0; transform: translateY(4px); transition: opacity 0.2s ease, transform 0.2s ease; }
+    @keyframes toast-in { from { opacity: 0; transform: translateY(6px); } }
+    .toast-icon {
+      width: 20px; height: 20px; flex: none; border-radius: 50%;
+      display: grid; place-items: center;
+      font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+    }
+    .toast--success .toast-icon { background: var(--success-soft); color: color-mix(in oklch, var(--success) 45%, var(--fg)); }
+    .toast--info    .toast-icon { background: var(--info-soft);    color: color-mix(in oklch, var(--info) 50%, var(--fg)); }
+    .toast--error   .toast-icon { background: var(--destructive-soft); color: color-mix(in oklch, var(--destructive) 60%, var(--fg)); }
+    .toast-body { display: block; }
+    .toast-title { display: block; font-size: 14px; font-weight: 600; }
+    .toast-msg { display: block; color: var(--muted); font-size: 13px; margin-top: 1px; }
+
+    /* ─── empty state ───────────────────────────────────────────────── */
+    .empty {
+      text-align: center; padding: 48px 24px;
+      border: 1px dashed var(--border); border-radius: var(--radius-lg);
+      color: var(--muted);
+    }
+    .empty-icon { font-family: var(--font-mono); font-size: 28px; line-height: 1; margin-bottom: 10px; opacity: 0.5; }
+    .empty h4 { color: var(--fg); margin: 0 0 6px; font-size: 16px; }
+    .empty p { margin: 0 auto 16px; max-width: 34ch; font-size: 14px; }
+
+    /* ─── skeleton ──────────────────────────────────────────────────── */
+    .sk { background: var(--hover-fill); border-radius: 6px; position: relative; overflow: hidden; }
+    .sk::after {
+      content: ""; position: absolute; inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--fg) 8%, transparent), transparent);
+      animation: shimmer 1.4s infinite;
+    }
+    @keyframes shimmer { 100% { transform: translateX(100%); } }
+    .sk-row { display: grid; gap: 12px; }
+    .sk-card { width: 220px; }
+
+    /* ─── dropzone ──────────────────────────────────────────────────── */
+    .dropzone {
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 30px; text-align: center;
+      background: var(--fg-soft);
+    }
+    .dropzone:hover { border-color: var(--fg); }
+    .dropzone .dz-icon { color: var(--muted); margin: 0 auto 10px; }
+    .thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 14px; }
+    .thumb {
+      position: relative; aspect-ratio: 1;
+      border-radius: var(--radius); border: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--accent-soft), var(--fg-soft)), var(--surface);
+      display: grid; place-items: center;
+      color: var(--muted); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.03em;
+    }
+    .thumb-remove {
+      position: absolute; top: -8px; right: -8px;
+      width: 44px; height: 44px;
+      display: grid; place-items: center;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+    }
+    .thumb-remove:hover { color: var(--destructive); border-color: var(--destructive); }
+
+    /* ─── product card ──────────────────────────────────────────────── */
+    .pcard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      max-width: 240px;
+      box-shadow: var(--shadow-soft);
+    }
+    .pcard-media {
+      aspect-ratio: 1 / 1; position: relative;
+      background: linear-gradient(135deg, var(--accent-soft), var(--fg-soft)), var(--hover-fill);
+      display: grid; place-items: center;
+      color: var(--muted);
+      font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .pcard-media--oos .pcard-media-inner { opacity: 0.55; }
+    .pcard-media-inner { display: grid; place-items: center; padding: 24px; }
+    .oos-badge {
+      position: absolute; top: 12px; left: 12px;
+      padding: 4px 10px; border-radius: 999px;
+      background: var(--destructive-soft);
+      color: color-mix(in oklch, var(--destructive) 70%, var(--fg));
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .pcard-body { padding: 14px 16px 16px; border-top: 1px solid var(--border); }
+    .pcard-name { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
+    .pcard-price { font-family: var(--font-mono); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+    .pcard-price--was { color: var(--muted); font-weight: 400; text-decoration: line-through; font-size: 13px; }
+    .pcard-rating { font-size: 14px; color: var(--muted); margin: 2px 0 0; }
+
+    /* ─── category card ─────────────────────────────────────────────── */
+    .ccard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .ccard-media {
+      aspect-ratio: 4 / 3;
+      background: linear-gradient(135deg, var(--accent-soft), var(--fg-soft)), var(--hover-fill);
+      display: grid; place-items: center;
+      color: var(--muted); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .ccard-body { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .ccard-name { font-size: 15px; font-weight: 600; margin: 0; }
+    .ccard-count { color: var(--muted); font-family: var(--font-mono); font-size: 12px; }
+
+    /* ─── image gallery ─────────────────────────────────────────────── */
+    .gallery { display: grid; gap: 12px; max-width: 420px; }
+    .gallery-main {
+      aspect-ratio: 1 / 1; border-radius: var(--radius-lg); border: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--accent-soft), var(--fg-soft)), var(--surface);
+      display: grid; place-items: center;
+      color: var(--muted); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em;
+    }
+    .gallery-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .gallery-thumb {
+      aspect-ratio: 1; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--surface); display: grid; place-items: center;
+      color: var(--muted); font-family: var(--font-mono); font-size: 10px;
+    }
+    .gallery-thumb:hover { border-color: var(--fg); }
+    .gallery-thumb.is-active { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── review ────────────────────────────────────────────────────── */
+    .review { display: flex; gap: 14px; padding: 20px 0; border-bottom: 1px solid var(--border); }
+    .review-avatar {
+      width: 40px; height: 40px; flex: none; border-radius: 50%;
+      background: var(--hover-fill); border: 1px solid var(--border);
+      display: grid; place-items: center;
+      font-family: var(--font-mono); font-size: 11px; color: var(--muted);
+    }
+    .review-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .review-name { font-size: 14px; font-weight: 600; margin: 0; }
+    .review-date { color: var(--muted); font-size: 12px; }
+    .review-stars { color: var(--accent); letter-spacing: 2px; font-size: 13px; }
+    .review p { margin: 6px 0 0; font-size: 14px; max-width: 60ch; }
+
+    /* ─── order summary ─────────────────────────────────────────────── */
+    .order-summary { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; background: var(--surface); max-width: 360px; box-shadow: var(--shadow-soft); }
+    .sum-row { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; padding: 6px 0; }
+    .sum-row--total { margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--border); font-weight: 600; }
+    .sum-label { color: var(--muted); }
+    .sum-value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    .sum-value--total { font-size: 18px; font-weight: 600; }
+
+    /* ─── confirmation ──────────────────────────────────────────────── */
+    .confirmation { text-align: center; max-width: 440px; margin-inline: auto; padding: 40px 0 8px; }
+    .conf-mark {
+      width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--success-soft); color: color-mix(in oklch, var(--success) 48%, var(--fg));
+      border: 1px solid color-mix(in oklch, var(--success) 30%, transparent);
+    }
+    .conf-mark svg { width: 26px; height: 26px; }
+    .confirm-id { color: var(--muted); font-family: var(--font-mono); font-size: 13px; margin-top: 10px; }
+
+    /* ─── admin stat cards ──────────────────────────────────────────── */
+    .statcard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+    .statcard-label { color: var(--muted); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 6px; }
+    .statcard-value { font-family: var(--font-mono); font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+    .statcard-trend { font-size: 12px; margin-top: 6px; }
+    .statcard-trend .up   { color: color-mix(in oklch, var(--success) 46%, var(--fg)); }
+    .statcard-trend .down { color: color-mix(in oklch, var(--destructive) 60%, var(--fg)); }
+
+    /* ─── sales chart (sample data) ─────────────────────────────────── */
+    .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; }
+    .chart-wrap svg { width: 100%; height: auto; display: block; }
+    .chart-area { fill: color-mix(in oklch, var(--accent) 12%, transparent); }
+    .chart-line { stroke: var(--accent); stroke-width: 2; fill: none; }
+    .chart-grid line { stroke: var(--border); stroke-width: 1; }
+    .chart-grid text, .chart-axis text { fill: var(--muted); font-family: var(--font-mono); font-size: 11px; }
+    .chart-dot { fill: var(--accent); }
+    .chart-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; color: var(--muted); font-size: 12px; }
+    .chart-legend .swatch-mini { width: 10px; height: 10px; border-radius: 3px; background: var(--accent); display: inline-block; margin-right: 6px; }
+
+    /* ─── feature cell (usage) ──────────────────────────────────────── */
+    .feature .feature-mark {
+      width: 36px; height: 36px;
+      display: grid; place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      margin-bottom: var(--gap-md);
+    }
+    .feature .feature-mark svg { width: 18px; height: 18px; }
+    .feature h3 { margin-bottom: 6px; }
+    .feature p { margin: 0; color: var(--muted); font-size: 15px; }
+  </style>
+</head>
+<body>
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav-inner">
+      <span class="logo">E-Commerce · Library</span>
+      <nav>
+        <a href="#shells">Shells</a>
+        <a href="#actions">Actions</a>
+        <a href="#forms">Forms</a>
+        <a href="#commerce">Commerce</a>
+        <a href="#admin">Admin</a>
+      </nav>
+      <button class="btn btn-secondary theme-toggle" id="theme-toggle" data-od-id="theme-toggle" aria-label="Toggle light and dark theme">
+        <span class="theme-icon">
+          <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </span>
+        <span id="theme-label">Light</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="content">
+  <!-- 1 · HERO -->
+  <section class="section" data-od-id="hero" style="padding-block: clamp(64px, 10vw, 116px);">
+    <div class="container" style="text-align: center; max-width: 780px;">
+      <p class="eyebrow">E-Commerce Component Library · v1.0</p>
+      <h1>Every block of the store, live.</h1>
+      <p class="lead" style="margin: 20px auto 30px;">The full component tree from system-design.md §5 — shells, actions, forms, feedback, commerce, and admin — all bound to the brand-spec tokens. Flip the theme in the header.</p>
+      <div style="display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+        <a class="btn btn-primary" href="#shells" data-od-id="cta-shells">Browse components</a>
+        <a class="btn btn-secondary" href="ecommerce-design-system.html" data-od-id="cta-ds">Open the design system</a>
+      </div>
+      <p class="meta" style="margin-top: 28px;">Light + dark · 1280px grid · 4px spacing · companion reference</p>
+    </div>
+  </section>
+
+  <!-- 2 · SHELLS -->
+  <section class="section" id="shells" data-od-id="shells">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow inner-eyebrow">01 · Shells</p>
+        <h2>Frames every screen of the store.</h2>
+        <p class="lead">Storefront header is 64px sticky (56px mobile); the admin console rides a 240px sidebar that collapses to a slide-over ≤768px.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-header">
+        <h3 class="compo-head">Storefront header</h3>
+        <div class="dev-frame">
+          <div class="site-header">
+            <div class="container site-header-inner">
+              <span class="logo">E-Commerce</span>
+              <nav class="hdr-nav" aria-label="Storefront">
+                <a href="#shells" class="is-active">Home</a>
+                <a href="#commerce">Shop</a>
+                <a href="#forms">Account</a>
+              </nav>
+              <div class="searchbar" role="search">
+                <input type="search" placeholder="Search products…" aria-label="Search products" />
+                <button class="icon-btn" type="button" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+              </div>
+              <button class="icon-btn cart-btn" type="button" data-open-drawer data-od-id="header-cart" aria-label="Open cart (2 items)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l1 13H5L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+                <span class="cart-badge" id="cart-count">2</span>
+              </button>
+              <span class="avatar" aria-label="Signed in as Jamie Doe">JD</span>
+            </div>
+          </div>
+        </div>
+        <p class="compo-caption">Sticky at 64px, 56px on mobile. Search collapses ≤720px; the cart badge carries the live count and opens the drawer. “Home” shows the inactive-vs-active nav contrast.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-admin-shell">
+        <h3 class="compo-head">Admin shell</h3>
+        <div class="dev-frame">
+          <div class="admin-layout">
+            <aside class="admin-sidebar" aria-label="Admin navigation">
+              <span class="side-label">Console</span>
+              <a class="admin-nav-link" href="#admin">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
+              </a>
+              <a class="admin-nav-link is-active" href="#forms">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
+                Products
+              </a>
+              <a class="admin-nav-link" href="#feedback">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>
+                Orders
+              </a>
+              <a class="admin-nav-link" href="#admin">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.9-3.2 3.4-5 6.5-5s5.6 1.8 6.5 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 15.2c2.2.3 3.9 1.8 4.6 4.3"/></svg>
+                Customers
+              </a>
+              <span class="side-label">Settings</span>
+              <a class="admin-nav-link" href="#forms">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h.1A1.7 1.7 0 0 0 10 3V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.1a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1Z"/></svg>
+                Preferences
+              </a>
+            </aside>
+            <div class="admin-main">
+              <div class="ph-img square" style="max-width: 140px;">content rail</div>
+              <p style="color: var(--muted); font-size: 14px; margin-top: 16px;">Sidebar 240px; the content rail hosts the page. On ≤768px the rail becomes a slide-over drawer.</p>
+            </div>
+          </div>
+        </div>
+        <p class="compo-caption">Active rail = accent-soft tint + accent text — the only accent element in the chrome. Icons render inline; swap for the icon set at bind time.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-footer">
+        <h3 class="compo-head">Storefront footer</h3>
+        <div class="dev-frame">
+          <div class="dev-pad">
+            <div class="foot-shell">
+              <div class="foot-brand">
+                <span style="font-family: var(--font-display); font-size: 18px; font-weight: 600;">E-Commerce</span>
+                <p style="color: var(--muted); font-size: 13px; margin: 10px 0 0;">Fresh finds, fast delivery. Built on the locked design system.</p>
+              </div>
+              <div><h4>Shop</h4><ul><li><a href="#commerce">New arrivals</a></li><li><a href="#commerce">Clothing</a></li><li><a href="#commerce">Electronics</a></li></ul></div>
+              <div><h4>Support</h4><ul><li><a href="#forms">Contact</a></li><li><a href="#forms">Shipping</a></li><li><a href="#forms">Returns</a></li></ul></div>
+              <div><h4>Company</h4><ul><li><a href="#shells">About</a></li><li><a href="#admin">Careers</a></li><li><a href="#shells">Press</a></li></ul></div>
+            </div>
+            <div class="foot-base">
+              <span style="color: var(--muted); font-size: 13px;">© 2026 E-Commerce</span>
+              <span style="color: var(--muted); font-size: 13px;">Terms · Privacy · Cookie settings</span>
+            </div>
+          </div>
+        </div>
+        <p class="compo-caption">Legal cluster lives in the footer only — headers and body copy never carry copyright text.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · ACTIONS -->
+  <section class="section" id="actions" data-od-id="actions">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow inner-eyebrow">02 · Actions</p>
+        <h2>One primary per action, every state accounted for.</h2>
+        <p class="lead">Buttons, icon controls, chips, tags, and pagination — hover and :focus-visible defined studio-wide; disabled is the only state allowed to lower contrast.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-buttons">
+        <h3 class="compo-head">Buttons</h3>
+        <div class="demo-row">
+          <button class="btn btn-primary" type="button">Shop Now</button>
+          <button class="btn btn-secondary" type="button">Filters</button>
+          <button class="btn btn-ghost" type="button">View all</button>
+          <button class="btn btn-danger" type="button" data-open-dialog>Delete product</button>
+          <button class="btn btn-primary" type="button" disabled>Add to Cart</button>
+          <button class="btn btn-primary" type="button" disabled><span class="spinner" aria-hidden="true"></span> Saving</button>
+        </div>
+        <p class="compo-caption">Danger is outline so destructive text never sits on the near-black primary. Loading swaps a placeholder for the spinner (border-right transparent) on currentColor.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-icon-controls">
+        <h3 class="compo-head">Icon controls</h3>
+        <div class="demo-row">
+          <button class="icon-btn" type="button" aria-label="Add to wishlist">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7.5-4.7-9.3-9A5.4 5.4 0 0 1 12 6.6a5.4 5.4 0 0 1 9.3 5.4c-1.8 4.3-9.3 9-9.3 9Z"/></svg>
+          </button>
+          <button class="icon-btn" type="button" aria-label="Share product">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6" cy="12" r="2.5"/><circle cx="17" cy="5" r="2.5"/><circle cx="17" cy="19" r="2.5"/><path d="m8.3 10.8 6.4-4M8.3 13.2l6.4 4"/></svg>
+          </button>
+          <button class="icon-btn icon-btn--bordered" type="button" aria-label="Search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          </button>
+          <button class="icon-btn icon-btn--bordered" type="button" aria-label="Close">×</button>
+        </div>
+        <p class="compo-caption">Every icon target is 44×44 — no exception. Hairline variants sit on chrome; bordered variants claim space on surfaces.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-chips">
+        <h3 class="compo-head">Status chips · tags</h3>
+        <div class="demo-row">
+          <span class="status-chip status-chip--warning">PENDING</span>
+          <span class="status-chip status-chip--success">PAID</span>
+          <span class="status-chip status-chip--info">SHIPPED</span>
+          <span class="status-chip status-chip--destructive">CANCELLED</span>
+          <span class="tag">Electronics</span>
+          <span class="tag">In stock · 24</span>
+          <span class="pill">New</span>
+        </div>
+        <p class="compo-caption">Status = color dot + text label, never color alone. Tags are neutral hover-fill; the pill is accent-tinted and reserved for promoted flags.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-pagination">
+        <h3 class="compo-head">Pagination</h3>
+        <div class="demo-row">
+          <div class="pager" aria-label="Pagination">
+            <button type="button" disabled aria-label="Previous page">←</button>
+            <button type="button" class="is-cur" aria-current="page">1</button>
+            <button type="button">2</button>
+            <button type="button">3</button>
+            <span class="pager-ellipsis">…</span>
+            <button type="button">10</button>
+            <button type="button" aria-label="Next page">→</button>
+          </div>
+        </div>
+        <p class="compo-caption">Current page is the only accent in the view; state syncs to URL query params.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · FORMS -->
+  <section class="section" id="forms" data-od-id="forms">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow inner-eyebrow">03 · Forms</p>
+        <h2>Fields with inline errors, not apologies.</h2>
+        <p class="lead">Every control keeps a ≥44px hit target, a visible focus ring, and never reads color alone — error text pairs with a glyph.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-fields">
+        <h3 class="compo-head">Fields</h3>
+        <div class="grid-2">
+          <div class="field">
+            <label for="demo-email">Email</label>
+            <input id="demo-email" class="input" type="email" placeholder="jane@mail.com" />
+          </div>
+          <div class="field">
+            <label for="demo-pw2">Password</label>
+            <div style="position: relative;">
+              <input id="demo-pw2" class="input" type="password" placeholder="Your password" style="padding-right: 84px;" />
+              <button class="btn btn-ghost" id="pw-toggle" type="button" aria-pressed="false" aria-label="Toggle password visibility" style="position: absolute; right: 4px; top: 50%; transform: translateY(-50%); height: 44px; padding-inline: 10px; font-size: 13px;">Show</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="demo-select">Order status</label>
+            <div class="select-wrap">
+              <select id="demo-select">
+                <option>PENDING</option>
+                <option selected>PAID</option>
+                <option>SHIPPED</option>
+                <option>DELIVERED</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="demo-desc">Notes</label>
+            <textarea id="demo-desc" class="textarea" placeholder="Write an internal note…"></textarea>
+          </div>
+        </div>
+        <p class="compo-caption">Focus = 2px accent-soft ring + border swap. The password toggle lives inside the control at 44px without leaving the field’s hit area.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-validation">
+        <h3 class="compo-head">Validation · error state</h3>
+        <div class="grid-2" style="max-width: 540px;">
+          <div class="field">
+            <label for="demo-min">Min price</label>
+            <input id="demo-min" class="input num" type="text" inputmode="decimal" value="$12.00" />
+          </div>
+          <div class="field has-error">
+            <label for="demo-max">Max price</label>
+            <input id="demo-max" class="input num" type="text" inputmode="decimal" value="$8.00" aria-invalid="true" aria-describedby="demo-err" style="border-color: var(--destructive);" />
+            <span class="field-error" id="demo-err">Max price is below the min price.</span>
+          </div>
+        </div>
+        <p class="compo-caption">Inline error = destructive border + ! glyph + message. Destructive raises luminance in dark so the 13px text keeps 4.5:1 on every surface.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-choice-controls">
+        <h3 class="compo-head">Checkbox · radio</h3>
+        <div class="demo-row" style="align-items: flex-start;">
+          <div class="stack">
+            <label class="check"><input type="checkbox" checked /> <span>Email me order updates</span></label>
+            <label class="check"><input type="checkbox" /> <span>Subscribe to the newsletter</span></label>
+          </div>
+          <div class="stack" role="radiogroup" aria-label="Shipping speed">
+            <label class="radio"><input type="radio" name="ship" checked /> <span>Standard · 3–5 days</span></label>
+            <label class="radio"><input type="radio" name="ship" /> <span>Express · 1–2 days</span></label>
+          </div>
+        </div>
+        <p class="compo-caption">Native inputs with accent-color keep all keyboard + assistive-tech behavior for free. Labels sit beside the control for ≥44px rows.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-multi-upload">
+        <h3 class="compo-head">MultiUpload</h3>
+        <div class="card" style="max-width: 560px; padding: 20px;">
+          <div class="dropzone">
+            <div class="dz-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4m0 0-4 4m4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+            </div>
+            <p style="margin: 0 0 12px; font-size: 14px;"><strong style="font-weight: 600;">Drag &amp; drop up to 5 images</strong><br /><span class="field-hint">JPG or PNG · 4:3 or square</span></p>
+            <button class="btn btn-secondary" type="button">Browse files</button>
+          </div>
+          <div class="thumbs">
+            <div class="thumb">front.jpg<button class="thumb-remove icon-btn" type="button" aria-label="Remove front.jpg">×</button></div>
+            <div class="thumb">back.png<button class="thumb-remove icon-btn" type="button" aria-label="Remove back.png">×</button></div>
+            <div class="thumb">+</div>
+          </div>
+        </div>
+        <p class="compo-caption">Dropzone is the only dashed surface in the system. Both drop and Browse accept JPG/PNG up to 5 files; removers are 44px icon buttons.</p>
+      </div>
+    </div>
+  </section>
+  <!-- 5 · FEEDBACK -->
+  <section class="section" id="feedback" data-od-id="feedback">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow inner-eyebrow">04 · Feedback</p>
+        <h2>Confirm before you destroy, toast after.</h2>
+        <p class="lead">Destructive actions always confirm via dialog; transient results surface as toasts; carts and empties have their own surfaces.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-toasts">
+        <h3 class="compo-head">Toast</h3>
+        <div class="demo-row">
+          <button class="btn btn-secondary" type="button" data-toast="success">Success</button>
+          <button class="btn btn-secondary" type="button" data-toast="info">Info</button>
+          <button class="btn btn-secondary" type="button" data-toast="error">Error</button>
+        </div>
+        <p class="compo-caption">Live toasts stack bottom-right and auto-dismiss after ~4s. Success/Info use role=status; error uses role=alert. Message copy stays short — details live in the page.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-dialog">
+        <h3 class="compo-head">Confirm dialog</h3>
+        <div class="demo-row">
+          <button class="btn btn-danger" type="button" data-open-dialog>Delete product</button>
+          <button class="btn btn-secondary" type="button" data-open-dialog>Cancel order</button>
+        </div>
+        <p class="compo-caption">Dialog opens on Enter/Space from the trigger and closes on Esc with focus returning to that trigger. The destructive action inside is a real outline .btn-danger — never a disabled-looking gray.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-drawer">
+        <h3 class="compo-head">Cart drawer</h3>
+        <div class="demo-row">
+          <button class="btn btn-primary" type="button" data-open-drawer>Open cart</button>
+          <button class="btn btn-secondary" type="button" data-add-cart="Top T-Shirt">Add to cart (demo)</button>
+        </div>
+        <p class="compo-caption">Drawer slides from the right and closes on overlay click or Esc. “Clear cart” inside demos the empty state; “Add to cart” bumps the header badge and restores the list.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-empty">
+        <h3 class="compo-head">Empty state</h3>
+        <div class="empty" style="max-width: 460px;">
+          <div class="empty-icon" aria-hidden="true">◉</div>
+          <h4>Your cart is empty</h4>
+          <p>Products you add will show up here. Start with something from the collection.</p>
+          <button class="btn btn-primary" type="button" data-add-cart="Top T-Shirt">Start shopping</button>
+        </div>
+        <p class="compo-caption">Empty states use a dashed border — distinct from cards (solid) and dropzones (dashed + centered upload copy).</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-skeleton">
+        <h3 class="compo-head">Skeleton</h3>
+        <div class="sk-card">
+          <div class="sk" style="aspect-ratio: 1 / 1; border-radius: var(--radius-lg);"></div>
+          <div class="sk-row" style="padding: 14px 0 4px;">
+            <div class="sk" style="height: 14px; width: 60%;"></div>
+            <div class="sk" style="height: 14px; width: 30%;"></div>
+          </div>
+        </div>
+        <p class="compo-caption" style="margin-top: 14px;">Shimmer runs on hover-fill, never accent; skeletons inherit the card radius and are removed on data load, not faded over content.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overlays: confirm dialog + cart drawer (hidden until triggered) -->
+  <div class="overlay" id="delete-overlay" hidden role="dialog" aria-modal="true">
+    <div class="dialog" id="delete-dialog" tabindex="-1" aria-labelledby="delete-title" data-od-id="confirm-dialog">
+      <h3 id="delete-title" style="font-size: 18px;">Delete Wireless Buds?</h3>
+      <p>This removes the product and its stock. This action cannot be undone.</p>
+      <div class="dialog-actions">
+        <button class="btn btn-secondary" type="button" data-close-dialog>Cancel</button>
+        <button class="btn btn-danger" type="button" id="confirm-delete">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-overlay" id="drawer-overlay" hidden data-od-id="drawer"></div>
+  <div class="drawer" id="cart-drawer" hidden role="dialog" aria-modal="true" aria-label="Cart" data-od-id="cart-drawer">
+    <div class="drawer-head">
+      <h3>Cart</h3>
+      <button class="icon-btn" type="button" data-close-drawer aria-label="Close cart">×</button>
+    </div>
+    <div class="drawer-body">
+      <div id="cart-list">
+        <div class="cart-line">
+          <div class="cart-line-thumb">TEE</div>
+          <div class="cart-line-body">
+            <p class="cart-line-name">Top T-Shirt</p>
+            <p class="cart-line-meta">M · Qty 1</p>
+            <div class="cart-line-foot">
+              <span class="cart-line-price">$99.99</span>
+              <button class="icon-btn" type="button" aria-label="Remove Top T-Shirt">×</button>
+            </div>
+          </div>
+        </div>
+        <div class="cart-line">
+          <div class="cart-line-thumb">BUDS</div>
+          <div class="cart-line-body">
+            <p class="cart-line-name">Wireless Buds</p>
+            <p class="cart-line-meta">Qty 1</p>
+            <div class="cart-line-foot">
+              <span class="cart-line-price">$42.00</span>
+              <button class="icon-btn" type="button" aria-label="Remove Wireless Buds">×</button>
+            </div>
+          </div>
+        </div>
+        <div class="cart-ledger">
+          <div class="sum-row"><span class="sum-label">Subtotal</span><span class="sum-value">$141.99</span></div>
+          <div class="sum-row"><span class="sum-label">Shipping</span><span class="sum-value">Free</span></div>
+          <div class="sum-row sum-row--total"><span class="sum-label">Total</span><span class="sum-value sum-value--total">$141.99</span></div>
+        </div>
+      </div>
+      <div id="cart-empty" class="empty" hidden>
+        <div class="empty-icon" aria-hidden="true">◉</div>
+        <h4>Your cart is empty</h4>
+        <p>Products you add will show up here.</p>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button class="btn btn-primary" type="button" id="cart-checkout" style="width: 100%; justify-content: center;">Checkout · $141.99</button>
+      <button class="btn btn-ghost" type="button" id="clear-cart" style="width: 100%; justify-content: center; margin-top: 8px;">Clear cart</button>
+    </div>
+  </div>
+
+  <!-- 6 · COMMERCE -->
+  <section class="section" id="commerce" data-od-id="commerce">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow inner-eyebrow">05 · Commerce</p>
+        <h2>The money moments, built to the legibility rule.</h2>
+        <p class="lead">Price and rating never drop below the 14px Body tier. Cards link to detail; add-to-cart lives on the product rail, not the card.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-product-cards">
+        <h3 class="compo-head">ProductCard</h3>
+        <div class="demo-row" style="align-items: start;">
+          <div class="pcard">
+            <div class="pcard-media"><div class="pcard-media-inner">image · 1:1</div></div>
+            <div class="pcard-body">
+              <p class="pcard-name">Top T-Shirt</p>
+              <p class="pcard-price">$99.99</p>
+              <p class="pcard-rating">★ 4.5 <span class="num">(12)</span></p>
+            </div>
+          </div>
+          <div class="pcard">
+            <div class="pcard-media"><div class="pcard-media-inner">image · 1:1</div></div>
+            <div class="pcard-body">
+              <p class="pcard-name">Classic Tee</p>
+              <p class="pcard-price">$15.75 <span class="pcard-price--was">$19.99</span></p>
+              <p class="pcard-rating">★ 5 <span class="num">(3)</span></p>
+            </div>
+          </div>
+          <div class="pcard" data-od-id="pcard-oos">
+            <div class="pcard-media pcard-media--oos">
+              <span class="oos-badge">Out of stock</span>
+              <div class="pcard-media-inner">image · 1:1</div>
+            </div>
+            <div class="pcard-body">
+              <p class="pcard-name">Wireless Buds</p>
+              <p class="pcard-price">$42.00</p>
+              <p class="pcard-rating">★ — <span class="num">(0)</span></p>
+            </div>
+          </div>
+        </div>
+        <p class="compo-caption">Price 14px/600, rating 14px — the legibility rule. Out-of-stock keeps the price and dims the media behind a destructive badge; the card still links to /products/:slug.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-category-cards">
+        <h3 class="compo-head">CategoryCard</h3>
+        <div class="grid-3">
+          <div class="ccard">
+            <div class="ccard-media">clothing</div>
+            <div class="ccard-body">
+              <p class="ccard-name">Clothing</p>
+              <span class="ccard-count">24 items</span>
+            </div>
+          </div>
+          <div class="ccard">
+            <div class="ccard-media">electronics</div>
+            <div class="ccard-body">
+              <p class="ccard-name">Electronics</p>
+              <span class="ccard-count">61 items</span>
+            </div>
+          </div>
+          <div class="ccard">
+            <div class="ccard-media">housewares</div>
+            <div class="ccard-body">
+              <p class="ccard-name">Housewares</p>
+              <span class="ccard-count">13 items</span>
+            </div>
+          </div>
+        </div>
+        <p class="compo-caption">Media slot is 4:3; the count renders mono at 12px (a count, not a price). The whole card is one link → /products?category=slug.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-gallery">
+        <h3 class="compo-head">Gallery + purchase rail</h3>
+        <div class="grid-2-1" style="margin-top: var(--gap-md);">
+          <div>
+            <div class="gallery">
+              <div class="gallery-main">main image · 1:1</div>
+              <div class="gallery-thumbs" role="list" aria-label="Product images">
+                <button class="gallery-thumb is-active" type="button" aria-label="View image 1">1</button>
+                <button class="gallery-thumb" type="button" aria-label="View image 2">2</button>
+                <button class="gallery-thumb" type="button" aria-label="View image 3">3</button>
+                <button class="gallery-thumb" type="button" aria-label="View image 4">4</button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span class="status-chip status-chip--success" style="margin-bottom: 10px;">IN STOCK</span>
+            <h3 class="compo-head" style="font-size: 22px;">Top T-Shirt</h3>
+            <p class="pcard-price" style="font-size: 20px;">$99.99</p>
+            <p class="pcard-rating" style="margin: 4px 0 16px;">★ 4.5 <span class="num">(12)</span></p>
+            <div class="demo-row" style="margin-bottom: 16px;">
+              <div class="stepper" data-stepper data-max="24" aria-label="Quantity stepper">
+                <button class="stepper-minus" aria-label="Decrease quantity" type="button">−</button>
+                <span class="stepper-qty num">1</span>
+                <button class="stepper-plus" aria-label="Increase quantity" type="button">+</button>
+              </div>
+              <button class="btn btn-primary" type="button" data-add-cart="Top T-Shirt">Add to Cart</button>
+            </div>
+            <p class="compo-caption" style="margin: 0;">Stepper bounds 1…stock (24); Add to Cart disables at stock, mirroring the server 409.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="compo-block" data-od-id="component-rating">
+        <h3 class="compo-head">StarRating</h3>
+        <div class="demo-row">
+          <div class="rating" id="star-input" role="group" aria-label="Rate this product">
+            <button type="button" aria-label="Rate 1 star" aria-pressed="false">★</button>
+            <button type="button" aria-label="Rate 2 stars" aria-pressed="false">★</button>
+            <button type="button" aria-label="Rate 3 stars" aria-pressed="false">★</button>
+            <button type="button" aria-label="Rate 4 stars" aria-pressed="false">★</button>
+            <button type="button" aria-label="Rate 5 stars" aria-pressed="false">★</button>
+          </div>
+          <span class="rating-read"><span class="rating-fill">★</span> 4.5 of 5</span>
+        </div>
+        <p class="compo-caption" id="star-note">Not rated yet — try the control.</p>
+        <p class="compo-caption">Five-button radio group, keyboard-operable; the readout ships with an aria-label.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-review">
+        <h3 class="compo-head">Review</h3>
+        <div class="review" style="max-width: 620px;">
+          <div class="review-avatar">JD</div>
+          <div>
+            <div class="review-head">
+              <p class="review-name">Jamie Doe</p>
+              <span class="review-date">Verified Purchase · Aug 12, 2026</span>
+            </div>
+            <div class="review-stars" role="img" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+            <p>Nice weight, true to size. The garment-dyed color settled after the first wash and the seams are clean.</p>
+          </div>
+        </div>
+        <p class="compo-caption">The review readout is aria-labelled; the verified-purchase date renders in the Small tier, stars stay accent on every surface.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-order-summary">
+        <h3 class="compo-head">OrderSummary · Confirmation</h3>
+        <div class="grid-2" style="align-items: start; max-width: 920px;">
+          <div class="order-summary">
+            <h3 style="font-size: 16px; margin-bottom: 12px;">Order summary</h3>
+            <div class="sum-row"><span class="sum-label">Subtotal</span><span class="sum-value">$141.99</span></div>
+            <div class="sum-row"><span class="sum-label">Shipping</span><span class="sum-value">Free</span></div>
+            <div class="sum-row"><span class="sum-label">Tax (8%)</span><span class="sum-value">$11.36</span></div>
+            <div class="sum-row sum-row--total"><span class="sum-label">Total</span><span class="sum-value sum-value--total">$153.35</span></div>
+            <button class="btn btn-primary" type="button" style="width: 100%; justify-content: center; margin-top: 16px;">Checkout</button>
+          </div>
+          <div class="confirmation">
+            <div class="conf-mark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+            </div>
+            <h3 style="font-size: 18px;">Order confirmed</h3>
+            <p style="color: var(--muted); font-size: 14px; margin: 6px 0 0;">We emailed your receipt. Shipping updates land in the Orders page.</p>
+            <p class="confirm-id">ORDER #A-1042 · $153.35 · PAID</p>
+            <button class="btn btn-secondary" type="button" style="margin-top: 16px;">View order</button>
+          </div>
+        </div>
+        <p class="compo-caption">Total is the only emphasized sum; mono numerics keep the ledger scannable. Confirmation pairs the success mark with a mono order id.</p>
+      </div>
+    </div>
+  </section>
+  <!-- 7 · ADMIN -->
+  <section class="section" id="admin" data-od-id="admin">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow inner-eyebrow">06 · Admin</p>
+        <h2>The console reads counting, not guessing.</h2>
+        <p class="lead">Stats at a glance, rows that answer how much / how many, and one chart with sample data clearly labeled.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-stat-cards" style="border-top: 0; padding-top: 0;">
+        <h3 class="compo-head">StatCards</h3>
+        <div class="grid-4">
+          <div class="statcard" data-od-id="stat-revenue">
+            <p class="statcard-label">Revenue</p>
+            <p class="statcard-value">$9,240.00</p>
+            <p class="statcard-trend"><span class="up">▲ +12%</span> vs last month</p>
+          </div>
+          <div class="statcard" data-od-id="stat-orders">
+            <p class="statcard-label">Orders</p>
+            <p class="statcard-value num">12</p>
+            <p class="statcard-trend"><span class="up">▲ +4%</span> vs last month</p>
+          </div>
+          <div class="statcard" data-od-id="stat-users">
+            <p class="statcard-label">Users</p>
+            <p class="statcard-value num">34</p>
+            <p class="statcard-trend"><span class="down">▼ −2%</span> vs last month</p>
+          </div>
+          <div class="statcard" data-od-id="stat-products">
+            <p class="statcard-label">Products</p>
+            <p class="statcard-value num">5</p>
+            <p class="statcard-trend">stable this month</p>
+          </div>
+        </div>
+        <p class="compo-caption">Values are the doc values from system-ui-design.md §5.12. Trends use success/destructive mixed into fg so the 12px text holds 4.5:1 in both themes.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-admin-table">
+        <h3 class="compo-head">Admin table</h3>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th class="num-col">Price</th>
+                <th class="num-col">Stock</th>
+                <th>Category</th>
+                <th class="num-col">Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Top T-Shirt</td>
+                <td class="num-col">$99.99</td>
+                <td class="num-col">24</td>
+                <td>Clothing</td>
+                <td><span class="status-chip status-chip--success">IN STOCK</span></td>
+                <td><a class="btn btn-ghost" href="#forms">Edit</a> <button class="btn btn-ghost" style="color: color-mix(in oklch, var(--destructive) 55%, var(--fg));" type="button" data-open-dialog>Delete</button></td>
+              </tr>
+              <tr>
+                <td>Classic Tee</td>
+                <td class="num-col">$15.75</td>
+                <td class="num-col"><span class="stock-low">2 · low</span></td>
+                <td>Clothing</td>
+                <td><span class="status-chip status-chip--warning">LOW</span></td>
+                <td><a class="btn btn-ghost" href="#forms">Edit</a> <button class="btn btn-ghost" style="color: color-mix(in oklch, var(--destructive) 55%, var(--fg));" type="button" data-open-dialog>Delete</button></td>
+              </tr>
+              <tr>
+                <td>Wireless Buds</td>
+                <td class="num-col">$42.00</td>
+                <td class="num-col"><span class="stock-out">0</span></td>
+                <td>Electronics</td>
+                <td><span class="status-chip status-chip--destructive">OUT</span></td>
+                <td><a class="btn btn-ghost" href="#forms">Edit</a> <button class="btn btn-ghost" style="color: color-mix(in oklch, var(--destructive) 55%, var(--fg));" type="button" data-open-dialog>Delete</button></td>
+              </tr>
+              <tr>
+                <td>Ceramic Mug</td>
+                <td class="num-col">$18.50</td>
+                <td class="num-col">47</td>
+                <td>Housewares</td>
+                <td><span class="status-chip status-chip--success">IN STOCK</span></td>
+                <td><a class="btn btn-ghost" href="#forms">Edit</a> <button class="btn btn-ghost" style="color: color-mix(in oklch, var(--destructive) 55%, var(--fg));" type="button" data-open-dialog>Delete</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="compo-caption">Stock ≤ 5 reads low (warning), 0 reads out (destructive). Delete always confirms via the dialog; row hover uses hover-fill, never accent.</p>
+      </div>
+
+      <div class="compo-block" data-od-id="component-sales-chart">
+        <h3 class="compo-head">SalesChart <span class="meta">· sample</span></h3>
+        <div class="chart-card" style="max-width: 640px;">
+          <div class="row-between" style="margin-bottom: 12px;">
+            <div>
+              <p style="margin: 0; font-weight: 600; font-size: 15px;">Revenue</p>
+              <p class="meta" style="margin: 2px 0 0;">Monthly · $K</p>
+            </div>
+            <span class="pill">Sample data</span>
+          </div>
+          <div class="chart-wrap">
+            <svg viewBox="0 0 560 220" role="img" aria-label="Area chart of monthly revenue, rising from $8.1K in August to $10.1K in January; sample data.">
+              <g class="chart-grid" aria-hidden="true">
+                <line x1="44" y1="190" x2="548" y2="190" />
+                <line x1="44" y1="146.5" x2="548" y2="146.5" />
+                <line x1="44" y1="103" x2="548" y2="103" />
+                <line x1="44" y1="59.5" x2="548" y2="59.5" />
+                <line x1="44" y1="16" x2="548" y2="16" />
+                <text x="36" y="194">0K</text>
+                <text x="36" y="150.5">3K</text>
+                <text x="36" y="107">6K</text>
+                <text x="36" y="63.5">9K</text>
+                <text x="32" y="20">12K</text>
+              </g>
+              <path class="chart-area" d="M44,72.55 L144.8,65.3 L245.6,60.95 L346.4,56.02 L447.2,50.8 L548,43.55 L548,190 L44,190 Z" />
+              <path class="chart-line" d="M44,72.55 L144.8,65.3 L245.6,60.95 L346.4,56.02 L447.2,50.8 L548,43.55" />
+              <g class="chart-line-dots" aria-hidden="true">
+                <circle class="chart-dot" cx="44" cy="72.55" r="3" />
+                <circle class="chart-dot" cx="144.8" cy="65.3" r="3" />
+                <circle class="chart-dot" cx="245.6" cy="60.95" r="3" />
+                <circle class="chart-dot" cx="346.4" cy="56.02" r="3" />
+                <circle class="chart-dot" cx="447.2" cy="50.8" r="3" />
+                <circle class="chart-dot" cx="548" cy="43.55" r="3" />
+              </g>
+              <g class="chart-axis" aria-hidden="true">
+                <text x="44" text-anchor="middle" y="212">Aug</text>
+                <text x="144.8" text-anchor="middle" y="212">Sep</text>
+                <text x="245.6" text-anchor="middle" y="212">Oct</text>
+                <text x="346.4" text-anchor="middle" y="212">Nov</text>
+                <text x="447.2" text-anchor="middle" y="212">Dec</text>
+                <text x="548" text-anchor="middle" y="212">Jan</text>
+              </g>
+            </svg>
+          </div>
+          <div class="chart-legend">
+            <span><span class="swatch-mini"></span>Revenue (area + line)</span>
+            <span>Months · Aug 2026 → Jan 2027</span>
+          </div>
+        </div>
+        <p class="compo-caption">Data encoding is filled area + line + point, never a bare axis. The “Sample data” chip keeps this out of production; swap at bind time with the reporting endpoint.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · USAGE -->
+  <section class="section" id="usage" data-od-id="usage">
+    <div class="container">
+      <div class="sec-head" style="max-width: 52ch; margin-inline: auto; text-align: center;">
+        <p class="eyebrow inner-eyebrow">07 · Usage</p>
+        <h2>Tokens → components → screens.</h2>
+        <p class="lead">Three rules keep the library coherent: one artifact per concern, tokens never hard-coded, and no more than two accents a viewport.</p>
+      </div>
+      <div class="grid-3">
+        <div class="feature card-flat">
+          <div class="feature-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M3 12h18"/></svg>
+          </div>
+          <h3>Start from tokens</h3>
+          <p>brand-spec.md owns the six OKLch tokens and their dark pairs. Every component here renders them — no raw hex anywhere outside :root.</p>
+        </div>
+        <div class="feature card-flat">
+          <div class="feature-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg>
+          </div>
+          <h3>Pair with the DS</h3>
+          <p>This library is the live spec; ecommerce-design-system.html holds the foundations, status mapping, type ramp, and a11y contract it obeys.</p>
+        </div>
+        <div class="feature card-flat">
+          <div class="feature-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>
+          </div>
+          <h3>Two accents, max</h3>
+          <p>Accent appears at most twice per viewport; status colors stay inside their chips; everything else runs on bg / surface / fg / muted / border.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top: 56px; text-align: center; max-width: 760px; margin-inline: auto;">
+        <h3 style="margin-bottom: 10px;">Locked. Screens next.</h3>
+        <p style="color: var(--muted); font-size: 15px; margin: 0 auto 24px; max-width: 52ch;">The screens — Home, Product, Cart, Checkout, Orders, Admin — each begin as compositions of these blocks, then translate to Penpot and into React (shadcn/ui).</p>
+        <div style="display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+          <a class="btn btn-primary btn-arrow" href="#shells" data-od-id="cta-jump">Jump to the shells</a>
+          <a class="btn btn-secondary" href="ecommerce-design-system.html" data-od-id="cta-ds-2">Design system</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+  <footer class="pagefoot" data-od-id="footer">
+    <div class="container row-between">
+      <span>© E-Commerce Component Library · v1.0 · 2026</span>
+      <span class="meta">bound from system-design.md §5 · companion to ecommerce-design-system.html</span>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+
+      /* Theme toggle */
+      var btn = document.getElementById('theme-toggle');
+      var lbl = document.getElementById('theme-label');
+      function setTheme(t) {
+        root.dataset.theme = t;
+        if (lbl) lbl.textContent = t === 'dark' ? 'Dark' : 'Light';
+        try { localStorage.setItem('ui.theme', t); } catch (e) {}
+      }
+      if (btn) btn.addEventListener('click', function () {
+        setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+      });
+      setTheme(root.dataset.theme || 'light');
+
+      /* Quantity stepper — bounded 1…data-max */
+      document.querySelectorAll('[data-stepper]').forEach(function (s) {
+        var minus = s.querySelector('.stepper-minus');
+        var plus = s.querySelector('.stepper-plus');
+        var out = s.querySelector('.stepper-qty');
+        var max = parseInt(s.dataset.max, 10) || 24;
+        function sync() {
+          var n = parseInt(out.textContent, 10);
+          minus.disabled = n <= 1;
+          plus.disabled = n >= max;
+        }
+        minus.addEventListener('click', function () {
+          var n = parseInt(out.textContent, 10) - 1;
+          if (n >= 1) { out.textContent = n; sync(); }
+        });
+        plus.addEventListener('click', function () {
+          var n = parseInt(out.textContent, 10) + 1;
+          if (n <= max) { out.textContent = n; sync(); }
+        });
+        sync();
+      });
+
+      /* Star rating input — radio-group behavior */
+      var rating = document.getElementById('star-input');
+      var starNote = document.getElementById('star-note');
+      if (rating) {
+        var stars = Array.prototype.slice.call(rating.querySelectorAll('button'));
+        stars.forEach(function (b, i) {
+          b.addEventListener('click', function () {
+            stars.forEach(function (x, j) {
+              var on = j <= i;
+              x.classList.toggle('is-on', on);
+              x.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            if (starNote) starNote.textContent = 'You rated this ' + (i + 1) + ' of 5.';
+          });
+        });
+      }
+
+      /* Password visibility toggle */
+      var pw = document.getElementById('demo-pw2');
+      var pwBtn = document.getElementById('pw-toggle');
+      if (pw && pwBtn) pwBtn.addEventListener('click', function () {
+        var isPw = pw.getAttribute('type') === 'password';
+        pw.setAttribute('type', isPw ? 'text' : 'password');
+        pwBtn.textContent = isPw ? 'Hide' : 'Show';
+        pwBtn.setAttribute('aria-pressed', isPw ? 'true' : 'false');
+      });
+
+      /* Toasts */
+      var toastStack = document.getElementById('toast-stack');
+      function toast(type, title, msg) {
+        if (!toastStack) return;
+        var el = document.createElement('div');
+        el.className = 'toast toast--' + type;
+        el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+        el.innerHTML = '<span class="toast-icon">' +
+          (type === 'success' ? '&#10003;' : type === 'error' ? '!' : 'i') +
+          '</span><span class="toast-body"><span class="toast-title">' + title +
+          '</span><span class="toast-msg">' + msg + '</span></span>';
+        toastStack.appendChild(el);
+        setTimeout(function () { el.classList.add('toast--out'); setTimeout(function () {
+          if (el.parentNode) el.parentNode.removeChild(el);
+        }, 220); }, 4200);
+      }
+      document.querySelectorAll('[data-toast]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var t = b.dataset.toast;
+          var cfg = {
+            success: ['Saved', 'Your changes were saved.'],
+            info:    ['Heads up', 'New orders are syncing.'],
+            error:   ['Something went wrong', 'Please try again.']
+          };
+          var c = cfg[t] || cfg.info;
+          toast(t, c[0], c[1]);
+        });
+      });
+
+      /* Cart badge + add-to-cart wiring */
+      var cartCount = document.getElementById('cart-count');
+      var cartList = document.getElementById('cart-list');
+      var cartEmpty = document.getElementById('cart-empty');
+      var checkoutBtn = document.getElementById('cart-checkout');
+      document.querySelectorAll('[data-add-cart]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (cartCount) cartCount.textContent = (parseInt(cartCount.textContent, 10) || 0) + 1;
+          if (cartList) cartList.hidden = false;
+          if (cartEmpty) cartEmpty.hidden = true;
+          if (checkoutBtn) checkoutBtn.disabled = false;
+          toast('success', 'Added to cart', (b.dataset.addCart || 'Item') + ' is in your cart.');
+        });
+      });
+
+      /* Cart drawer */
+      var drawer = document.getElementById('cart-drawer');
+      var dOverlay = document.getElementById('drawer-overlay');
+      function openDrawer() { if (drawer) drawer.hidden = false; if (dOverlay) dOverlay.hidden = false; }
+      function closeDrawer() { if (drawer) drawer.hidden = true; if (dOverlay) dOverlay.hidden = true; }
+      document.querySelectorAll('[data-open-drawer]').forEach(function (b) {
+        b.addEventListener('click', openDrawer);
+      });
+      document.querySelectorAll('[data-close-drawer]').forEach(function (b) {
+        b.addEventListener('click', closeDrawer);
+      });
+      if (dOverlay) dOverlay.addEventListener('click', closeDrawer);
+      var clearBtn = document.getElementById('clear-cart');
+      if (clearBtn) clearBtn.addEventListener('click', function () {
+        if (cartList) cartList.hidden = true;
+        if (cartEmpty) cartEmpty.hidden = false;
+        if (cartCount) cartCount.textContent = 0;
+        if (checkoutBtn) checkoutBtn.disabled = true;
+        toast('info', 'Cart cleared', 'Empty state is shown in the drawer.');
+      });
+
+      /* Confirm dialog */
+      var ov = document.getElementById('delete-overlay');
+      var dlg = document.getElementById('delete-dialog');
+      var lastTrigger = null;
+      function openDialog() { if (ov) ov.hidden = false; }
+      function closeDialog() {
+        if (ov) ov.hidden = true;
+        if (lastTrigger) { lastTrigger.focus(); lastTrigger = null; }
+      }
+      document.querySelectorAll('[data-open-dialog]').forEach(function (b) {
+        b.addEventListener('click', function () { lastTrigger = b; openDialog(); if (dlg) dlg.focus(); });
+      });
+      document.querySelectorAll('[data-close-dialog]').forEach(function (b) {
+        b.addEventListener('click', closeDialog);
+      });
+      var confirmDelete = document.getElementById('confirm-delete');
+      if (confirmDelete) confirmDelete.addEventListener('click', function () {
+        closeDialog();
+        toast('error', 'Product deleted', 'Wireless Buds was removed (demo).');
+      });
+
+      /* Esc closes the top-most overlay */
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        closeDialog();
+        closeDrawer();
+      });
+    })();
+  </script>
+</body>
+</html>

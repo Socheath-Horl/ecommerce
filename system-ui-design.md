@@ -1,23 +1,36 @@
 # E-Commerce UI System Design (Wireframes)
 
 > Companion doc to `system-design.md`. Defines the UI structure, page flows, and
-> component composition for all screens so they can be implemented in Penpot
-> first, then translated to React (shadcn/ui) with high fidelity.
+> component composition for all screens.
+>
+> **Canonical reference build:** the wireframes below are realized as static HTML
+> in `ux-ui/` (`brand-spec.md`, `ecommerce-design-system.html`,
+> `component-library.html`, `shadcn-component-library.html`, plus one HTML file
+> per page). Where a prose spec and the HTML disagree, **the HTML wins** — it is
+> the source of truth for translation to React (shadcn/ui).
 
 ---
 
 ## 1. Scope & Conventions
 
-- Wireframes are schematic — exact spacing/colors resolve at the Penpot stage.
+- Wireframes may have been schematic originally; **exact spacing/colors are now resolved** in the `ux-ui/` HTML reference build (see §8).
 - Every screen lists its **composition** (which components from `system-design.md` §5 it uses).
 - Roles: `GUEST`, `CUSTOMER`, `USER`, `ADMIN`.
 - Base layout width for desktop frames: **1280px**, tablet: **768px**, mobile: **375px**.
 - Currency format: `$` (USD, per Stripe defaults).
 - Prices formatted `$1,234.56`; ratings shown as `★ 4.5 (12)`.
+- **Brand:** *Horizon Supply Co.* — everyday carry / outdoor-lifestyle goods ("Objects with a point of view"). Catalog: **Outerwear (24), Travel (12), Carry & Desk (18), Drinkware (9)** — 63 styles. Store name + category set are used verbatim in seed and headers/footers.
 
 ---
 
-## 2. Design Tokens (Proposed — confirm in Penpot before coding)
+## 2. Design Tokens (Confirmed in `ux-ui/` reference build)
+
+**Values below are confirmed** — the `ux-ui/` CSS variables and `brand-spec.md`
+are the source of truth for the shadcn/Tailwind token map. Tokens are written in
+**OKLCH** in the reference build (hex here is the sRGB equivalent).
+`ecommerce-design-system.html` holds the full slot-bridge table for mapping
+these onto shadcn/ui CSS variables; `shadcn-component-library.html` documents
+the composition of every primitive.
 
 ### 2.1 Colors (aligned with shadcn/ui defaults)
 
@@ -52,7 +65,9 @@
 | border     | #27272A | Inputs, cards, dividers |
 | destructive / success / warning / info | #EF4444 / #22C55E / #FACC15 / #3B82F6 | Status colors (raised luminance for contrast) |
 
-**Theme control:** toggle in Header (sun/moon icon), persisted to `localStorage`, stored in `ui.theme` slice. Default: `light` (follows `prefers-color-scheme` on first load).
+**Documented extensions** (present in the reference build, in addition to the shadcn defaults): `--on-accent` #FAFAFA / #18181B (text on primary) and `--hover-fill` #F4F4F5 / #18181B (secondary, badges, table zebra). Status soft-background variants (`--success-soft`, `--warning-soft`, `--info-soft`, `--destructive-soft`) back the status badge chips.
+
+**Theme control:** toggle in Header (sun/moon icon) flips the **`html.dark` class** on the root element (shadcn `darkMode: ['class']` strategy); preference persisted in `ui.theme` (localStorage). First load follows `prefers-color-scheme`. Dark-mode paragraphs in the spec sketch optional arc — the reference build implements light + dark as paired token sets, and the stores differ per token as listed.
 
 ### 2.2 Typography
 
@@ -68,16 +83,26 @@
 
 **Legibility rule:** product-card **price and rating use Body (14px)** — never the 12px Small tier on a purchase-relevant number. `Small` stays for captions, timestamps, badges, meta only.
 
+**Font families (from the reference build):**
+
+| Role | Stack |
+|------|-------|
+| Display (`--font-display`) | `'Iowan Old Style', 'Charter', Georgia, 'Times New Roman', serif` — headings, logo, admin titles |
+| Body (`--font-body`) | system sans stack — body, buttons, fields |
+| Mono (`--font-mono`) | `ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace` — prices/SKUs/eyebrows, table meta, status chips |
+
+The serif display + sans body pairing is the brand signifier; mono is reserved for "machine-ish" data (SKUs `FLT-04`, order IDs, timestamps, currency figures).
+
 ### 2.3 Sizing
 
 | Token | Value |
 |-------|-------|
 | Spacing scale | 4px grid (4, 8, 12, 16, 24, 32, 48) |
-| Radius | `sm` 6px (buttons, inputs), `md` 8px (cards), `lg` 12px (modals), `full` (pills) |
+| Radius | **`--radius` 10px** (buttons, inputs, selects, chips) · **`--radius-lg` 16px** (cards, tables, drawers, modals) · `100%`/`full` (pills, avatar) — from the reference build CSS |
 | Card gap | 16px grid gap desktop, 8px mobile |
-| Max content width | 1280px centered |
+| Max content width | 1280px centered (`--container: 1280px`) |
 | Header height | 64px (desktop), 56px (mobile) |
-| Sidebar width | 240px (desktop), slide-over on mobile |
+| Sidebar width | 240px (admin desktop), slide-over on mobile |
 
 ### 2.4 Accessibility Contract (all screens)
 
@@ -116,11 +141,13 @@
 │ │         │ │ My Orders    │ │ Shipping     │ │ Payment     │ │
 │ │         │ │ My Profile   │ │ Returns      │ │ [Visa][MC]  │ │
 │ └─────────┘ └──────────────┘ └──────────────┘ └─────────────┘ │
-│ Copyright © ecommerce — All rights reserved                    │
+│ Copyright © Horizon Supply Co. — All rights reserved              │
 └────────────────────────────────────────────────────────────────┘
 ```
 
 **Composition:** `Layout` → `Header` (Logo, SearchBar, CartIcon+badge, UserMenu, MobileMenu) + `Footer`.
+
+**Dimensions confirmed in the reference build:** cart drawer right slide-over = `min(420px, 100vw)` full-height; mobile menu = 320px left slide-out; user dropdown = 236px. Header sits sticky at 64px (56px mobile); the search control renders as a rounded **pill** (44px hit area, radius-full) with a focus ring on open.
 
 **Header — mobile (375px):**
 ```
@@ -212,7 +239,7 @@
 ```
 ┌──────────────────────────────────────────────┐
 │                    [LOGO]                     │
-│                E-Commerce                    │
+│                Horizon Supply Co.               │
 │                                              │
 │        ┌──────────────────────────────┐      │
 │        │  Sign in                     │      │
@@ -257,23 +284,23 @@ On failure: inline field errors + error toast.
 ```
 ┌────────────────────────────────────────────────────────────────┐
 │ [HeroBanner — full width, h=420]                                │
-│  Fresh finds, fast delivery                      (bg image)     │
-│  Headline 36-48px bold                                          │
+│  Horizon Supply Co.                                  (bg image) │
+│  "Title / tagline" — carries the SS26 collection text           │
 │  [  Shop Now  ]      (single primary CTA → /products)          │
 │  (Categories are browsed via CategoryGrid below — no duplicate) │
 ├────────────────────────────────────────────────────────────────┤
 │ CategoryGrid (4/2/1 cols)     Section: "Shop by Category"      │
 │ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐                │
 │ │  IMG    │ │  IMG    │ │  IMG    │ │  IMG    │                │
-│ │Electronics│ │Clothing │ │ Books  │ │ Toys    │                │
-│ │ (24 items) │ │(18)   │ │ (12)   │ │  (9)   │                │
+│ │Outerwear│ │ Travel  │ │Carry&Desk│ │Drinkware│                │
+│ │ (24 items) │ │(12)   │ │ (18)   │ │  (9)   │                │
 │ └─────────┘ └─────────┘ └─────────┘ └─────────┘                │
 ├────────────────────────────────────────────────────────────────┤
 │ "Featured Products"                       [ View all → ]       │
 │ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐                        │
 │ │  IMG  │ │  IMG  │ │  IMG  │ │  IMG  │   ProductGrid          │
 │ │Name   │ │Name   │ │Name   │ │Name   │   (4→2→1 cols)         │
-│ │$99.99 │ │$15.75 │ │$42.00 │ │$8.95  │                        │
+│ │$189.00│ │$15.75 │ │$42.00 │ │$8.95  │                        │
 │ │★4.5(12)│ │★5(3) │ │★3.8(21)│ │★4.2(9)│                        │
 │ └───────┘ └───────┘ └───────┘ └───────┘                        │
 └────────────────────────────────────────────────────────────────┘
@@ -313,20 +340,21 @@ Card: hover shadow + image zoom; whole card links to `/products/:slug`; the card
 │ (w=260)     │ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐            │
 │             │ │ Card  │ │ Card  │ │ Card  │ │ Card  │            │
 │ Category    │ └───────┘ └───────┘ └───────┘ └───────┘            │
-│ ○ Electronics│ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐            │
-│ ○ Clothing  │ │       │ │       │ │       │ │       │            │
-│ ○ Books     │ └───────┘ └───────┘ └───────┘ └───────┘            │
-│ ○ Toys      │ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐            │
-│             │ │       │ │       │ │       │ │       │            │
-│ Price       │ └───────┘ └───────┘ └───────┘ └───────┘            │
-│ $[___] - $[___]  [Apply]  │                                      │
-│ Rating: [4 ★] [3 ★] [2 ★] │        Pagination                    │
-│ [Clear all filters] │      │   ◀   1  2  3  4 …  ▶   (3 of 10)   │
+│ ○ All       │ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐            │
+│ ○ Outerwear │ │       │ │       │ │       │ │       │            │
+│ ○ Travel    │ └───────┘ └───────┘ └───────┘ └───────┘            │
+│ ○ Carry & Desk │  ....                    ┌───────┐            │
+│ ○ Drinkware │ └───────┘ └───────┘ └───────┘ └───────┘            │
+│             │                                                     │
+│ Price       │                                                     │
+│ $[___] - $[___]  [Apply]  │        Pagination                     │
+│ Rating: [4 ★] [3 ★] [2 ★] │   ◀   1  2  3  4 …  ▶   (3 of 10)   │
+│ [Clear all filters] │      │                                     │
 └─────────────┴───────────────────────────────────────────────────┘
 ```
 
 **Composition:** `FilterSidebar` + `SortSelect` + `ProductGrid` + `Pagination`.
-**Responsive:** mobile → filters collapse behind "Filters" button (drawer); SortSelect moves into the drawer as a native select (no desktop dropdown on ≤640px).
+**Responsive:** mobile → filters collapse behind "Filters" button (drawer, `min(320px,…)`); SortSelect moves into the drawer as a native select (no desktop dropdown on ≤640px).
 **Query sync:** URL params drive state (search, categoryId, minPrice, maxPrice, rating, sort, page). Category is **single-select** (radio list, one entry active) — matches the spec's single `categoryId` param; there is **no multi-category mode**.
 **Price validation:** `minPrice ≤ maxPrice` enforced inline before `[Apply]` (swap or error message); range inputs are start/end pairs, not two independent filters.
 **Sort options:** `newest` (default), `price_asc`, `price_desc`, `popular`.
@@ -336,10 +364,10 @@ Card: hover shadow + image zoom; whole card links to `/products/:slug`; the card
 
 ```
 ┌───────────────────────────────────────────┬─────────────────────┐
-│ Home / Products / Clothing / Top T-Shirt  │  (Breadcrumb)       │
+│ Home / Products / Outerwear / Waxed Field Jacket │  (Breadcrumb)       │
 │ ImageGallery (w=560)                      │ ProductInfo (w=420) │
 │                                           │                     │
-│        [     Main Image      ]            │  Top T-Shirt         │
+│        [     Main Image      ]            │  Waxed Field Jacket   │
 │        [   square 1:1, w=560 ]            │  #tag / category link│
 │                                           │                     │
 │ [thumb] [thumb] [thumb] [thumb]           │  ★ 4.5  (12 reviews) │
@@ -407,7 +435,7 @@ Card: hover shadow + image zoom; whole card links to `/products/:slug`; the card
 **Composition:** `CartItem` × n + `OrderSummary`.
 **OrderSummary data source:** subtotal, shipping, tax, and total render from `GET /api/cart` (`shipping`, `tax`, `total` — server-computed estimate, `system-design.md` §3.3), never computed client-side.
 
-**Cart Drawer is the single cart surface:** header cart icon **click** (desktop) or **tap** (mobile) sets `ui.isCartOpen = true` → right slide-over panel (w=400, full-height). Same components as Cart page, compacted; empty state inside drawer. One icon, one trigger, one surface — **no separate hover dropdown**. Matches `system-design.md` §4.1 `ui.isCartOpen`.
+**Cart surface — drawer + full Cart page:** the header cart icon (click/tap) sets `ui.isCartOpen = true` → right slide-over panel (`min(420px, 100vw)`, full-height, closes on overlay/✕/Esc). It reuses the Cart page's components, compacted, with its own empty state; the `[View Cart]`/`[Continue shopping]` link opens `/cart`. One trigger, one drawer — **no hover dropdown**. Full-page `/cart` remains the standard checkout path. Matches `system-design.md` §4.1 `ui.isCartOpen`.
 
 ```
 ┌──────────┐
@@ -605,8 +633,8 @@ Click overlay/✕ → `isCartOpen = false`. On mobile: full-width drawer.
 │ ┌──┬──────────────┬───────┬───────┬──────────┬────────────────┐ │
 │ │# │ Name         │ Price │ Stock │ Category │ Actions         │ │
 │ ├──┼──────────────┼───────┼───────┼──────────┼────────────────┤ │
-│ │1 │ Top T-Shirt  │$99.99 │  24   │ Clothing │ [✏️ Edit] [🗑️]   │ │
-│ │2 │ Wireless Buds│$42.00 │   0 ⚠ │Electronics│ [✏️ Edit] [🗑️]  │ │
+│ │1 │ Waxed Field Jacket │$189.00│  24   │ Outerwear │ [✏️ Edit] [🗑️]   │ │
+│ │2 │ Weekender Duffel   │$168.00│   0 ⚠ │ Travel     │ [✏️ Edit] [🗑️]  │ │
 │ └──┴──────────────┴───────┴───────┴──────────┴────────────────┘ │
 │  Pagination ◀ 1 2 ▶   (stock 0 row: red Stock cell)             │
 └────────────────────────────────────────────────────────────────┘
@@ -644,8 +672,8 @@ Click overlay/✕ → `isCartOpen = false`. On mobile: full-width drawer.
 │  Categories                             [ + New Category ]     │
 │ ┌─────────────────────────────────────────────┬───────────────┐│
 │ │ Category │ Slug │ Products │ Image │ Actions │               ││
-│ │ Electronics│ electronics│ 24 │[IMG] │ [✏️][🗑️]│               │
-│ │ Clothing  │ clothing │ 18 │[IMG] │ [✏️][🗑️]│               │
+│ │ Outerwear │ outerwear │ 24 │[IMG] │ [✏️][🗑️]│               │
+│ │ Travel  │ travel │ 12 │[IMG] │ [✏️][🗑️]│               │
 │ └─────────────────────────────────────────────┴───────────────┘│
 │ CategoryForm (modal): Name [____]  Image [SingleUpload]        │
 │                        [Save] [Cancel]                         │
@@ -787,16 +815,18 @@ All images served via `File.url`; `alt` = product/category/user name. Fallback p
 
 ---
 
-## 8. Penpot Implementation Notes
+## 8. Reference Build (`ux-ui/`) — Implementation Notes
 
-- One **Board per page**: name = page name (e.g. `Home`, `Products`, `Admin Dashboard`), width 1280 (desktop), plus mobile variants at 375.
-- Use **design tokens** (§2) in Penpot tokens catalog so code translation (Tailwind/shadcn) maps 1:1.
-- Components (Header, ProductCard, ProductTable…) built as **library components** with variants where applicable (e.g. button: default/loading/disabled; status badge: 5 states).
-- Component instance names must match `system-design.md` §5 names (e.g. `FilterSidebar`, `OrderSummary`, `StatsCards`).
-- Mark "interactive" parts (dropdowns, modals, drawers) as separate boards/frames stacked on the page board, in `Opacity 30%` off-position.
-- Export any raster placeholders directly in Penpot; never hand-pick colors not in the token set.
-- Render **dark variants** as paired boards (`Home-Dark`, `Dashboard-Dark`) for the key pages; all tokens from §2.1 dark palette.
-- Image placeholders use the thumbnail aspect ratios listed in §6.3 (square 200/300/500).
+The static HTML build in `ux-ui/` is the canonical visual spec; React translation happens **directly from the HTML, not via Penpot**. When implementing in React:
+
+- **One HTML file per page** maps to one React route (see §4): `home-page.html`, `products-page.html`, `product-detail-page.html`, `cart-page.html`, `checkout-page.html`, `order-success.html`, `orders-page.html`, `order-detail-page.html`, `profile-page.html`, `login-page.html`, `register-page.html`, `404-page.html`; admin: `admin-page.html`, `admin-products-page.html`, `admin-product-form.html`, `admin-categories-page.html`, `admin-orders-page.html`, `admin-users-page.html`.
+- **Design-system source files:** `brand-spec.md` (brand/token prose), `ecommerce-design-system.html` (token slot-bridge + primitives), `component-library.html` and `shadcn-component-library.html` (composed components incl. Header/ProductCard/CartDrawer/StatusBadges/DataTable).
+- **Design tokens** (§2) map 1:1 to the Tailwind/shadcn theme (`:root` + `.dark` CSS variables, `darkMode: ['class']`). TODO notes and raw hexes in code are banned — always reference the tokens.
+- Components (Header, ProductCard, ProductTable…) are **composable pieces** in the HTML — rebuild them as typed React + shadcn components with variants (e.g. button: default/loading/disabled; status badge: 5 states).
+- Component names must match `system-design.md` §5 names (e.g. `FilterSidebar`, `OrderSummary`, `StatsCards`).
+- Interactive parts (dropdowns, modals, drawers) are already wired in the HTML (open/close, Esc, overlay click) — copy the interaction contract, not just the look.
+- Both **light and dark variants** are in the HTML (`html.dark` class toggles all tokens); one component theme, don't fork per-mode.
+- Image placeholders use the thumbnail sizes in §6.3 (square 200/300/500) and the `assets/` photography in `ux-ui/assets/` (hero + product + category JPGs).
 
 ---
 
@@ -815,6 +845,7 @@ All contract gaps identified while writing this UI spec are now folded into `sys
 | 7 | Order snapshot fields `shipping`/`tax` + cart estimate | §2 `Order` model; §3.3 `GET /api/cart`; §3.4 order responses |
 | 8 | Legal status-transition matrix for admin PATCH | §3.4 PATCH `/api/admin/orders/:id/status` (added) |
 | 9 | Admin stats keys for all four dashboard cards | §3.7 `GET /api/admin/stats` (added `newUsersThisWeek`, `ordersThisWeek`, `lowStockProducts`) |
+| 10 | Built UI binds the spec: brand (Horizon Supply Co.), 4 categories + SKU catalog, `html.dark` theme, `--radius` 10/16px, cart drawer 420px complements `/cart` | This doc §1/§2.1–2.3/§5.6 + `implement-plan.md` §1.5/1.22 · reference: `ux-ui/` HTML |
 
 > **Already satisfied (no change needed):** MIME allow-list `jpg, jpeg, png, webp` was already uniform (§8) · `DELETE /api/cart` · `GET /api/orders` + `?status=` · `GET /api/admin/users` + role PATCH · `GET /api/cart` PATCH/DELETE `403`/`409` · avatar/category 2MB + product/review 5MB limits (§8) · `File.url` serving (all §6.3 rows servable).
 
@@ -825,7 +856,10 @@ All contract gaps identified while writing this UI spec are now folded into `sys
 Both specs are now in agreement; reconciliation items #1–#9 are folded into `system-design.md`, and `implement-plan.md` has been aligned:
 - §6 rewritten for the order-first flow (`POST /api/orders` → `POST /api/checkout/create-session` → webhook flips `PENDING → PAID`; webhook no longer creates orders)
 - Register DTO/page use a single `name` (spec has no `firstName`/`lastName`)
-- `MiniCart` replaced by the `CartDrawer` (single cart surface); category filter is a single-select radio; address fields are `line1/line2/city/state/zip/country`; Order model includes `shipping`/`tax`
+- `MiniCart` replaced by the `CartDrawer` (single quick-access surface, complements the `/cart` page); category filter is a single-select radio; address fields are `line1/line2/city/state/zip/country`; Order model includes `shipping`/`tax`
 - Stripe frontend is hosted-checkout redirect only (no Elements/Card Element)
+- **Visual source is the `ux-ui/` HTML reference build** (§8) — React is implemented against it directly, with the Penpot translation step dropped.
+
+Optional (not required for consistency): drop `Role.GUEST` from the `Role` enum — it encodes "logged out", which the UI models via request state, not a DB role.
 
 Optional (not required for consistency): drop `Role.GUEST` from the `Role` enum — it encodes "logged out", which the UI models via request state, not a DB role.

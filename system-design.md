@@ -16,6 +16,14 @@
 GUEST → CUSTOMER → USER → ADMIN
 ```
 
+### Product Domain & Seed Content
+
+The storefront (spec + seed data) implements **Horizon Supply Co.** — an everyday-carry / outdoor-lifestyle goods store:
+- **Categories:** Outerwear (24), Travel (12), Carry & Desk (18), Drinkware (9) — 63 styles total.
+- **Slugs:** `outerwear`, `travel`, `carry-desk`, `drinkware` (URL string used by `GET /api/products?categoryId=` and the product-detail breadcrumb).
+- **Products** use SKU-style slugs (e.g. FLT-04 waxed field jacket, WKD-09 weekender duffel, FLK-24 stainless flask); `isFeatured` seeds ~8 featured items for the Home grid.
+- Seed data and any admin UX copy use these names/values verbatim. Visual reference: `ux-ui/` HTML build (see `system-ui-design.md` §8).
+
 ---
 
 ## 2. Database Schema (Prisma)
@@ -143,9 +151,9 @@ enum OrderStatus {
 }
 ```
 
-**Pricing rule (server-computed, never client-side):**
+**Pricing rule (server-computed, never client-side)** — confirmed against the `ux-ui/` reference build (`cart-page.html` renders the same constants: `SHIP_FLAT = 5`, `SHIP_FREE_MIN = 100`, tax 8.25%):
 - `subtotal = Σ (OrderItem.price × quantity)`, where `price` is the **product price at order creation** (snapshot against future price changes; orders are never re-priced)
-- `shipping = $5.00` flat, **free when subtotal ≥ $100`
+- `shipping = $5.00` flat, **free when subtotal ≥ $100**
 - `tax = subtotal × 0.0825` (state rate, fixed for v1)
 - `total = subtotal + shipping + tax`
 
@@ -1418,10 +1426,10 @@ App
 ├── Layout
 │   ├── Header
 │   │   ├── Logo
-│   │   ├── SearchBar
-│   │   ├── CartIcon (with badge)
-│   │   ├── UserMenu (dropdown)
-│   │   └── MobileMenu
+│   │   ├── SearchBar (pill, radius-full)
+│   │   ├── CartIcon (with badge) → opens CartDrawer
+│   │   ├── UserMenu (dropdown, 236px)
+│   │   └── MobileMenu (320px left slide-out)
 │   ├── Sidebar (admin only)
 │   └── Footer
 │
@@ -1442,6 +1450,9 @@ App
 │   │   ├── ProductInfo
 │   │   ├── QuantitySelector
 │   │   ├── ReviewSection
+│   │   │   ├── StarRating
+│   │   │   ├── ReviewForm
+│   │   │   └── ReviewList → ReviewCard (+ ReviewImages)
 │   │   └── RelatedProducts
 │   │
 │   ├── Cart
@@ -1450,7 +1461,7 @@ App
 │   │
 │   ├── Checkout
 │   │   ├── AddressForm
-│   │   ├── PaymentForm (Stripe)
+│   │   ├── PaymentForm (Stripe hosted redirect)
 │   │   └── OrderSummary
 │   │
 │   ├── Profile
@@ -1467,12 +1478,16 @@ App
 │       └── RegisterForm
 │
 ├── Components
+│   ├── CartDrawer (right slide-over, min 420px; shared by Header across all customer pages)
 │   ├── FileUpload
 │   │   ├── SingleUpload
 │   │   └── MultiUpload
 │   ├── ImageGallery
 │   ├── Pagination
-│   └── SearchBar
+│   ├── SearchBar
+│   ├── OrderStatusBadge (status ⇄ color-chip mapping, 5 states)
+│   ├── Breadcrumb
+│   └── Toast
 │
 └── Admin
     ├── Dashboard
@@ -1488,6 +1503,8 @@ App
     └── UserManagement
         └── UserTable
 ```
+
+> Visual contract for every named component = the matching section in `ux-ui/` (see `system-ui-design.md` §8). `CartDrawer` replaces any standalone hover-`MiniCart`; the full `/cart` page and the drawer share `CartItem`/`OrderSummary`.
 
 ---
 
