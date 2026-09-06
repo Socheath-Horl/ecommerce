@@ -44,13 +44,15 @@
 - [x] Verify: `npm run build` compiles
 
 ### 1.5 Backend — Seed File
-- [ ] Create `prisma/seed.ts`
-- [ ] Seed admin user (email, hashed password, ADMIN role)
-- [ ] Seed sample categories (brand = Horizon Supply Co. — match `ux-ui/`): Outerwear, Travel, Carry & Desk, Drinkware
-- [ ] Seed sample products per category (use the SKUs from `ux-ui/`: FLT-04 Field Jacket, WKD-09 Weekender Duffel, FLK-24 Stainless Flask, FGT-02 Flight Tote, DSR-01 Desk Roll, ZPL-L4 Zip Pouch, TMB-16 Tumbler, MRN-HV Merino Crew)
-- [ ] Add seed script to `package.json`
-- [ ] Run seed (`npx prisma db seed`)
-- [ ] Verify: `npx prisma studio` shows seed data
+- [x] Add `Product.isFeatured Boolean @default(false)` + migration `product_is_featured` (Home "Featured Products" needs it)
+- [x] Install `tsx` (seed runner)
+- [x] Register seed command in `prisma.config.ts` (`migrations.seed: 'tsx prisma/seed.ts'` — Prisma 7 moved this out of `package.json`)
+- [x] Create `prisma/seed.ts` (idempotent `upsert` by slug/email; driver adapter `PrismaPg`)
+- [x] Seed admin user (`admin@horizon.supply` / `Admin123!`, bcrypt-hashed, ADMIN role)
+- [x] Seed sample categories (brand = Horizon Supply Co. — match `ux-ui/`): Outerwear, Travel, Carry & Desk, Drinkware
+- [x] Seed sample products per category (use the SKUs from `ux-ui/`: FLT-04 Field Jacket, WKD-09 Weekender Duffel, FLK-24 Stainless Flask, FGT-02 Flight Tote, DSR-01 Desk Roll, ZPL-L4 Zip Pouch, TMB-16 Tumbler, MRN-HV Merino Crew — all `isFeatured`)
+- [x] Run seed (`npx prisma db seed`)
+- [x] Verify: data check (categories = 4, products = 8, admin = ADMIN)
 
 ### 1.6 Backend — Auth Module Structure
 - [ ] Create `AuthModule` (`src/modules/auth/auth.module.ts`)

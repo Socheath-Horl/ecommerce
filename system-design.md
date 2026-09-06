@@ -72,6 +72,7 @@ model Product {
   description String
   price       Decimal
   stock       Int      @default(0)
+  isFeatured  Boolean  @default(false)
   categoryId  String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
