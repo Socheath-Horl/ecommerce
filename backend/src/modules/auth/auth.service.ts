@@ -89,6 +89,12 @@ export class AuthService {
     });
   }
 
+  async getProfile(userId: string): Promise<AuthUser> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new UnauthorizedException('Unauthorized');
+    return { id: user.id, name: user.name, email: user.email, role: user.role };
+  }
+
   private async buildAuthResult(user: AuthUser): Promise<AuthResult> {
     const payload = { sub: user.id, email: user.email, role: user.role };
     const accessToken = await this.jwt.signAsync(payload);

@@ -39,6 +39,8 @@ export class RefreshDataDto {
 
 export class RefreshResponseDto extends ApiResponse(RefreshDataDto) {}
 
+export class ProfileResponseDto extends ApiResponse(AuthUserDto) {}
+
 export class MessageResponseDto {
   @ApiProperty({ example: true })
   success: boolean;

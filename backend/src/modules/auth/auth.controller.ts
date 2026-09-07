@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Put, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import {
   ApiBadRequestResponse,
@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import {
   AuthResponseDto,
   MessageResponseDto,
+  ProfileResponseDto,
   RefreshResponseDto,
 } from '@/modules/auth/dto/auth-response.dto';
 import { ChangePasswordDto } from '@/modules/auth/dto/change-password.dto';
@@ -86,5 +87,16 @@ export class AuthController {
     const { id } = (req as Request & { user: { id: string } }).user;
     await this.authService.changePassword(id, dto);
     return { success: true, message: 'Password updated successfully' };
+  }
+
+  @ApiOperation({ summary: 'Get the current signed-in user profile' })
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: ProfileResponseDto, description: 'Current user data' })
+  @ApiUnauthorizedResponse({ type: ApiErrorDto, description: 'Unauthorized' })
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async profile(@Req() req: Request) {
+    const { id } = (req as Request & { user: { id: string } }).user;
+    return { success: true, data: await this.authService.getProfile(id) };
   }
 }

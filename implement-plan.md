@@ -134,11 +134,11 @@
 - [x] Verify: Password changes successfully
 
 ### 1.14 Backend — Profile Endpoint
-- [ ] Implement `getProfile()` in AuthService
-- [ ] Return current user data from JWT payload
-- [ ] Add GET `/api/auth/profile` route (protected)
-- [ ] OpenAPI: document GET /api/auth/profile (@ApiBearerAuth, @ApiOkResponse, @ApiUnauthorizedResponse)
-- [ ] Verify: Profile returns current user data
+- [x] Implement `getProfile()` in AuthService
+- [x] Return current user data from JWT payload
+- [x] Add GET `/api/auth/profile` route (protected)
+- [x] OpenAPI: document GET /api/auth/profile (@ApiBearerAuth, @ApiOkResponse, @ApiUnauthorizedResponse)
+- [x] Verify: Profile returns current user data
 
 ### 1.15 Backend — Auth Error Handling
 - [ ] Return 401 for invalid credentials
