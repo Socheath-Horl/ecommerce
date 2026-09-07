@@ -55,32 +55,32 @@
 - [x] Verify: data check (categories = 4, products = 8, admin = ADMIN)
 
 ### 1.6 Backend — Auth Module Structure
-- [ ] Create `AuthModule` (`src/modules/auth/auth.module.ts`)
-- [ ] Create `AuthService` (`src/modules/auth/auth.service.ts`)
-- [ ] Create `AuthController` (`src/modules/auth/auth.controller.ts`)
-- [ ] Register AuthModule in `AppModule`
-- [ ] Verify: `npm run build` compiles
+- [x] Create `AuthModule` (`src/modules/auth/auth.module.ts`)
+- [x] Create `AuthService` (`src/modules/auth/auth.service.ts`)
+- [x] Create `AuthController` (`src/modules/auth/auth.controller.ts`)
+- [x] Register AuthModule in `AppModule`
+- [x] Verify: `npm run build` compiles
 
 ### 1.7 Backend — Auth DTOs
-- [ ] Create `RegisterDto` (email, password, name)
-- [ ] Create `LoginDto` (email, password)
-- [ ] Create `RefreshTokenDto` (refreshToken)
-- [ ] Create `ChangePasswordDto` (currentPassword, newPassword)
-- [ ] Add validation decorators to all DTOs
-- [ ] Verify: `npm run build` compiles
+- [x] Create `RegisterDto` (email, password, name)
+- [x] Create `LoginDto` (email, password)
+- [x] Create `RefreshTokenDto` (refreshToken)
+- [x] Create `ChangePasswordDto` (currentPassword, newPassword)
+- [x] Add validation decorators to all DTOs
+- [x] Verify: `npm run build` compiles
 
 ### 1.8 Backend — JWT Strategy
-- [ ] Create JWT strategy (`src/modules/auth/strategies/jwt.strategy.ts`)
-- [ ] Configure strategy to extract token from Authorization header
-- [ ] Configure strategy to validate token and attach user to request
-- [ ] Register strategy in AuthModule
-- [ ] Verify: `npm run build` compiles
+- [x] Create JWT strategy (`src/modules/auth/strategies/jwt.strategy.ts`)
+- [x] Configure strategy to extract token from Authorization header
+- [x] Configure strategy to validate token and attach user to request
+- [x] Register strategy in AuthModule
+- [x] Verify: `npm run build` compiles
 
 ### 1.9 Backend — Auth Guards
-- [ ] Create `JwtAuthGuard` (`src/modules/auth/guards/jwt-auth.guard.ts`)
-- [ ] Create `RolesGuard` (`src/modules/auth/guards/roles.guard.ts`)
-- [ ] Create `@Roles()` decorator (`src/modules/auth/decorators/roles.decorator.ts`)
-- [ ] Verify: `npm run build` compiles
+- [x] Create `JwtAuthGuard` (`src/modules/auth/guards/jwt-auth.guard.ts`)
+- [x] Create `RolesGuard` (`src/modules/auth/guards/roles.guard.ts`)
+- [x] Create `@Roles()` decorator (`src/modules/auth/decorators/roles.decorator.ts`)
+- [x] Verify: `npm run build` compiles
 
 ### 1.10 Backend — Register Endpoint
 - [ ] Implement `register()` in AuthService
