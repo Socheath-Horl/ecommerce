@@ -17,13 +17,21 @@ export function ApiResponse<T>(type: Type<T>): Type<ApiResponseShape<T>> {
   return ApiResponseDto as Type<ApiResponseShape<T>>;
 }
 
-export class ApiErrorDto {
-  @ApiProperty({ description: 'HTTP status code', example: 401 })
-  statusCode: number;
+export class ApiErrorDetailDto {
+  @ApiProperty({ description: 'Machine-readable error code', example: 'UNAUTHORIZED' })
+  code: string;
 
-  @ApiProperty({ description: 'Error message', example: 'Invalid credentials' })
+  @ApiProperty({ description: 'Human-readable error message', example: 'Invalid credentials' })
   message: string;
 
-  @ApiPropertyOptional({ description: 'Error category', example: 'Unauthorized' })
-  error?: string;
+  @ApiPropertyOptional({ type: [String], description: 'Field-level error details (validation)' })
+  details?: string[];
+}
+
+export class ApiErrorDto {
+  @ApiProperty({ example: false })
+  success: boolean;
+
+  @ApiProperty({ type: ApiErrorDetailDto })
+  error: ApiErrorDetailDto;
 }

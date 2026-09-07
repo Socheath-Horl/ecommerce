@@ -141,11 +141,12 @@
 - [x] Verify: Profile returns current user data
 
 ### 1.15 Backend — Auth Error Handling
-- [ ] Return 401 for invalid credentials
-- [ ] Return 409 for duplicate email on register
-- [ ] Return 400 for invalid/expired refresh token
-- [ ] Return 400 for wrong current password
-- [ ] Verify: All error cases return correct status codes
+- [x] Return 401 for invalid credentials
+- [x] Return 409 for duplicate email on register
+- [x] Return 401 for invalid/expired refresh token (system-design: 401, not 400)
+- [x] Return 401 for wrong current password (system-design: 401, not 400)
+- [x] Verify: All error cases return correct status codes
+- [x] Add global exception filter to shape error bodies as `{ success, error: { code, message, details } }`
 
 ### 1.16 Backend — MinIO Module
 - [ ] Create `MinioModule` (`src/modules/minio/minio.module.ts`)
