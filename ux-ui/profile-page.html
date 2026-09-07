@@ -1461,7 +1461,7 @@
         document.getElementById('pw-new').setAttribute('aria-invalid', 'false');
         document.getElementById('pw-confirm').setAttribute('aria-invalid', 'false');
         if (!current) { fc.textContent = 'Enter your current password.'; document.getElementById('pw-current').setAttribute('aria-invalid', 'true'); ok = false; }
-        if (pwNew.length < 8) { fn.textContent = 'Password must be at least 8 characters.'; document.getElementById('pw-new').setAttribute('aria-invalid', 'true'); ok = false; }
+        if (pwNew.length < 6) { fn.textContent = 'Password must be at least 6 characters.'; document.getElementById('pw-new').setAttribute('aria-invalid', 'true'); ok = false; }
         if (pwNew !== confirm) { fco.textContent = 'Passwords do not match.'; document.getElementById('pw-confirm').setAttribute('aria-invalid', 'true'); ok = false; }
         if (!ok) return;
         toast('success', 'Password updated', 'Your password was changed.');

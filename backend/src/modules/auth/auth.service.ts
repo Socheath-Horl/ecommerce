@@ -4,6 +4,7 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '@/prisma/prisma.service';
+import { ChangePasswordDto } from '@/modules/auth/dto/change-password.dto';
 import { LoginDto } from '@/modules/auth/dto/login.dto';
 import { RegisterDto } from '@/modules/auth/dto/register.dto';
 import type { JwtPayload } from '@/modules/auth/strategies/jwt.strategy';
@@ -75,6 +76,17 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('Invalid refresh token');
     const { accessToken, refreshToken: newRefreshToken } = await this.buildAuthResult(user);
     return { accessToken, refreshToken: newRefreshToken };
+  }
+
+  async changePassword(userId: string, dto: ChangePasswordDto): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !(await bcrypt.compare(dto.currentPassword, user.password))) {
+      throw new UnauthorizedException('Current password incorrect');
+    }
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: await bcrypt.hash(dto.newPassword, 10) },
+    });
   }
 
   private async buildAuthResult(user: AuthUser): Promise<AuthResult> {

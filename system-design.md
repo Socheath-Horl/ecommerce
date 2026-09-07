@@ -320,7 +320,7 @@ Authorization: Bearer <accessToken>
 401 - Unauthorized
 ```
 
-#### PATCH `/api/auth/password`
+#### PUT `/api/auth/change-password`
 ```typescript
 // Headers
 Authorization: Bearer <accessToken>

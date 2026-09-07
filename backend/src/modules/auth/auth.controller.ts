@@ -1,4 +1,5 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Put, Req, UseGuards } from '@nestjs/common';
+import type { Request } from 'express';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -14,9 +15,10 @@ import { AuthService } from '@/modules/auth/auth.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import {
   AuthResponseDto,
-  LogoutResponseDto,
+  MessageResponseDto,
   RefreshResponseDto,
 } from '@/modules/auth/dto/auth-response.dto';
+import { ChangePasswordDto } from '@/modules/auth/dto/change-password.dto';
 import { LoginDto } from '@/modules/auth/dto/login.dto';
 import { RefreshTokenDto } from '@/modules/auth/dto/refresh-token.dto';
 import { RegisterDto } from '@/modules/auth/dto/register.dto';
@@ -51,7 +53,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Sign out — invalidates the refresh token (client clears storage)' })
   @ApiBearerAuth()
   @ApiBody({ type: RefreshTokenDto })
-  @ApiOkResponse({ type: LogoutResponseDto, description: 'Logged out successfully' })
+  @ApiOkResponse({ type: MessageResponseDto, description: 'Logged out successfully' })
   @ApiUnauthorizedResponse({ type: ApiErrorDto, description: 'Missing/invalid refresh token' })
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -69,5 +71,20 @@ export class AuthController {
   @Post('refresh')
   async refresh(@Body() dto: RefreshTokenDto) {
     return { success: true, data: await this.authService.refresh(dto.refreshToken) };
+  }
+
+  @ApiOperation({ summary: 'Update the account password' })
+  @ApiBearerAuth()
+  @ApiBody({ type: ChangePasswordDto })
+  @ApiOkResponse({ type: MessageResponseDto, description: 'Password updated successfully' })
+  @ApiBadRequestResponse({ type: ApiErrorDto, description: 'Validation error' })
+  @ApiUnauthorizedResponse({ type: ApiErrorDto, description: 'Unauthorized or current password incorrect' })
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Put('change-password')
+  async changePassword(@Req() req: Request, @Body() dto: ChangePasswordDto) {
+    const { id } = (req as Request & { user: { id: string } }).user;
+    await this.authService.changePassword(id, dto);
+    return { success: true, message: 'Password updated successfully' };
   }
 }

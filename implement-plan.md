@@ -125,13 +125,13 @@
 - [x] Verify: Refresh token returns new access token
 
 ### 1.13 Backend — Change Password Endpoint
-- [ ] Implement `changePassword()` in AuthService
-- [ ] Verify current password matches
-- [ ] Hash new password
-- [ ] Update password in database
-- [ ] Add PATCH `/api/auth/change-password` route (protected)
-- [ ] OpenAPI: document PATCH /api/auth/change-password (@ApiBearerAuth, @ApiBody ChangePasswordDto, @ApiOkResponse, @ApiBadRequestResponse)
-- [ ] Verify: Password changes successfully
+- [x] Implement `changePassword()` in AuthService
+- [x] Verify current password matches
+- [x] Hash new password
+- [x] Update password in database
+- [x] Add PUT `/api/auth/change-password` route (protected, min 6 per register reconciliation)
+- [x] OpenAPI: document PUT /api/auth/change-password (@ApiBearerAuth, @ApiBody ChangePasswordDto, @ApiOkResponse, @ApiBadRequestResponse)
+- [x] Verify: Password changes successfully
 
 ### 1.14 Backend — Profile Endpoint
 - [ ] Implement `getProfile()` in AuthService

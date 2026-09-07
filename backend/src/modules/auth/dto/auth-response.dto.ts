@@ -39,7 +39,7 @@ export class RefreshDataDto {
 
 export class RefreshResponseDto extends ApiResponse(RefreshDataDto) {}
 
-export class LogoutResponseDto {
+export class MessageResponseDto {
   @ApiProperty({ example: true })
   success: boolean;
 
