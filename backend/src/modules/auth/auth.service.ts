@@ -1,9 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '@/prisma/prisma.service';
+import { LoginDto } from '@/modules/auth/dto/login.dto';
 import { RegisterDto } from '@/modules/auth/dto/register.dto';
 
 export interface AuthUser {
@@ -40,6 +41,24 @@ export class AuthService {
       },
     });
     return this.buildAuthResult(user);
+  }
+
+  async login(dto: LoginDto): Promise<AuthResult> {
+    const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    if (!user || !(await bcrypt.compare(dto.password, user.password))) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    return this.buildAuthResult(user);
+  }
+
+  async logout(refreshToken: string): Promise<void> {
+    try {
+      await this.jwt.verifyAsync(refreshToken, {
+        secret: this.config.get<string>('REFRESH_TOKEN_SECRET') ?? 'change-me-refresh',
+      });
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
   }
 
   private async buildAuthResult(user: AuthUser): Promise<AuthResult> {

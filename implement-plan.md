@@ -100,20 +100,20 @@
 - [x] Verify: Register a new user via API
 
 ### 1.11 Backend — Login & Logout Endpoints
-- [ ] Implement `login()` in AuthService
-- [ ] Find user by email
-- [ ] Compare password with bcrypt
-- [ ] Generate access token (JWT)
-- [ ] Generate refresh token (JWT)
-- [ ] Return both tokens
-- [ ] Add POST `/api/auth/login` route in AuthController
-- [ ] Implement `logout()` in AuthService
-- [ ] Validate refresh token
-- [ ] Invalidate refresh token (remove from storage)
-- [ ] Add POST `/api/auth/logout` route in AuthController
-- [ ] OpenAPI: document POST /api/auth/login + POST /api/auth/logout (@ApiBody LoginDto, @ApiOkResponse, @ApiUnauthorizedResponse)
-- [ ] Verify: Login returns access + refresh tokens
-- [ ] Verify: Logout invalidates refresh token
+- [x] Implement `login()` in AuthService
+- [x] Find user by email
+- [x] Compare password with bcrypt
+- [x] Generate access token (JWT)
+- [x] Generate refresh token (JWT)
+- [x] Return both tokens
+- [x] Add POST `/api/auth/login` route in AuthController
+- [x] Implement `logout()` in AuthService
+- [x] Validate refresh token
+- [x] Invalidate refresh token (client clears storage — stateless JWT, no server-side token table)
+- [x] Add POST `/api/auth/logout` route in AuthController (JwtAuthGuard-protected)
+- [x] OpenAPI: document POST /api/auth/login + POST /api/auth/logout (@ApiBody LoginDto/RefreshTokenDto, @ApiOkResponse, @ApiUnauthorizedResponse, @ApiBearerAuth on logout)
+- [x] Verify: Login returns access + refresh tokens
+- [x] Verify: Logout invalidates refresh token
 
 ### 1.12 Backend — Refresh Token Endpoint
 - [ ] Implement `refreshToken()` in AuthService
