@@ -116,13 +116,13 @@
 - [x] Verify: Logout invalidates refresh token
 
 ### 1.12 Backend — Refresh Token Endpoint
-- [ ] Implement `refreshToken()` in AuthService
-- [ ] Validate refresh token
-- [ ] Generate new access token
-- [ ] Return new access token
-- [ ] Add POST `/api/auth/refresh` route in AuthController
-- [ ] OpenAPI: document POST /api/auth/refresh (@ApiBody RefreshTokenDto, @ApiOkResponse, @ApiBadRequestResponse)
-- [ ] Verify: Refresh token returns new access token
+- [x] Implement `refreshToken()` in AuthService
+- [x] Validate refresh token
+- [x] Generate new access token
+- [x] Return new access token (plus rotated refresh token per system-design)
+- [x] Add POST `/api/auth/refresh` route in AuthController
+- [x] OpenAPI: document POST /api/auth/refresh (@ApiBody RefreshTokenDto, @ApiOkResponse, @ApiUnauthorizedResponse)
+- [x] Verify: Refresh token returns new access token
 
 ### 1.13 Backend — Change Password Endpoint
 - [ ] Implement `changePassword()` in AuthService

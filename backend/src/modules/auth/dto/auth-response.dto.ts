@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
+import { ApiResponse } from '@/common/dto/response.dto';
 
 export class AuthUserDto {
   @ApiProperty({ format: 'uuid', description: 'User UUID' })
@@ -26,13 +27,17 @@ export class AuthResultDto {
   refreshToken: string;
 }
 
-export class AuthResponseDto {
-  @ApiProperty({ example: true })
-  success: boolean;
+export class AuthResponseDto extends ApiResponse(AuthResultDto) {}
 
-  @ApiProperty({ type: AuthResultDto })
-  data: AuthResultDto;
+export class RefreshDataDto {
+  @ApiProperty({ description: 'Short-lived access token (sent as Bearer)' })
+  accessToken: string;
+
+  @ApiProperty({ description: 'New refresh token (issued on rotation)' })
+  refreshToken: string;
 }
+
+export class RefreshResponseDto extends ApiResponse(RefreshDataDto) {}
 
 export class LogoutResponseDto {
   @ApiProperty({ example: true })

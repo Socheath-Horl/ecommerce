@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '@/prisma/prisma.service';
 import { LoginDto } from '@/modules/auth/dto/login.dto';
 import { RegisterDto } from '@/modules/auth/dto/register.dto';
+import type { JwtPayload } from '@/modules/auth/strategies/jwt.strategy';
 
 export interface AuthUser {
   id: string;
@@ -59,6 +60,21 @@ export class AuthService {
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
+  }
+
+  async refresh(refreshToken: string): Promise<Pick<AuthResult, 'accessToken' | 'refreshToken'>> {
+    let payload: JwtPayload;
+    try {
+      payload = await this.jwt.verifyAsync(refreshToken, {
+        secret: this.config.get<string>('REFRESH_TOKEN_SECRET') ?? 'change-me-refresh',
+      });
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+    const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
+    if (!user) throw new UnauthorizedException('Invalid refresh token');
+    const { accessToken, refreshToken: newRefreshToken } = await this.buildAuthResult(user);
+    return { accessToken, refreshToken: newRefreshToken };
   }
 
   private async buildAuthResult(user: AuthUser): Promise<AuthResult> {

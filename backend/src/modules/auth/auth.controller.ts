@@ -15,6 +15,7 @@ import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import {
   AuthResponseDto,
   LogoutResponseDto,
+  RefreshResponseDto,
 } from '@/modules/auth/dto/auth-response.dto';
 import { LoginDto } from '@/modules/auth/dto/login.dto';
 import { RefreshTokenDto } from '@/modules/auth/dto/refresh-token.dto';
@@ -58,5 +59,15 @@ export class AuthController {
   async logout(@Body() dto: RefreshTokenDto) {
     await this.authService.logout(dto.refreshToken);
     return { success: true, message: 'Logged out successfully' };
+  }
+
+  @ApiOperation({ summary: 'Refresh the token pair — exchange a valid refresh token for new access + refresh tokens' })
+  @ApiBody({ type: RefreshTokenDto })
+  @ApiOkResponse({ type: RefreshResponseDto, description: 'New access + refresh tokens issued' })
+  @ApiUnauthorizedResponse({ type: ApiErrorDto, description: 'Invalid/expired refresh token' })
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh')
+  async refresh(@Body() dto: RefreshTokenDto) {
+    return { success: true, data: await this.authService.refresh(dto.refreshToken) };
   }
 }
