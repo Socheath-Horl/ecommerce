@@ -1,5 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { apiReference } from '@scalar/nestjs-api-reference';
+import type { Request, Response } from 'express';
 import { AppModule } from '@/app.module';
 
 async function bootstrap() {
@@ -14,6 +17,23 @@ async function bootstrap() {
 
   // API prefix
   app.setGlobalPrefix('api');
+
+  // OpenAPI document + Scalar interactive UI
+  const config = new DocumentBuilder()
+    .setTitle('Horizon Supply Co. API')
+    .setDescription('E-commerce REST API — Horizon Supply Co.')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+
+  app.use('/api-json', (_req: Request, res: Response) => res.json(document));
+  app.use(
+    '/api/docs',
+    apiReference({
+      spec: { content: document },
+    }),
+  );
 
   // CORS
   app.enableCors({

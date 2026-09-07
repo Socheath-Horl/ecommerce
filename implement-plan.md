@@ -54,6 +54,13 @@
 - [x] Run seed (`npx prisma db seed`)
 - [x] Verify: data check (categories = 4, products = 8, admin = ADMIN)
 
+### 1.5.5 Backend — OpenAPI Docs (Scalar UI)
+- [x] Install `@nestjs/swagger` + `@scalar/nestjs-api-reference`
+- [x] Configure `SwaggerModule` + Scalar UI at `/api/docs` (raw OpenAPI JSON at `/api-json`)
+- [x] Add a shared reference for the `{ success, data, message }` response envelope
+- [x] Backfill OpenAPI decorators on endpoints already built (§1.10 register)
+- [x] Verify: `npm run build` + `GET /api/docs` renders the interactive UI
+
 ### 1.6 Backend — Auth Module Structure
 - [x] Create `AuthModule` (`src/modules/auth/auth.module.ts`)
 - [x] Create `AuthService` (`src/modules/auth/auth.service.ts`)
@@ -83,13 +90,14 @@
 - [x] Verify: `npm run build` compiles
 
 ### 1.10 Backend — Register Endpoint
-- [ ] Implement `register()` in AuthService
-- [ ] Hash password with bcrypt before saving
-- [ ] Check for existing user (email unique)
-- [ ] Create user in database
-- [ ] Return user data (without password)
-- [ ] Add POST `/api/auth/register` route in AuthController
-- [ ] Verify: Register a new user via API
+- [x] Implement `register()` in AuthService
+- [x] Hash password with bcrypt before saving
+- [x] Check for existing user (email unique)
+- [x] Create user in database
+- [x] Return user data (without password)
+- [x] Add POST `/api/auth/register` route in AuthController
+- [x] OpenAPI: document POST /api/auth/register (@ApiOperation with summary, @ApiBody RegisterDto, @ApiCreatedResponse, @ApiBadRequestResponse, @ApiConflictResponse)
+- [x] Verify: Register a new user via API
 
 ### 1.11 Backend — Login & Logout Endpoints
 - [ ] Implement `login()` in AuthService
@@ -103,6 +111,7 @@
 - [ ] Validate refresh token
 - [ ] Invalidate refresh token (remove from storage)
 - [ ] Add POST `/api/auth/logout` route in AuthController
+- [ ] OpenAPI: document POST /api/auth/login + POST /api/auth/logout (@ApiBody LoginDto, @ApiOkResponse, @ApiUnauthorizedResponse)
 - [ ] Verify: Login returns access + refresh tokens
 - [ ] Verify: Logout invalidates refresh token
 
@@ -112,6 +121,7 @@
 - [ ] Generate new access token
 - [ ] Return new access token
 - [ ] Add POST `/api/auth/refresh` route in AuthController
+- [ ] OpenAPI: document POST /api/auth/refresh (@ApiBody RefreshTokenDto, @ApiOkResponse, @ApiBadRequestResponse)
 - [ ] Verify: Refresh token returns new access token
 
 ### 1.13 Backend — Change Password Endpoint
@@ -120,12 +130,14 @@
 - [ ] Hash new password
 - [ ] Update password in database
 - [ ] Add PATCH `/api/auth/change-password` route (protected)
+- [ ] OpenAPI: document PATCH /api/auth/change-password (@ApiBearerAuth, @ApiBody ChangePasswordDto, @ApiOkResponse, @ApiBadRequestResponse)
 - [ ] Verify: Password changes successfully
 
 ### 1.14 Backend — Profile Endpoint
 - [ ] Implement `getProfile()` in AuthService
 - [ ] Return current user data from JWT payload
 - [ ] Add GET `/api/auth/profile` route (protected)
+- [ ] OpenAPI: document GET /api/auth/profile (@ApiBearerAuth, @ApiOkResponse, @ApiUnauthorizedResponse)
 - [ ] Verify: Profile returns current user data
 
 ### 1.15 Backend — Auth Error Handling
@@ -157,18 +169,21 @@
 - [ ] Use simple `multer` memory storage
 - [ ] Save file record in database
 - [ ] Return file data
+- [ ] OpenAPI: document POST /api/files/upload (@ApiConsumes multipart/form-data, @ApiBody, @ApiCreatedResponse)
 - [ ] Verify: Upload image via API, check MinIO + DB
 
 ### 1.19 Backend — File List Endpoint
 - [ ] Implement GET `/api/files` endpoint
 - [ ] Filter by entityType and entityId
 - [ ] Return list of files
+- [ ] OpenAPI: document GET /api/files (@ApiOkResponse)
 - [ ] Verify: List files for an entity
 
 ### 1.20 Backend — File Delete Endpoint
 - [ ] Implement DELETE `/api/files/:id` endpoint
 - [ ] Delete from MinIO
 - [ ] Delete record from database
+- [ ] OpenAPI: document DELETE /api/files/:id (@ApiParam id, @ApiOkResponse/@ApiNoContentResponse, @ApiNotFoundResponse)
 - [ ] Verify: Delete removes from MinIO + DB
 
 ### 1.21 Backend — File Link/Unlink Endpoints
@@ -176,6 +191,7 @@
 - [ ] Link file to entity (entityType + entityId)
 - [ ] Implement PATCH `/api/files/:id/unlink` endpoint
 - [ ] Unlink file from entity
+- [ ] OpenAPI: document PATCH /api/files/:id/link|unlink (@ApiBody, @ApiOkResponse)
 - [ ] Verify: Link/unlink works correctly
 
 ### 1.22 Frontend — Vite Project
@@ -281,6 +297,7 @@
 - [ ] Return users with total count and order count
 - [ ] Add GET `/api/admin/users` route (ADMIN only)
 - [ ] Apply AdminGuard
+- [ ] OpenAPI: document GET /api/admin/users (@ApiBearerAuth, @ApiOkResponse, @ApiForbiddenResponse)
 - [ ] Verify: Admin can list users
 
 ### 2.4 Backend — Admin Update Role Endpoint
@@ -289,6 +306,7 @@
 - [ ] Prevent self-role change
 - [ ] Add PATCH `/api/admin/users/:id/role` route (ADMIN only)
 - [ ] Apply AdminGuard
+- [ ] OpenAPI: document PATCH /api/admin/users/:id/role (@ApiBearerAuth, @ApiBody, @ApiOkResponse, @ApiForbiddenResponse)
 - [ ] Verify: Admin can change user role
 
 ### 2.5 Backend — Admin User Error Handling
@@ -397,12 +415,14 @@
 - [ ] Auto-generate slug from name
 - [ ] Check for duplicate name
 - [ ] Add POST `/api/categories` route (admin only)
+- [ ] OpenAPI: document POST /api/categories (@ApiBearerAuth, @ApiBody, @ApiCreatedResponse, @ApiConflictResponse)
 - [ ] Verify: Admin can create category
 
 ### 3.5 Backend — List Categories Endpoint
 - [ ] Implement `findAll()` in CategoriesService
 - [ ] Return all categories (public)
 - [ ] Add GET `/api/categories` route
+- [ ] OpenAPI: document GET /api/categories (@ApiOkResponse)
 - [ ] Verify: Categories list returns data
 
 ### 3.6 Backend — Update Category Endpoint
@@ -410,6 +430,7 @@
 - [ ] Check category exists
 - [ ] Update slug if name changes
 - [ ] Add PATCH `/api/categories/:id` route (admin only)
+- [ ] OpenAPI: document PATCH /api/categories/:id (@ApiBearerAuth, @ApiBody, @ApiOkResponse, @ApiNotFoundResponse)
 - [ ] Verify: Admin can update category
 
 ### 3.7 Backend — Delete Category Endpoint
@@ -417,6 +438,7 @@
 - [ ] Check for products in category
 - [ ] Prevent delete if products exist
 - [ ] Add DELETE `/api/categories/:id` route (admin only)
+- [ ] OpenAPI: document DELETE /api/categories/:id (@ApiBearerAuth, @ApiOkResponse/@ApiNoContentResponse, @ApiNotFoundResponse, @ApiConflictResponse)
 - [ ] Verify: Admin can delete category (if no products)
 
 ### 3.8 Backend — Products Module Structure
@@ -451,6 +473,7 @@
 - [ ] Validate category exists
 - [ ] Create product in database
 - [ ] Add POST `/api/products` route (admin only)
+- [ ] OpenAPI: document POST /api/products (@ApiBearerAuth, @ApiBody, @ApiCreatedResponse, @ApiConflictResponse)
 - [ ] Verify: Admin can create product
 
 ### 3.13 Backend — List Products Endpoint
@@ -460,12 +483,14 @@
 - [ ] Add sorting (price, date, name)
 - [ ] Include category and images in response
 - [ ] Add GET `/api/products` route (public)
+- [ ] OpenAPI: document GET /api/products (@ApiOkResponse, pagination query params)
 - [ ] Verify: Products list with filters works
 
 ### 3.14 Backend — Get Product Endpoint
 - [ ] Implement `findBySlug()` in ProductsService
 - [ ] Include category and images
 - [ ] Add GET `/api/products/:slug` route (public)
+- [ ] OpenAPI: document GET /api/products/:slug (@ApiParam slug, @ApiOkResponse, @ApiNotFoundResponse)
 - [ ] Verify: Single product returns correctly
 
 ### 3.15 Backend — Update Product Endpoint
@@ -474,6 +499,7 @@
 - [ ] Validate category exists (if changing)
 - [ ] Update slug if name changes
 - [ ] Add PATCH `/api/products/:id` route (admin only)
+- [ ] OpenAPI: document PATCH /api/products/:id (@ApiBearerAuth, @ApiBody, @ApiOkResponse, @ApiNotFoundResponse)
 - [ ] Verify: Admin can update product
 
 ### 3.16 Backend — Delete Product Endpoint
@@ -482,6 +508,7 @@
 - [ ] Delete product images from MinIO
 - [ ] Delete product from database
 - [ ] Add DELETE `/api/products/:id` route (admin only)
+- [ ] OpenAPI: document DELETE /api/products/:id (@ApiBearerAuth, @ApiOkResponse/@ApiNoContentResponse, @ApiNotFoundResponse, @ApiConflictResponse)
 - [ ] Verify: Admin can delete product
 
 ### 3.17 Backend — Product Error Handling
@@ -663,6 +690,7 @@
 - [ ] Apply image filter
 - [ ] Generate thumbnails based on entity type
 - [ ] Save both original and thumbnails
+- [ ] OpenAPI: document POST /api/files/upload (@ApiConsumes multipart/form-data, @ApiBody, @ApiCreatedResponse)
 - [ ] Verify: Upload generates thumbnails
 
 ### 4.6 Backend — Multiple Upload Endpoint
@@ -670,6 +698,7 @@
 - [ ] Accept max 5 files
 - [ ] Validate each file (5MB limit, image types)
 - [ ] Return array of uploaded files
+- [ ] OpenAPI: document POST /api/files/upload/multiple (@ApiConsumes multipart/form-data, @ApiBody, @ApiCreatedResponse)
 - [ ] Verify: Multiple file upload works
 
 ### 4.7 Backend — File Validation
@@ -758,6 +787,7 @@
 - [ ] Check if item already in cart (increment quantity)
 - [ ] Create new cart item if not exists
 - [ ] Add POST `/api/cart` route (protected)
+- [ ] OpenAPI: document POST /api/cart/items (@ApiBearerAuth, @ApiBody, @ApiCreatedResponse, @ApiConflictResponse)
 - [ ] Verify: Add to cart works
 
 ### 5.5 Backend — Get Cart Endpoint
@@ -766,6 +796,7 @@
 - [ ] Calculate subtotal per item
 - [ ] Calculate total
 - [ ] Add GET `/api/cart` route (protected)
+- [ ] OpenAPI: document GET /api/cart (@ApiBearerAuth, @ApiOkResponse)
 - [ ] Verify: Get cart returns correct data
 
 ### 5.6 Backend — Update Cart Endpoint
@@ -774,12 +805,14 @@
 - [ ] Check stock availability
 - [ ] Update quantity
 - [ ] Add PATCH `/api/cart/:id` route (protected)
+- [ ] OpenAPI: document PATCH /api/cart/items/:id (@ApiBearerAuth, @ApiBody, @ApiOkResponse, @ApiNotFoundResponse)
 - [ ] Verify: Update quantity works
 
 ### 5.7 Backend — Remove from Cart Endpoint
 - [ ] Implement `removeFromCart()` in CartService
 - [ ] Delete cart item
 - [ ] Add DELETE `/api/cart/:id` route (protected)
+- [ ] OpenAPI: document DELETE /api/cart/items/:id (@ApiBearerAuth, @ApiOkResponse/@ApiNoContentResponse, @ApiNotFoundResponse)
 - [ ] Verify: Remove from cart works
 
 ### 5.8 Backend — Cart Validation
@@ -904,6 +937,7 @@
 - [ ] Validate cart is not empty, items in stock before creating order
 - [ ] Implement `POST /api/checkout/create-session` — accepts `{ orderId }`, verifies order is the user's own `PENDING`, calls Stripe service, returns `data.url`
 - [ ] Add routes (protected)
+- [ ] OpenAPI: document POST /api/checkout (@ApiBearerAuth, @ApiBody, @ApiCreatedResponse, @ApiConflictResponse)
 - [ ] Verify: `POST /api/orders` + `create-session` produce a Stripe checkout URL
 
 ### 6.6 Backend — Stripe Webhook Handler
@@ -916,6 +950,7 @@
 - [ ] Decrement product stock
 - [ ] Clear user cart
 - [ ] Add POST `/api/webhook/stripe` route
+- [ ] OpenAPI: document POST /api/webhooks/stripe (@ApiOkResponse, raw body)
 - [ ] Verify: Webhook processes correctly
 
 ### 6.7 Backend — Checkout Validation
@@ -1006,6 +1041,7 @@
 - [ ] Include order items
 - [ ] Add pagination
 - [ ] Add GET `/api/orders` route (protected)
+- [ ] OpenAPI: document GET /api/orders (@ApiBearerAuth, @ApiOkResponse)
 - [ ] Verify: User can list their orders
 
 ### 7.4 Backend — Get Order Endpoint
@@ -1013,6 +1049,7 @@
 - [ ] Include order items and payment
 - [ ] Verify user owns the order
 - [ ] Add GET `/api/orders/:id` route (protected)
+- [ ] OpenAPI: document GET /api/orders/:id (@ApiBearerAuth, @ApiOkResponse, @ApiNotFoundResponse)
 - [ ] Verify: User can get order detail
 
 ### 7.5 Backend — Admin Update Order Status Endpoint
@@ -1020,6 +1057,7 @@
 - [ ] Validate status is valid enum
 - [ ] Update order status
 - [ ] Add PATCH `/api/admin/orders/:id/status` route (admin only)
+- [ ] OpenAPI: document PATCH /api/admin/orders/:id/status (@ApiBearerAuth, @ApiBody, @ApiOkResponse, @ApiNotFoundResponse)
 - [ ] Verify: Admin can update order status
 
 ### 7.6 Backend — Address Model
@@ -1033,6 +1071,7 @@
 - [ ] Implement `updateProfile()` in UsersService
 - [ ] Add GET `/api/users/me` route (protected)
 - [ ] Add PATCH `/api/users/me` route (protected)
+- [ ] OpenAPI: document GET/PATCH /api/profile (@ApiBearerAuth, @ApiBody, @ApiOkResponse)
 - [ ] Verify: Profile get/update works
 
 ### 7.8 Backend — Address Endpoints
@@ -1041,6 +1080,7 @@
 - [ ] Implement `deleteAddress()` in UsersService
 - [ ] Implement `getAddresses()` in UsersService
 - [ ] Add address routes (protected)
+- [ ] OpenAPI: document /api/profile/addresses CRUD (@ApiBearerAuth, @ApiBody, @ApiOkResponse, @ApiNotFoundResponse)
 - [ ] Verify: Address CRUD works
 
 ### 7.9 Frontend — Orders API (RTK Query)
@@ -1166,6 +1206,7 @@
 - [ ] Prevent duplicate reviews
 - [ ] Create review in database
 - [ ] Add POST `/api/products/:id/reviews` route (protected)
+- [ ] OpenAPI: document create review (@ApiBearerAuth, @ApiBody, @ApiCreatedResponse, @ApiConflictResponse)
 - [ ] Verify: Create review works
 
 ### 8.5 Backend — List Reviews Endpoint
@@ -1174,6 +1215,7 @@
 - [ ] Include images
 - [ ] Include user info (name only)
 - [ ] Add GET `/api/products/:id/reviews` route (public)
+- [ ] OpenAPI: document list reviews (@ApiOkResponse)
 - [ ] Verify: List reviews works
 
 ### 8.6 Backend — Delete Review Endpoint
@@ -1182,6 +1224,7 @@
 - [ ] Delete review images from MinIO
 - [ ] Delete review from database
 - [ ] Add DELETE `/api/reviews/:id` route (protected)
+- [ ] OpenAPI: document delete review (@ApiBearerAuth, @ApiOkResponse/@ApiNoContentResponse, @ApiNotFoundResponse)
 - [ ] Verify: Delete own review works
 
 ### 8.7 Backend — Review Validation
@@ -1281,6 +1324,7 @@
 - [ ] Get recent orders (last 10)
 - [ ] Calculate sales by day (revenue per day)
 - [ ] Add GET `/api/admin/stats` route (admin only)
+- [ ] OpenAPI: document GET /api/admin/stats (@ApiBearerAuth, @ApiOkResponse, @ApiForbiddenResponse)
 - [ ] Verify: Stats endpoint returns all fields
 
 ### 9.3 Backend — Admin Orders Endpoint
@@ -1290,6 +1334,7 @@
 - [ ] Add pagination (page, limit)
 - [ ] Add filters: status, dateFrom, dateTo (ISO dates)
 - [ ] Add GET `/api/admin/orders` route (admin only)
+- [ ] OpenAPI: document GET /api/admin/orders (@ApiBearerAuth, @ApiOkResponse)
 - [ ] Verify: Admin can list all orders with filters
 
 ### 9.4 Backend — Admin Products Endpoint
@@ -1299,6 +1344,7 @@
 - [ ] Add pagination (page, limit)
 - [ ] Add filters: search (by name), categoryId, stock ("in_stock" | "out_of_stock" | "low")
 - [ ] Add GET `/api/admin/products` route (admin only)
+- [ ] OpenAPI: document GET /api/admin/products (@ApiBearerAuth, @ApiOkResponse)
 - [ ] Verify: Admin can list all products with filters
 
 ### 9.5 Frontend — Admin API Updates

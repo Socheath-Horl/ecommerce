@@ -1,0 +1,28 @@
+[
+  {
+    "adapter": "JavaScript",
+    "label": "Launch NestJS (npm run start:debug)",
+    "request": "launch",
+    "type": "pwa-node",
+    "runtimeExecutable": "npm",
+    "runtimeArgs": ["run", "start:debug"],
+    "cwd": "$ZED_WORKTREE_ROOT/backend",
+    "console": "internalConsole",
+    "sourceMaps": true,
+    "pauseForSourceMap": true,
+    "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+    "outFiles": ["${ZED_WORKTREE_ROOT}/backend/dist/**/*.js"]
+  },
+  {
+    "adapter": "JavaScript",
+    "label": "Attach NestJS (--inspect on 9229)",
+    "request": "attach",
+    "type": "pwa-node",
+    "cwd": "$ZED_WORKTREE_ROOT/backend",
+    "port": 9229,
+    "console": "internalConsole",
+    "sourceMaps": true,
+    "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+    "outFiles": ["${ZED_WORKTREE_ROOT}/backend/dist/**/*.js"]
+  }
+]
