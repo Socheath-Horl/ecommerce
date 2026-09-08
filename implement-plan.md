@@ -261,16 +261,16 @@
 - [x] Verify: Register works end-to-end
 
 ### 1.29 Phase 1 — Full Verification
-- [ ] Backend starts without errors
-- [ ] Frontend starts without errors
-- [ ] Register a new user
-- [ ] Login with new user
-- [ ] Access protected route with token
-- [ ] Refresh token works
-- [ ] Change password works
-- [ ] Upload file via API
-- [ ] List files via API
-- [ ] Delete file via API
+- [x] Backend starts without errors
+- [ ] Frontend starts without errors (headless/browser + API e2e verified — pending Lightpanda click-through)
+- [x] Register a new user
+- [x] Login with new user
+- [x] Access protected route with token
+- [x] Refresh token works
+- [x] Change password works
+- [x] Upload file via API
+- [x] List files via API
+- [x] Delete file via API
 
 ---
 
