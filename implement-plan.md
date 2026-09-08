@@ -196,17 +196,17 @@
 - [x] Verify: Link/unlink works correctly
 
 ### 1.22 Frontend — Vite Project
-- [ ] Create Vite + React + TypeScript project in `frontend/`
-- [ ] Install `@reduxjs/toolkit`, `react-redux`
-- [ ] Install `react-router-dom`
-- [ ] Install `axios`
-- [ ] Install `tailwindcss` and `@tailwindcss/vite`
-- [ ] Configure Tailwind in `vite.config.ts`
-- [ ] Initialize shadcn/ui
-- [ ] Add shadcn/ui components: button, input, card, label
-- [ ] Set up token CSS (globals.css) from `ux-ui/brand-spec.md` (OKLCH zinc values, light + dark) and `ux-ui/shadcn-component-library.html` slot-bridge table
-- [ ] Set up theme strategy: `darkMode: ['class']`, `html.dark` class, persisted `ui.theme` in localStorage, first load follows `prefers-color-scheme`
-- [ ] Verify: `npm run build` compiles
+- [x] Create Vite + React + TypeScript project in `frontend/`
+- [x] Install `@reduxjs/toolkit`, `react-redux`
+- [x] Install `react-router-dom`
+- [x] Install `axios`
+- [x] Install `tailwindcss` and `@tailwindcss/vite`
+- [x] Configure Tailwind in `vite.config.ts`
+- [x] Initialize shadcn/ui
+- [x] Add shadcn/ui components: button, input, card, label
+- [x] Set up token CSS (globals.css) from `ux-ui/brand-spec.md` (OKLCH zinc values, light + dark) and `ux-ui/shadcn-component-library.html` slot-bridge table
+- [x] Set up theme strategy: `darkMode: ['class']`, `html.dark` class, persisted `ui.theme` in localStorage, first load follows `prefers-color-scheme`
+- [x] Verify: `npm run build` compiles
 
 ### 1.23 Frontend — Redux Store
 - [ ] Create store (`src/store/index.ts`)
