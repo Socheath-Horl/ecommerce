@@ -46,6 +46,10 @@ export class MinioService implements OnModuleInit {
     return `${this.useSsl ? 'https' : 'http'}://${this.endpoint}:${this.port}/${this.bucket}/${key}`;
   }
 
+  get bucketName(): string {
+    return this.bucket;
+  }
+
   private publicReadPolicy() {
     return {
       Version: '2012-10-17',

@@ -168,7 +168,7 @@
 ### 1.18 Backend — Basic File Upload Endpoint
 - [ ] Implement basic POST `/api/files/upload` endpoint (single file)
 - [ ] Use simple `multer` memory storage
-- [ ] Save file record in database
+- [x] Save file record in database
 - [ ] Return file data
 - [ ] OpenAPI: document POST /api/files/upload (@ApiConsumes multipart/form-data, @ApiBody, @ApiCreatedResponse)
 - [ ] Verify: Upload image via API, check MinIO + DB

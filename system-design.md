@@ -1323,7 +1323,7 @@ Authorization: Bearer <accessToken>
 404 - File not found
 ```
 
-#### PATCH `/api/files/:id/link`
+#### PUT `/api/files/:id/link`
 ```typescript
 // Headers
 Authorization: Bearer <accessToken>
@@ -1350,7 +1350,7 @@ Authorization: Bearer <accessToken>
 404 - Entity not found
 ```
 
-#### PATCH `/api/files/:id/unlink`
+#### PUT `/api/files/:id/unlink`
 ```typescript
 // Headers
 Authorization: Bearer <accessToken>
