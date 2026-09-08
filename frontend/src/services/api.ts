@@ -2,17 +2,23 @@ import axios, {
   type AxiosError,
   type InternalAxiosRequestConfig,
 } from 'axios'
-import { store } from '@/store'
+import type { store } from '@/store'
 import { logout, setTokens } from '@/store/slices/authSlice'
 import { getRefreshToken } from '@/lib/authStorage'
 import type { AuthTokens } from '@/store/slices/authSlice'
 
 const baseURL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api'
 
+let storeRef: typeof store
+
+export function setStoreRef(s: typeof store): void {
+  storeRef = s
+}
+
 export const api = axios.create({ baseURL })
 
 api.interceptors.request.use((config) => {
-  const token = store.getState().auth.accessToken
+  const token = storeRef?.getState().auth.accessToken
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
@@ -27,7 +33,7 @@ async function tryRefreshToken(): Promise<string | null> {
     { refreshToken },
   )
   if (!data.success) return null
-  store.dispatch(setTokens(data.data))
+  storeRef.dispatch(setTokens(data.data))
   return data.data.accessToken
 }
 
@@ -46,7 +52,7 @@ api.interceptors.response.use(
 
     const newToken = await refreshPromise
     if (!newToken) {
-      store.dispatch(logout())
+      storeRef.dispatch(logout())
       throw error
     }
 
