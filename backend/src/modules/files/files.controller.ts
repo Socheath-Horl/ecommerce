@@ -23,13 +23,16 @@ import {
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { memoryStorage } from 'multer';
 import type { Request } from 'express';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
+import { MessageResponseDto } from '@/modules/auth/dto/auth-response.dto';
 import {
   ALLOWED_FILE_EXTENSIONS,
   ALLOWED_FILE_TYPES,
@@ -160,8 +163,10 @@ export class FilesController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiParam({ name: 'id', format: 'uuid', description: 'File id' })
   @ApiOperation({ summary: 'Delete a file (owner or admin)' })
-  @ApiOkResponse({ type: FileResponseDto })
+  @ApiOkResponse({ type: MessageResponseDto, description: 'File deleted' })
+  @ApiNotFoundResponse({ description: 'File not found' })
   async remove(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     await this.files.deleteFile(id, req.user.id, req.user.role as never);
     return { success: true, message: 'File deleted' };
@@ -170,8 +175,10 @@ export class FilesController {
   @Put(':id/link')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiParam({ name: 'id', format: 'uuid', description: 'File id' })
   @ApiOperation({ summary: 'Link a file to an entity (owner or admin)' })
   @ApiOkResponse({ type: FileResponseDto })
+  @ApiNotFoundResponse({ description: 'File not found' })
   async link(@Param('id') id: string, @Body() dto: LinkFileDto, @Req() req: AuthenticatedRequest) {
     const file = await this.files.link(id, dto.entityType, dto.entityId, req.user.id, req.user.role as never);
     return { success: true, data: file };
@@ -180,8 +187,10 @@ export class FilesController {
   @Put(':id/unlink')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiParam({ name: 'id', format: 'uuid', description: 'File id' })
   @ApiOperation({ summary: 'Unlink a file from its entity (owner or admin)' })
   @ApiOkResponse({ type: FileResponseDto })
+  @ApiNotFoundResponse({ description: 'File not found' })
   async unlink(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const file = await this.files.unlink(id, req.user.id, req.user.role as never);
     return { success: true, data: file };

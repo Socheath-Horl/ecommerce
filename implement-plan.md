@@ -159,41 +159,41 @@
 - [x] Verify: MinIO connection works (check MinIO console)
 
 ### 1.17 Backend — Files Module
-- [ ] Create `FilesModule` (`src/modules/files/files.module.ts`)
-- [ ] Create `FilesService` (`src/modules/files/files.service.ts`)
-- [ ] Create `FilesController` (`src/modules/files/files.controller.ts`)
-- [ ] Register FilesModule in `AppModule`
-- [ ] Verify: `npm run build` compiles
+- [x] Create `FilesModule` (`src/modules/files/files.module.ts`)
+- [x] Create `FilesService` (`src/modules/files/files.service.ts`)
+- [x] Create `FilesController` (`src/modules/files/files.controller.ts`)
+- [x] Register FilesModule in `AppModule`
+- [x] Verify: `npm run build` compiles
 
 ### 1.18 Backend — Basic File Upload Endpoint
-- [ ] Implement basic POST `/api/files/upload` endpoint (single file)
-- [ ] Use simple `multer` memory storage
+- [x] Implement basic POST `/api/files/upload` endpoint (single file)
+- [x] Use simple `multer` memory storage
 - [x] Save file record in database
-- [ ] Return file data
-- [ ] OpenAPI: document POST /api/files/upload (@ApiConsumes multipart/form-data, @ApiBody, @ApiCreatedResponse)
-- [ ] Verify: Upload image via API, check MinIO + DB
+- [x] Return file data
+- [x] OpenAPI: document POST /api/files/upload (@ApiConsumes multipart/form-data, @ApiBody, @ApiCreatedResponse)
+- [x] Verify: Upload image via API, check MinIO + DB
 
 ### 1.19 Backend — File List Endpoint
-- [ ] Implement GET `/api/files` endpoint
-- [ ] Filter by entityType and entityId
-- [ ] Return list of files
-- [ ] OpenAPI: document GET /api/files (@ApiOkResponse)
-- [ ] Verify: List files for an entity
+- [x] Implement GET `/api/files` endpoint
+- [x] Filter by entityType and entityId
+- [x] Return list of files
+- [x] OpenAPI: document GET /api/files (@ApiOkResponse)
+- [x] Verify: List files for an entity
 
 ### 1.20 Backend — File Delete Endpoint
-- [ ] Implement DELETE `/api/files/:id` endpoint
-- [ ] Delete from MinIO
-- [ ] Delete record from database
-- [ ] OpenAPI: document DELETE /api/files/:id (@ApiParam id, @ApiOkResponse/@ApiNoContentResponse, @ApiNotFoundResponse)
-- [ ] Verify: Delete removes from MinIO + DB
+- [x] Implement DELETE `/api/files/:id` endpoint
+- [x] Delete from MinIO
+- [x] Delete record from database
+- [x] OpenAPI: document DELETE /api/files/:id (@ApiParam id, @ApiOkResponse/@ApiNoContentResponse, @ApiNotFoundResponse)
+- [x] Verify: Delete removes from MinIO + DB
 
 ### 1.21 Backend — File Link/Unlink Endpoints
-- [ ] Implement PATCH `/api/files/:id/link` endpoint
-- [ ] Link file to entity (entityType + entityId)
-- [ ] Implement PATCH `/api/files/:id/unlink` endpoint
-- [ ] Unlink file from entity
-- [ ] OpenAPI: document PATCH /api/files/:id/link|unlink (@ApiBody, @ApiOkResponse)
-- [ ] Verify: Link/unlink works correctly
+- [x] Implement PATCH `/api/files/:id/link` endpoint (as PUT per dev preference)
+- [x] Link file to entity (entityType + entityId)
+- [x] Implement PATCH `/api/files/:id/unlink` endpoint (as PUT per dev preference)
+- [x] Unlink file from entity
+- [x] OpenAPI: document PATCH /api/files/:id/link|unlink (@ApiBody, @ApiOkResponse) (as PUT)
+- [x] Verify: Link/unlink works correctly
 
 ### 1.22 Frontend — Vite Project
 - [ ] Create Vite + React + TypeScript project in `frontend/`
