@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
 import { FILE_ENTITY_TYPES } from '@/modules/files/files.constants';
-import { ApiResponse } from '@/common/dto/response.dto';
+import { ApiResponse, ListResponse } from '@/common/dto/response.dto';
 
 export class FileUploadDto {
   @ApiPropertyOptional({ enum: FILE_ENTITY_TYPES, description: 'Entity type the file belongs to' })
@@ -89,4 +89,5 @@ export class FileDto {
 }
 
 export class FileResponseDto extends ApiResponse(FileDto) {}
-export class FileListResponseDto extends ApiResponse([FileDto]) {}
+export class FilesArrayResponseDto extends ApiResponse([FileDto]) {}
+export class FileListResponseDto extends ListResponse([FileDto]) {}

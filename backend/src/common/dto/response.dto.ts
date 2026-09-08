@@ -19,7 +19,6 @@ export interface ApiResponseShape<T> {
   success: boolean;
   data: T;
   message?: string;
-  pagination?: PaginationDto;
 }
 
 export function ApiResponse<T>(type: Type<T> | Type<T>[]): Type<ApiResponseShape<T>> {
@@ -32,11 +31,28 @@ export function ApiResponse<T>(type: Type<T> | Type<T>[]): Type<ApiResponseShape
 
     @ApiPropertyOptional({ description: 'Human-readable message' })
     message?: string;
-
-    @ApiPropertyOptional({ type: PaginationDto })
-    pagination?: PaginationDto;
   }
   return ApiResponseDto as Type<ApiResponseShape<T>>;
+}
+
+export interface ListResponseShape<T> {
+  success: boolean;
+  data: T;
+  pagination: PaginationDto;
+}
+
+export function ListResponse<T>(type: Type<T> | Type<T>[]): Type<ListResponseShape<T>> {
+  class ListResponseDto {
+    @ApiProperty({ example: true })
+    success!: boolean;
+
+    @ApiProperty({ type: type as unknown as Function })
+    data!: T;
+
+    @ApiProperty({ type: PaginationDto })
+    pagination!: PaginationDto;
+  }
+  return ListResponseDto as Type<ListResponseShape<T>>;
 }
 
 export class ApiErrorDetailDto {

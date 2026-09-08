@@ -41,6 +41,7 @@ import { FilesService } from '@/modules/files/files.service';
 import {
   FileListResponseDto,
   FileResponseDto,
+  FilesArrayResponseDto,
   FileUploadDto,
   LinkFileDto,
   ListFilesQueryDto,
@@ -119,7 +120,7 @@ export class FilesController {
   @ApiOperation({ summary: 'Upload up to 5 files' })
   @ApiConsumes('multipart/form-data')
   @ApiBody(multipleApiBody)
-  @ApiCreatedResponse({ type: FileListResponseDto })
+  @ApiCreatedResponse({ type: FilesArrayResponseDto })
   @HttpCode(HttpStatus.CREATED)
   async uploadMultiple(
     @UploadedFiles() files: Express.Multer.File[] | undefined,
