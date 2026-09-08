@@ -149,14 +149,14 @@
 - [x] Add global exception filter to shape error bodies as `{ success, error: { code, message, details } }`
 
 ### 1.16 Backend — MinIO Module
-- [ ] Create `MinioModule` (`src/modules/minio/minio.module.ts`)
-- [ ] Create `MinioService` (`src/modules/minio/minio.service.ts`)
-- [ ] Implement bucket creation on module init
-- [ ] Implement basic file upload to MinIO
-- [ ] Implement basic file delete from MinIO
-- [ ] Implement file URL generation
-- [ ] Register MinioModule in `AppModule`
-- [ ] Verify: MinIO connection works (check MinIO console)
+- [x] Create `MinioModule` (`src/modules/minio/minio.module.ts`)
+- [x] Create `MinioService` (`src/modules/minio/minio.service.ts`)
+- [x] Implement bucket creation on module init
+- [x] Implement basic file upload to MinIO
+- [x] Implement basic file delete from MinIO
+- [x] Implement file URL generation
+- [x] Register MinioModule in `AppModule`
+- [x] Verify: MinIO connection works (check MinIO console)
 
 ### 1.17 Backend — Files Module
 - [ ] Create `FilesModule` (`src/modules/files/files.module.ts`)
