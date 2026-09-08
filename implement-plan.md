@@ -248,7 +248,7 @@
 - [x] Redirect to home on success
 - [x] Show error message on failure (401 → "Invalid email or password" toast)
 - [x] Add link to register page
-- [ ] Verify: Login works end-to-end
+- [x] Verify: Login works end-to-end
 
 ### 1.28 Frontend — Register Page
 - [x] Create Register page (`src/pages/auth/Register.tsx`) — follow `ux-ui/register-page.html`
@@ -258,7 +258,7 @@
 - [x] Redirect to login on success (409 → "Email already exists" toast)
 - [x] Show error message on failure (inline field errors + toast)
 - [x] Add link to login page
-- [ ] Verify: Register works end-to-end
+- [x] Verify: Register works end-to-end
 
 ### 1.29 Phase 1 — Full Verification
 - [ ] Backend starts without errors
