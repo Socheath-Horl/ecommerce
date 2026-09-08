@@ -47,6 +47,11 @@ npm run lint               # Run ESLint
 npx shadcn@latest add <component>  # Add shadcn/ui component
 ```
 
+### Frontend Verification (headless)
+- **Verify frontend end-to-end with the Lightpanda headless browser** (lightpanda.io — a standalone binary, NOT an npm package — install it separately; confirm Windows support/availability before relying on it)
+- Workflow: `npm run dev` (or `preview` of a production build), then point Lightpanda at the app URL and assert the page renders and client flows (login, register, routing, protected redirects) execute/succeed
+- Read results from Lightpanda's dumped DOM/output instead of a manual browser
+
 ## API Conventions
 
 **Response format:** `{ success: boolean, data?: T, message?: string, error?: { code, message, details } }`
