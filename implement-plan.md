@@ -225,10 +225,10 @@
 - [x] Verify: `npm run build` compiles
 
 ### 1.25 Frontend — Router Setup
-- [ ] Configure React Router in `App.tsx`
-- [ ] Create route structure: `/`, `/auth/*`, `/admin/*`, `/products`, `/cart`, etc.
-- [ ] Create placeholder pages for each route
-- [ ] Verify: `npm run build` compiles, routes work
+- [x] Configure React Router in `App.tsx`
+- [x] Create route structure: `/`, `/auth/*`, `/admin/*`, `/products`, `/cart`, etc.
+- [x] Create placeholder pages for each route
+- [x] Verify: `npm run build` compiles, routes work
 
 ### 1.26 Frontend — Auth API (RTK Query)
 - [ ] Create authApi (`src/services/authApi.ts`)
