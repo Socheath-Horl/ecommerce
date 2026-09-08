@@ -231,13 +231,13 @@
 - [x] Verify: `npm run build` compiles, routes work
 
 ### 1.26 Frontend — Auth API (RTK Query)
-- [ ] Create authApi (`src/services/authApi.ts`)
-- [ ] Add register mutation
-- [ ] Add login mutation
-- [ ] Add refresh mutation
-- [ ] Add getProfile query
-- [ ] Configure base URL and headers
-- [ ] Verify: `npm run build` compiles
+- [x] Create authApi (`src/services/authApi.ts`)
+- [x] Add register mutation
+- [x] Add login mutation
+- [x] Add refresh mutation
+- [x] Add getProfile query
+- [x] Configure base URL and headers
+- [x] Verify: `npm run build` compiles
 
 ### 1.27 Frontend — Login Page
 - [ ] Create Login page (`src/pages/auth/Login.tsx`) — follow `ux-ui/login-page.html`
