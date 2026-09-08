@@ -209,20 +209,20 @@
 - [x] Verify: `npm run build` compiles
 
 ### 1.23 Frontend — Redux Store
-- [ ] Create store (`src/store/index.ts`)
-- [ ] Create auth slice (`src/store/slices/authSlice.ts`)
-- [ ] Add user, tokens, isAuthenticated to auth state
-- [ ] Add login, logout, setTokens actions
-- [ ] Configure localStorage persistence for refresh token
-- [ ] Wrap app with Redux Provider in `main.tsx`
-- [ ] Verify: `npm run build` compiles
+- [x] Create store (`src/store/index.ts`)
+- [x] Create auth slice (`src/store/slices/authSlice.ts`)
+- [x] Add user, tokens, isAuthenticated to auth state
+- [x] Add login, logout, setTokens actions
+- [x] Configure localStorage persistence for refresh token
+- [x] Wrap app with Redux Provider in `main.tsx`
+- [x] Verify: `npm run build` compiles
 
 ### 1.24 Frontend — API Base Service
-- [ ] Create Axios instance (`src/services/api.ts`)
-- [ ] Configure base URL from env variable
-- [ ] Add request interceptor to attach access token
-- [ ] Add response interceptor to handle 401 (refresh token)
-- [ ] Verify: `npm run build` compiles
+- [x] Create Axios instance (`src/services/api.ts`)
+- [x] Configure base URL from env variable
+- [x] Add request interceptor to attach access token
+- [x] Add response interceptor to handle 401 (refresh token)
+- [x] Verify: `npm run build` compiles
 
 ### 1.25 Frontend — Router Setup
 - [ ] Configure React Router in `App.tsx`
