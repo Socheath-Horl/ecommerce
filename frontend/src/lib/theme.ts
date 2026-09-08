@@ -29,6 +29,7 @@ export function setTheme(theme: Theme): void {
   } catch {
     /* storage unavailable — theme still applies for this session */
   }
+  window.dispatchEvent(new Event('ui:themechange'))
 }
 
 export function toggleTheme(): Theme {

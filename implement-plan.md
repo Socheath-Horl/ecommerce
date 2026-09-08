@@ -240,24 +240,24 @@
 - [x] Verify: `npm run build` compiles
 
 ### 1.27 Frontend — Login Page
-- [ ] Create Login page (`src/pages/auth/Login.tsx`) — follow `ux-ui/login-page.html`
-- [ ] Add email input field
-- [ ] Add password input field with show/hide toggle
-- [ ] Add submit button
-- [ ] Call login API on submit
-- [ ] Redirect to home on success
-- [ ] Show error message on failure (401 → "Invalid email or password" toast)
-- [ ] Add link to register page
+- [x] Create Login page (`src/pages/auth/Login.tsx`) — follow `ux-ui/login-page.html`
+- [x] Add email input field
+- [x] Add password input field with show/hide toggle
+- [x] Add submit button
+- [x] Call login API on submit
+- [x] Redirect to home on success
+- [x] Show error message on failure (401 → "Invalid email or password" toast)
+- [x] Add link to register page
 - [ ] Verify: Login works end-to-end
 
 ### 1.28 Frontend — Register Page
-- [ ] Create Register page (`src/pages/auth/Register.tsx`) — follow `ux-ui/register-page.html`
-- [ ] Add name, email, password fields (password ≥ 6 chars, show/hide toggle)
-- [ ] Add submit button
-- [ ] Call register API on submit
-- [ ] Redirect to login on success (409 → "Email already exists" toast)
-- [ ] Show error message on failure (inline field errors + toast)
-- [ ] Add link to login page
+- [x] Create Register page (`src/pages/auth/Register.tsx`) — follow `ux-ui/register-page.html`
+- [x] Add name, email, password fields (password ≥ 6 chars, show/hide toggle)
+- [x] Add submit button
+- [x] Call register API on submit
+- [x] Redirect to login on success (409 → "Email already exists" toast)
+- [x] Show error message on failure (inline field errors + toast)
+- [x] Add link to login page
 - [ ] Verify: Register works end-to-end
 
 ### 1.29 Phase 1 — Full Verification

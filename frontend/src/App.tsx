@@ -11,6 +11,7 @@ import Register from '@/pages/auth/Register'
 import NotFound from '@/pages/NotFound'
 import AdminLayout from '@/pages/admin/AdminLayout'
 import AdminUsers from '@/pages/admin/AdminUsers'
+import { ThemeToaster } from '@/components/theme-toaster'
 
 const router = createBrowserRouter([
   { path: '/', element: <Home /> },
@@ -36,5 +37,10 @@ const router = createBrowserRouter([
 ])
 
 export default function App() {
-  return <RouterProvider router={router} />
+  return (
+    <>
+      <RouterProvider router={router} />
+      <ThemeToaster />
+    </>
+  )
 }
