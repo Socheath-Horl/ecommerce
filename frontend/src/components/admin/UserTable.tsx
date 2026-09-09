@@ -12,7 +12,7 @@ function rowDate(iso: string) {
   return iso.slice(0, 10)
 }
 
-export default function UserTable({ users }: { users: AdminUser[] }) {
+export default function UserTable({ users, emptyRole }: { users: AdminUser[]; emptyRole: string }) {
   const currentUser = useAppSelector(selectUser)
   return (
     <div className="overflow-x-auto">
@@ -29,7 +29,10 @@ export default function UserTable({ users }: { users: AdminUser[] }) {
           {users.length === 0 ? (
             <tr>
               <td colSpan={4}>
-                <div className="px-4 py-12 text-center text-muted-foreground">No users match.</div>
+                <div className="px-4 py-12 text-center text-muted-foreground">
+                  No users match{' '}
+                  <code className="font-mono text-[13px]">role={emptyRole}</code>.
+                </div>
               </td>
             </tr>
           ) : (

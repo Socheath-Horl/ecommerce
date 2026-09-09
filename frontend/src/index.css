@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant lt900 (@media (max-width: 900px));
 
 :root {
   --radius: 0.625rem;
@@ -145,4 +146,14 @@
   body {
     @apply bg-background text-foreground;
   }
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+@utility shadow-soft {
+  box-shadow:
+    0 1px 2px color-mix(in oklch, var(--color-foreground) 8%, transparent),
+    0 16px 40px -18px color-mix(in oklch, var(--color-foreground) 14%, transparent);
 }

@@ -36,7 +36,7 @@ export default function RoleSelector({ user }: { user: AdminUser }) {
         disabled={disabled}
         aria-label={`Role for ${user.name}`}
         className={cn(
-          'h-[34px] cursor-pointer appearance-none rounded-full border border-border py-0 pl-3 pr-8 font-mono text-xs font-semibold tracking-[0.02em] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50',
+          'h-[34px] cursor-pointer appearance-none rounded-full border border-border py-0 pl-2.5 pr-[30px] font-mono text-xs font-semibold tracking-[0.02em] transition-colors disabled:cursor-not-allowed disabled:opacity-50',
           ROLE_TINTS[user.role as SelectableRole],
         )}
       >
@@ -46,7 +46,7 @@ export default function RoleSelector({ user }: { user: AdminUser }) {
           </option>
         ))}
       </select>
-      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 size-3.5 -translate-y-1/2 text-current" />
+      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-current" />
     </span>
   )
 }

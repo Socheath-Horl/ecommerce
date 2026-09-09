@@ -2,17 +2,14 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import UserTable from '@/components/admin/UserTable'
 import Pager from '@/components/admin/Pager'
-import DeniedView from '@/components/admin/DeniedView'
 import { useGetUsersQuery } from '@/services/adminApi'
-import { useAppSelector } from '@/store'
-import { selectUser, type Role } from '@/store/slices/authSlice'
+import { type Role } from '@/store/slices/authSlice'
 
 const PAGE_SIZE = 10
 const ROLE_FILTERS = ['ALL', 'ADMIN', 'USER', 'CUSTOMER'] as const
 type RoleFilter = (typeof ROLE_FILTERS)[number]
 
 export default function UserList() {
-  const currentUser = useAppSelector(selectUser)
   const [page, setPage] = useState(1)
   const [role, setRole] = useState<RoleFilter>('ALL')
   const [search, setSearch] = useState('')
@@ -34,10 +31,6 @@ export default function UserList() {
     search: debounced.trim() || undefined,
   })
 
-  if (currentUser?.role !== 'ADMIN') {
-    return <DeniedView role={currentUser?.role} />
-  }
-
   const total = data?.pagination.total ?? 0
   const totalPages = data?.pagination.totalPages ?? 0
 
@@ -58,7 +51,7 @@ export default function UserList() {
           id="role-filter"
           value={role}
           onChange={(e) => setRole(e.target.value as RoleFilter)}
-          className="h-10 rounded-lg border border-border bg-background px-2.5 text-sm text-foreground outline-none transition-colors hover:border-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+          className="h-10 rounded-[10px] border border-border bg-background px-2.5 text-sm text-foreground transition-colors hover:border-foreground"
         >
           {ROLE_FILTERS.map((r) => (
             <option key={r} value={r}>{r === 'ALL' ? 'All' : r}</option>
@@ -70,22 +63,22 @@ export default function UserList() {
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search name or email…"
           aria-label="Search users"
-          className="h-10 flex-[0_0_240px] max-w-full rounded-lg border border-border bg-background px-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground hover:border-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+          className="h-10 flex-[0_0_240px] max-w-full rounded-[10px] border border-border bg-background px-2.5 text-sm text-foreground transition-colors placeholder:text-muted-foreground hover:border-foreground"
         />
         <span className="ml-auto font-mono text-[13px] text-muted-foreground">
           {total} user{total === 1 ? '' : 's'}
         </span>
       </div>
 
-      <section className="overflow-hidden rounded-2xl border border-border bg-background shadow-sm">
+      <section className="overflow-hidden rounded-2xl border border-border bg-background shadow-soft">
         {isLoading && !data ? (
           <div className="p-10 text-center text-sm text-muted-foreground">Loading users…</div>
         ) : isError ? (
           <div className="p-10 text-center text-sm text-destructive">Failed to load users.</div>
         ) : (
           <>
-            <UserTable users={data!.data} />
-            <Pager page={page} totalPages={totalPages} onChange={setPage} />
+            <UserTable users={data!.data} emptyRole={role} />
+            {data!.data.length > 0 && <Pager page={page} totalPages={totalPages} onChange={setPage} />}
           </>
         )}
       </section>

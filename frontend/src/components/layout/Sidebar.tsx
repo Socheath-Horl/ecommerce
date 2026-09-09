@@ -45,7 +45,7 @@ export function AdminNav({ role, className }: { role?: Role; className?: string 
             }`
           }
         >
-          <Icon className="h-[17px] w-[17px]" />
+          <Icon className="h-[17px] w-[17px]" strokeWidth={1.7} />
           {label}
         </NavLink>
       ))}
@@ -69,7 +69,7 @@ export function AdminSidebarFooter() {
           toast('Signed out', { description: 'You left the admin portal.' })
         }}
       >
-        <LogOut className="size-3.5" />
+        <LogOut className="size-3.5" strokeWidth={1.7} />
         Logout
       </Button>
     </div>
@@ -78,13 +78,18 @@ export function AdminSidebarFooter() {
 
 export default function Sidebar({ role }: { role?: Role }) {
   return (
-    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col gap-8 border-r border-border bg-background px-4 py-5 lg:flex">
-      <Link to="/admin" className="px-2 font-serif text-lg font-semibold tracking-tight">
+    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-border bg-background px-4 py-5 lt900:flex">
+      <Link
+        to="/admin"
+        className="px-2 font-serif text-lg font-semibold tracking-[-0.01em]"
+      >
         Horizon Supply Co.
       </Link>
       <AdminNav role={role} />
-      <hr className="mx-2 border-t border-border" />
-      <AdminSidebarFooter />
+      <div className="mt-auto flex flex-col gap-8">
+        <hr className="mx-2 border-t border-border" />
+        <AdminSidebarFooter />
+      </div>
     </aside>
   )
 }

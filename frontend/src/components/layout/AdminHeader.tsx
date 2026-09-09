@@ -11,8 +11,8 @@ import { NAV_ITEMS } from '@/components/layout/Sidebar'
 
 const TITLES = Object.fromEntries(NAV_ITEMS.map((item) => [item.to, item.label]))
 
-const iconBtnBordered =
-  'grid size-11 place-items-center rounded-lg border border-border text-foreground transition-colors hover:bg-muted'
+const iconBtnSpring = 'transition-colors hover:bg-muted'
+const iconBtnStyles = `grid size-11 place-items-center rounded-[10px] border border-border text-foreground ${iconBtnSpring}`
 
 export function AdminHeader({ onOpenMenu }: { onOpenMenu: () => void }) {
   const location = useLocation()
@@ -33,33 +33,34 @@ export function AdminHeader({ onOpenMenu }: { onOpenMenu: () => void }) {
   return (
     <header className="sticky top-0 z-10 flex items-center gap-5 border-b border-border bg-background/90 px-8 py-3 backdrop-blur">
       <button
-        className={cn(iconBtnBordered, 'lg:hidden')}
+        className={cn(iconBtnStyles, 'hidden lt900:inline-grid')}
         type="button"
         aria-label="Open menu"
+        aria-expanded="false"
         onClick={onOpenMenu}
       >
-        <Menu className="h-5 w-5" />
+        <Menu className="h-[18px] w-[18px]" strokeWidth={1.7} />
       </button>
-      <h1 className="font-serif text-[22px] font-semibold tracking-tight">{title}</h1>
+      <h1 className="font-serif text-[22px] font-semibold tracking-[-0.01em]">{title}</h1>
       <div className="ml-auto flex items-center gap-2.5">
         <ThemeToggle />
         <div className="relative">
           <button
-            className={iconBtnBordered}
+            className={iconBtnStyles}
             type="button"
             aria-label="Account menu"
             aria-haspopup="true"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <UserRound className="h-[18px] w-[18px]" />
+            <UserRound className="h-[18px] w-[18px]" strokeWidth={1.7} />
           </button>
           {menuOpen && (
-            <div className="absolute right-0 top-[calc(100%+10px)] z-30 w-60 rounded-2xl border border-border bg-background p-2 shadow-lg">
-              <div className="mb-1.5 border-b border-border px-3 pb-2.5 pt-1.5">
+            <div className="absolute right-0 top-[calc(100%+10px)] z-30 w-[236px] rounded-2xl border border-border bg-background p-2 shadow-soft">
+              <div className="mb-1.5 border-b border-border px-3 pb-2.5 pt-2.5">
                 <p className="text-[13px] font-medium">{user?.name ?? 'Guest'}</p>
                 <p className="font-mono text-[11px] text-muted-foreground">
-                  {user ? `${user.role} · ${user.email}` : 'sign in to manage the portal'}
+                  {user ? `${user.role} · ${user.email}` : 'sign in to manage users'}
                 </p>
               </div>
               <Link
