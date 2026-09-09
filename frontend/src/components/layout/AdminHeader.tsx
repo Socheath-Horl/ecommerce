@@ -1,9 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Menu, UserRound } from 'lucide-react'
 import { toast } from 'sonner'
-import { cn } from 'cn'
-import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { logout, selectUser } from '@/store/slices/authSlice'
@@ -11,17 +8,23 @@ import { NAV_ITEMS } from '@/components/layout/Sidebar'
 
 const TITLES = Object.fromEntries(NAV_ITEMS.map((item) => [item.to, item.label]))
 
-const iconBtnSpring = 'transition-colors hover:bg-muted'
-const iconBtnStyles = `grid size-11 place-items-center rounded-[10px] border border-border text-foreground ${iconBtnSpring}`
-
 export function AdminHeader({ onOpenMenu }: { onOpenMenu: () => void }) {
   const location = useLocation()
   const user = useAppSelector(selectUser)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const title = TITLES[location.pathname] ?? 'Admin'
+
+  useEffect(() => {
+    function onPointerDown(e: MouseEvent | TouchEvent) {
+      if (!menuRef.current?.contains(e.target as Node)) setMenuOpen(false)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => document.removeEventListener('pointerdown', onPointerDown)
+  }, [])
 
   function handleLogout() {
     setMenuOpen(false)
@@ -31,64 +34,56 @@ export function AdminHeader({ onOpenMenu }: { onOpenMenu: () => void }) {
   }
 
   return (
-    <header className="sticky top-0 z-10 flex items-center gap-5 border-b border-border bg-background/90 px-8 py-3 backdrop-blur">
+    <header className="adm-head">
       <button
-        className={cn(iconBtnStyles, 'hidden lt900:inline-grid')}
+        className="icon-btn icon-btn--bordered menu-btn"
         type="button"
         aria-label="Open menu"
         aria-expanded="false"
         onClick={onOpenMenu}
       >
-        <Menu className="h-[18px] w-[18px]" strokeWidth={1.7} />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
       </button>
-      <h1 className="font-serif text-[22px] font-semibold tracking-[-0.01em]">{title}</h1>
-      <div className="ml-auto flex items-center gap-2.5">
+      <h1 className="adm-title">{title}</h1>
+      <div className="adm-head-right">
         <ThemeToggle />
-        <div className="relative">
+        <div className="usermenu" ref={menuRef}>
           <button
-            className={iconBtnStyles}
+            className="icon-btn icon-btn--bordered"
             type="button"
             aria-label="Account menu"
             aria-haspopup="true"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <UserRound className="h-[18px] w-[18px]" strokeWidth={1.7} />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M5 20a7 7 0 0 1 14 0" />
+            </svg>
           </button>
           {menuOpen && (
-            <div className="absolute right-0 top-[calc(100%+10px)] z-30 w-[236px] rounded-2xl border border-border bg-background p-2 shadow-soft">
-              <div className="mb-1.5 border-b border-border px-3 pb-2.5 pt-2.5">
-                <p className="text-[13px] font-medium">{user?.name ?? 'Guest'}</p>
-                <p className="font-mono text-[11px] text-muted-foreground">
-                  {user ? `${user.role} · ${user.email}` : 'sign in to manage users'}
-                </p>
+            <div className="usermenu-panel">
+              <div className="usermenu-head">
+                <p>{user?.name ?? 'Guest'}</p>
+                <p className="meta">{user ? `${user.role} · ${user.email}` : 'sign in to manage users'}</p>
               </div>
-              <Link
-                to="/admin"
-                onClick={() => setMenuOpen(false)}
-                className="block rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted"
-              >
+              <Link className="menu-item" to="/admin" onClick={() => setMenuOpen(false)}>
                 Dashboard
               </Link>
-              <Link
-                to="/profile"
-                onClick={() => setMenuOpen(false)}
-                className="block rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted"
-              >
+              <Link className="menu-item" to="/profile" onClick={() => setMenuOpen(false)}>
                 My Profile
               </Link>
-              <button
-                onClick={handleLogout}
-                className="block w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted"
-              >
+              <button className="menu-item" type="button" onClick={handleLogout}>
                 Sign out
               </button>
             </div>
           )}
         </div>
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/">View Store</Link>
-        </Button>
+        <Link className="btn" data-variant="outline" data-size="sm" to="/">
+          View Store
+        </Link>
       </div>
     </header>
   )

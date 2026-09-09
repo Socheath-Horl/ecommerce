@@ -15,39 +15,32 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
   return (
     <AuthGuard>
       <RoleGuard roles={['USER', 'ADMIN']}>
-        <div className="flex min-h-screen bg-background">
+        <div className="adm-shell">
           <Sidebar role={user?.role} />
           {mobileOpen && (
             <>
-              <div
-                className="fixed inset-0 z-40 bg-foreground/35"
-                onClick={() => setMobileOpen(false)}
-              />
-              <div className="fixed inset-y-0 left-0 z-50 flex w-[min(260px,86vw)] flex-col gap-8 overflow-y-auto border-r border-border bg-background px-4 py-5 shadow-soft">
-                <div className="flex items-center justify-between pr-2">
-                  <span className="px-2 font-serif text-lg font-semibold tracking-[-0.01em]">
-                    Horizon Supply Co.
-                  </span>
+              <div className="adm-menu-overlay" onClick={() => setMobileOpen(false)} />
+              <nav className="adm-panel" aria-label="Admin">
+                <div className="adm-panel-head">
+                  <span className="adm-logo">Horizon Supply Co.</span>
                   <button
+                    className="icon-btn"
                     type="button"
                     aria-label="Close menu"
                     onClick={() => setMobileOpen(false)}
-                    className="grid size-11 place-items-center rounded-[10px] text-2xl leading-none text-muted-foreground transition-colors hover:bg-muted"
                   >
                     ×
                   </button>
                 </div>
                 <AdminNav role={user?.role} />
-                <div className="mt-auto flex flex-col gap-8">
-                  <hr className="mx-2 border-t border-border" />
-                  <AdminSidebarFooter />
-                </div>
-              </div>
+                <hr className="adm-nav-sep" />
+                <AdminSidebarFooter />
+              </nav>
             </>
           )}
-          <div className="flex min-w-0 flex-1 flex-col">
+          <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column' }}>
             <AdminHeader onOpenMenu={() => setMobileOpen(true)} />
-            <main className="px-8 pb-14 pt-8">
+            <main className="adm-main">
               {children ?? <Outlet />}
             </main>
           </div>

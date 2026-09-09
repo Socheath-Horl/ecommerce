@@ -35,46 +35,49 @@ export default function UserList() {
   const totalPages = data?.pagination.totalPages ?? 0
 
   return (
-    <div className="flex flex-col gap-5">
-      <nav
-        aria-label="Breadcrumb"
-        className="flex flex-wrap items-center gap-2 font-mono text-xs tracking-[0.03em] text-muted-foreground"
-      >
-        <Link to="/admin" className="transition-colors hover:text-foreground">Admin</Link>
-        <span>/</span>
-        <span aria-current="page">Users</span>
+    <>
+      <nav className="crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li>
+            <Link to="/admin">Admin</Link>
+          </li>
+          <li aria-current="page">Users</li>
+        </ol>
       </nav>
 
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-background px-4 py-3.5">
-        <label htmlFor="role-filter" className="text-[13px] text-muted-foreground">Role</label>
+      <div className="filters">
+        <label htmlFor="role-filter">Role</label>
         <select
+          className="filter"
           id="role-filter"
           value={role}
           onChange={(e) => setRole(e.target.value as RoleFilter)}
-          className="h-10 rounded-[10px] border border-border bg-background px-2.5 text-sm text-foreground transition-colors hover:border-foreground"
         >
           {ROLE_FILTERS.map((r) => (
-            <option key={r} value={r}>{r === 'ALL' ? 'All' : r}</option>
+            <option key={r} value={r}>
+              {r === 'ALL' ? 'All' : r}
+            </option>
           ))}
         </select>
         <input
+          className="filter filter--search"
           type="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          id="user-search"
           placeholder="Search name or email…"
           aria-label="Search users"
-          className="h-10 flex-[0_0_240px] max-w-full rounded-[10px] border border-border bg-background px-2.5 text-sm text-foreground transition-colors placeholder:text-muted-foreground hover:border-foreground"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
-        <span className="ml-auto font-mono text-[13px] text-muted-foreground">
+        <span className="meta" style={{ marginLeft: 'auto' }}>
           {total} user{total === 1 ? '' : 's'}
         </span>
       </div>
 
-      <section className="overflow-hidden rounded-2xl border border-border bg-background shadow-soft">
+      <section className="table-card">
         {isLoading && !data ? (
-          <div className="p-10 text-center text-sm text-muted-foreground">Loading users…</div>
+          <div className="empty">Loading users…</div>
         ) : isError ? (
-          <div className="p-10 text-center text-sm text-destructive">Failed to load users.</div>
+          <div className="empty">Failed to load users.</div>
         ) : (
           <>
             <UserTable users={data!.data} emptyRole={role} />
@@ -82,6 +85,6 @@ export default function UserList() {
           </>
         )}
       </section>
-    </div>
+    </>
   )
 }

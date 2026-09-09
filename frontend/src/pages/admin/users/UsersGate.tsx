@@ -15,9 +15,5 @@ export default function UsersGate() {
     )
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <DeniedView role={user?.role} />
-    </div>
-  )
+  return <DeniedView role={user?.role} />
 }

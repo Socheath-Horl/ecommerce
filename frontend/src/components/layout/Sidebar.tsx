@@ -1,51 +1,94 @@
+import type { ReactNode } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import {
-  FolderOpen,
-  LayoutDashboard,
-  LogOut,
-  Package,
-  ShoppingCart,
-  Users,
-  type LucideIcon,
-} from 'lucide-react'
 import { toast } from 'sonner'
-import { cn } from 'cn'
-import { Button } from '@/components/ui/button'
 import { useAppDispatch } from '@/store'
 import { logout, type Role } from '@/store/slices/authSlice'
+
+const svgProps = {
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.7,
+  'aria-hidden': true,
+} as const
 
 interface AdminNavItem {
   to: string
   label: string
-  icon: LucideIcon
+  icon: ReactNode
   end?: boolean
   adminOnly?: boolean
 }
 
 export const NAV_ITEMS: AdminNavItem[] = [
-  { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/admin/products', label: 'Products', icon: Package },
-  { to: '/admin/categories', label: 'Categories', icon: FolderOpen },
-  { to: '/admin/orders', label: 'Orders', icon: ShoppingCart },
-  { to: '/admin/users', label: 'Users', icon: Users, adminOnly: true },
+  {
+    to: '/admin',
+    label: 'Dashboard',
+    end: true,
+    icon: (
+      <svg {...svgProps}>
+        <rect x="3" y="3" width="8" height="8" rx="1" />
+        <rect x="13" y="3" width="8" height="8" rx="1" />
+        <rect x="3" y="13" width="8" height="8" rx="1" />
+        <rect x="13" y="13" width="8" height="8" rx="1" />
+      </svg>
+    ),
+  },
+  {
+    to: '/admin/products',
+    label: 'Products',
+    icon: (
+      <svg {...svgProps}>
+        <path d="m6 10 6-4 6 4v7l-6 4-6-4v-7Z" />
+        <path d="m6 10 6 4 6-4M12 14v7" />
+      </svg>
+    ),
+  },
+  {
+    to: '/admin/categories',
+    label: 'Categories',
+    icon: (
+      <svg {...svgProps}>
+        <path d="M3 5h7l2 2h9v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5Z" />
+      </svg>
+    ),
+  },
+  {
+    to: '/admin/orders',
+    label: 'Orders',
+    icon: (
+      <svg {...svgProps}>
+        <path d="M6 8h12l-1 12H7L6 8Z" />
+        <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+      </svg>
+    ),
+  },
+  {
+    to: '/admin/users',
+    label: 'Users',
+    adminOnly: true,
+    icon: (
+      <svg {...svgProps}>
+        <circle cx="9" cy="8" r="4" />
+        <path d="M2 21a7 7 0 0 1 14 0" />
+        <path d="M17 8a4 4 0 0 1 0 7M22 21a5 5 0 0 0-3-4.6" />
+      </svg>
+    ),
+  },
 ]
 
 export function AdminNav({ role, className }: { role?: Role; className?: string }) {
   const items = NAV_ITEMS.filter((item) => !item.adminOnly || role === 'ADMIN')
   return (
-    <nav className={cn('flex flex-col gap-1', className)} aria-label="Admin">
-      {items.map(({ to, label, icon: Icon, end }) => (
+    <nav className={className ?? 'adm-nav'} aria-label="Admin">
+      {items.map(({ to, label, icon, end }) => (
         <NavLink
           key={to}
           to={to}
           end={end}
-          className={({ isActive }) =>
-            `flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-              isActive ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'
-            }`
-          }
+          className={({ isActive }) => (isActive ? 'adm-nav-item is-active' : 'adm-nav-item')}
         >
-          <Icon className="h-[17px] w-[17px]" strokeWidth={1.7} />
+          {icon}
           {label}
         </NavLink>
       ))}
@@ -56,40 +99,35 @@ export function AdminNav({ role, className }: { role?: Role; className?: string 
 export function AdminSidebarFooter() {
   const dispatch = useAppDispatch()
   return (
-    <div className="flex flex-col gap-2">
-      <Button variant="outline" size="sm" className="w-full justify-start" asChild>
-        <Link to="/">View Store</Link>
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="w-full justify-start"
+    <div className="adm-side-foot">
+      <Link className="btn" data-variant="outline" data-size="sm" to="/">
+        View Store
+      </Link>
+      <button
+        type="button"
+        className="btn"
+        data-variant="ghost"
+        data-size="sm"
         onClick={() => {
           dispatch(logout())
           toast('Signed out', { description: 'You left the admin portal.' })
         }}
       >
-        <LogOut className="size-3.5" strokeWidth={1.7} />
         Logout
-      </Button>
+      </button>
     </div>
   )
 }
 
 export default function Sidebar({ role }: { role?: Role }) {
   return (
-    <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r border-border bg-background px-4 py-5 lt900:hidden">
-      <Link
-        to="/admin"
-        className="px-2 font-serif text-lg font-semibold tracking-[-0.01em]"
-      >
+    <aside className="adm-side">
+      <Link className="adm-logo" to="/admin">
         Horizon Supply Co.
       </Link>
       <AdminNav role={role} />
-      <div className="mt-auto flex flex-col gap-8">
-        <hr className="mx-2 border-t border-border" />
-        <AdminSidebarFooter />
-      </div>
+      <hr className="adm-nav-sep" />
+      <AdminSidebarFooter />
     </aside>
   )
 }
