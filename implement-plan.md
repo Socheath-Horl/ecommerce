@@ -328,10 +328,10 @@
 - [x] Verify: All error cases handled
 
 ### 2.6 Frontend — Admin API (RTK Query)
-- [ ] Create adminApi (`src/services/adminApi.ts`)
-- [ ] Add getUsers query (with pagination)
-- [ ] Add updateUserRole mutation
-- [ ] Verify: `npm run build` compiles
+- [x] Create adminApi (`src/services/adminApi.ts`)
+- [x] Add getUsers query (with pagination)
+- [x] Add updateUserRole mutation
+- [x] Verify: `npm run build` compiles
 
 ### 2.7 Frontend — Auth Guard Component
 - [ ] Create AuthGuard (`src/components/guards/AuthGuard.tsx`)
