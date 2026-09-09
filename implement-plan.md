@@ -383,9 +383,10 @@
 - [x] Verify: `npm run build` compiles
 
 ### 2.14 Frontend — Protect Admin Routes
-- [ ] Wrap `/admin/*` routes with AuthGuard
-- [ ] Wrap `/admin/*` routes with RoleGuard (ADMIN/USER)
-- [ ] Verify: Non-admin users redirected (Lightpanda: CUSTOMER login → /admin blocked/redirected)
+- [x] Wrap `/admin/*` routes with AuthGuard
+- [x] Wrap `/admin/*` routes with RoleGuard (ADMIN/USER)
+- [x] Boot-time session restore (`src/lib/session.ts`): refresh token -> `/auth/refresh` -> `/auth/profile`, so direct URLs / hard refreshes stay logged in
+- [x] Verify: Non-admin users redirected (Lightpanda: anon /admin -> login PASS, CUSTOMER login -> /admin blocked to / PASS, ADMIN /admin/users renders 10 rows PASS)
 
 ### 2.15 Phase 2 — Full Verification
 - [ ] Backend admin endpoints work
