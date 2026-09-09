@@ -312,20 +312,20 @@
 - [x] Verify: Admin can list users
 
 ### 2.4 Backend — Admin Update Role Endpoint
-- [ ] Implement `updateRole()` in UsersService
-- [ ] Validate role is valid enum value (CUSTOMER | USER | ADMIN)
-- [ ] Prevent self-role change
-- [ ] Add PATCH `/api/admin/users/:id/role` route (ADMIN only)
-- [ ] Apply AdminGuard
-- [ ] OpenAPI: document PATCH /api/admin/users/:id/role (@ApiBearerAuth, @ApiBody, @ApiOkResponse, @ApiForbiddenResponse)
-- [ ] Verify: Admin can change user role
+- [x] Implement `updateRole()` in UsersService
+- [x] Validate role is valid enum value (CUSTOMER | USER | ADMIN)
+- [x] Prevent self-role change
+- [x] Add PUT `/api/admin/users/:id/role` route (ADMIN only)
+- [x] Apply AdminGuard
+- [x] OpenAPI: document PUT /api/admin/users/:id/role (@ApiBearerAuth, @ApiBody, @ApiOkResponse, @ApiForbiddenResponse)
+- [x] Verify: Admin can change user role
 
 ### 2.5 Backend — Admin User Error Handling
-- [ ] Return 404 for non-existent user
-- [ ] Return 400 for invalid role
-- [ ] Return 403 for non-admin access
-- [ ] Return 400 for self-role change attempt
-- [ ] Verify: All error cases handled
+- [x] Return 404 for non-existent user
+- [x] Return 400 for invalid role
+- [x] Return 403 for non-admin access
+- [x] Return 400 for self-role change attempt
+- [x] Verify: All error cases handled
 
 ### 2.6 Frontend — Admin API (RTK Query)
 - [ ] Create adminApi (`src/services/adminApi.ts`)

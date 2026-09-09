@@ -1055,7 +1055,7 @@ Role: ADMIN  // Only ADMIN can manage users
 403 - Not admin
 ```
 
-#### PATCH `/api/admin/users/:id/role`
+#### PUT `/api/admin/users/:id/role`
 ```typescript
 // Headers
 Authorization: Bearer <accessToken>

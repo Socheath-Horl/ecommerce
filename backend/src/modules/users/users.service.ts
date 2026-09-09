@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
 import { PrismaService } from '@/prisma/prisma.service';
 import type { PaginationDto } from '@/common/dto/response.dto';
 import type { ListUsersQueryDto } from '@/modules/users/dto/list-users-query.dto';
-import type { AdminUserListItemDto } from '@/modules/users/dto/users.response.dto';
+import type { UpdateRoleDto } from '@/modules/users/dto/update-role.dto';
+import type { AdminUserDto, AdminUserListItemDto } from '@/modules/users/dto/users.response.dto';
 
 @Injectable()
 export class UsersService {
@@ -45,5 +46,23 @@ export class UsersService {
       data: users,
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     };
+  }
+
+  async updateRole(actorId: string, userId: string, dto: UpdateRoleDto): Promise<AdminUserDto> {
+    if (actorId === userId) {
+      throw new BadRequestException('Cannot change your own role');
+    }
+
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const updated = await this.prisma.user.update({
+      where: { id: userId },
+      data: { role: dto.role },
+      select: { id: true, name: true, email: true, role: true },
+    });
+    return updated;
   }
 }
