@@ -78,7 +78,7 @@ export function AdminSidebarFooter() {
 
 export default function Sidebar({ role }: { role?: Role }) {
   return (
-    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-border bg-background px-4 py-5 lt900:flex">
+    <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r border-border bg-background px-4 py-5 lt900:hidden">
       <Link
         to="/admin"
         className="px-2 font-serif text-lg font-semibold tracking-[-0.01em]"
