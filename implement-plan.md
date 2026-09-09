@@ -295,9 +295,10 @@
 - [x] Verify: `npm run build` compiles
 
 ### 2.2 Backend — Users DTOs
-- [ ] Create `UpdateRoleDto` (role: ADMIN | USER | CUSTOMER)
-- [ ] Add validation decorators
-- [ ] Verify: `npm run build` compiles
+- [x] Create `UpdateRoleDto` (role: ADMIN | USER | CUSTOMER)
+- [x] Add validation decorators
+- [x] Create response DTOs (AdminUserListItemDto `_count.orders`, AdminUserDto, ListUsersResponseDto, UpdateRoleResponseDto)
+- [x] Verify: `npm run build` compiles
 
 ### 2.3 Backend — Admin List Users Endpoint
 - [ ] Implement `findAll()` in UsersService
