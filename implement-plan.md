@@ -288,11 +288,11 @@
 **Duration:** 1-2 days
 
 ### 2.1 Backend — Users Module Structure
-- [ ] Create `UsersModule` (`src/modules/users/users.module.ts`)
-- [ ] Create `UsersService` (`src/modules/users/users.service.ts`)
-- [ ] Create `UsersController` (`src/modules/users/users.controller.ts`)
-- [ ] Register UsersModule in `AppModule`
-- [ ] Verify: `npm run build` compiles
+- [x] Create `UsersModule` (`src/modules/users/users.module.ts`)
+- [x] Create `UsersService` (`src/modules/users/users.service.ts`)
+- [x] Create `UsersController` (`src/modules/users/users.controller.ts`)
+- [x] Register UsersModule in `AppModule`
+- [x] Verify: `npm run build` compiles
 
 ### 2.2 Backend — Users DTOs
 - [ ] Create `UpdateRoleDto` (role: ADMIN | USER | CUSTOMER)

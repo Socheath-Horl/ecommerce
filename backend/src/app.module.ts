@@ -4,6 +4,7 @@ import { PrismaModule } from '@/prisma/prisma.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { MinioModule } from '@/modules/minio/minio.module';
 import { FilesModule } from '@/modules/files/files.module';
+import { UsersModule } from '@/modules/users/users.module';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 
@@ -16,6 +17,7 @@ import { AppService } from '@/app.service';
     AuthModule,
     MinioModule,
     FilesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
