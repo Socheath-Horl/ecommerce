@@ -368,12 +368,12 @@
 - [x] Verify: `npm run build` compiles
 
 ### 2.12 Frontend — Role Selector Component
-- [ ] Create RoleSelector (`src/components/admin/RoleSelector.tsx`)
-- [ ] Show current role
-- [ ] Dropdown to select new role
-- [ ] Call updateUserRole on change
-- [ ] Show success/error feedback
-- [ ] Verify: `npm run build` compiles
+- [x] Create RoleSelector (`src/components/admin/RoleSelector.tsx`)
+- [x] Show current role
+- [x] Dropdown to select new role
+- [x] Call updateUserRole on change
+- [x] Show success/error feedback
+- [x] Verify: `npm run build` compiles
 
 ### 2.13 Frontend — User List Page
 - [ ] Create UserList page (`src/pages/admin/users/UserList.tsx`)

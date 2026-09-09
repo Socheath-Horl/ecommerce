@@ -1,13 +1,11 @@
 import type { AdminUser } from '@/services/adminApi'
-
-const ROLE_OPTIONS: AdminUser['role'][] = ['CUSTOMER', 'USER', 'ADMIN']
+import RoleSelector from '@/components/admin/RoleSelector'
 
 interface UserTableProps {
   users: AdminUser[]
-  onRoleChange: (userId: string, role: AdminUser['role']) => void
 }
 
-export default function UserTable({ users, onRoleChange }: UserTableProps) {
+export default function UserTable({ users }: UserTableProps) {
   return (
     <div className="overflow-hidden rounded-lg border bg-background">
       <table className="w-full text-sm">
@@ -26,18 +24,7 @@ export default function UserTable({ users, onRoleChange }: UserTableProps) {
               <td className="px-4 py-3 font-medium">{user.name}</td>
               <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
               <td className="px-4 py-3">
-                <select
-                  value={user.role}
-                  onChange={(e) => onRoleChange(user.id, e.target.value as AdminUser['role'])}
-                  className="rounded-md border bg-background px-2 py-1 text-sm"
-                  aria-label={`Change role for ${user.name}`}
-                >
-                  {ROLE_OPTIONS.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
+                <RoleSelector user={user} />
               </td>
               <td className="px-4 py-3 text-muted-foreground">
                 {new Date(user.createdAt).toLocaleDateString()}
