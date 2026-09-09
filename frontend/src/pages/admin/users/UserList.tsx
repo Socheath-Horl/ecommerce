@@ -1,57 +1,94 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import UserTable from '@/components/admin/UserTable'
+import Pager from '@/components/admin/Pager'
+import DeniedView from '@/components/admin/DeniedView'
 import { useGetUsersQuery } from '@/services/adminApi'
+import { useAppSelector } from '@/store'
+import { selectUser, type Role } from '@/store/slices/authSlice'
 
 const PAGE_SIZE = 10
+const ROLE_FILTERS = ['ALL', 'ADMIN', 'USER', 'CUSTOMER'] as const
+type RoleFilter = (typeof ROLE_FILTERS)[number]
 
 export default function UserList() {
+  const currentUser = useAppSelector(selectUser)
   const [page, setPage] = useState(1)
-  const { data, isLoading, isError } = useGetUsersQuery({ page, limit: PAGE_SIZE })
+  const [role, setRole] = useState<RoleFilter>('ALL')
+  const [search, setSearch] = useState('')
+  const [debounced, setDebounced] = useState('')
 
-  const totalPages = data?.pagination.totalPages ?? 0
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(search), 300)
+    return () => clearTimeout(t)
+  }, [search])
+
+  useEffect(() => {
+    setPage(1)
+  }, [role, debounced])
+
+  const { data, isLoading, isError } = useGetUsersQuery({
+    page,
+    limit: PAGE_SIZE,
+    role: role === 'ALL' ? undefined : (role as Role),
+    search: debounced.trim() || undefined,
+  })
+
+  if (currentUser?.role !== 'ADMIN') {
+    return <DeniedView role={currentUser?.role} />
+  }
+
   const total = data?.pagination.total ?? 0
+  const totalPages = data?.pagination.totalPages ?? 0
 
   return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-primary">Admin</p>
-        <h1 className="font-serif text-[26px] tracking-tight">Users</h1>
-        <p className="text-sm text-muted-foreground">Manage customer accounts and roles.</p>
+    <div className="flex flex-col gap-5">
+      <nav
+        aria-label="Breadcrumb"
+        className="flex flex-wrap items-center gap-2 font-mono text-xs tracking-[0.03em] text-muted-foreground"
+      >
+        <Link to="/admin" className="transition-colors hover:text-foreground">Admin</Link>
+        <span>/</span>
+        <span aria-current="page">Users</span>
+      </nav>
+
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-background px-4 py-3.5">
+        <label htmlFor="role-filter" className="text-[13px] text-muted-foreground">Role</label>
+        <select
+          id="role-filter"
+          value={role}
+          onChange={(e) => setRole(e.target.value as RoleFilter)}
+          className="h-10 rounded-lg border border-border bg-background px-2.5 text-sm text-foreground outline-none transition-colors hover:border-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+        >
+          {ROLE_FILTERS.map((r) => (
+            <option key={r} value={r}>{r === 'ALL' ? 'All' : r}</option>
+          ))}
+        </select>
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search name or email…"
+          aria-label="Search users"
+          className="h-10 flex-[0_0_240px] max-w-full rounded-lg border border-border bg-background px-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground hover:border-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+        />
+        <span className="ml-auto font-mono text-[13px] text-muted-foreground">
+          {total} user{total === 1 ? '' : 's'}
+        </span>
       </div>
 
-      {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading users…</p>
-      ) : isError ? (
-        <p className="text-sm text-destructive">Failed to load users.</p>
-      ) : (
-        <>
-          <UserTable users={data!.data} />
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Page {data?.pagination.page} of {totalPages} ({total} users)
-            </p>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page <= 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-        </>
-      )}
+      <section className="overflow-hidden rounded-2xl border border-border bg-background shadow-sm">
+        {isLoading && !data ? (
+          <div className="p-10 text-center text-sm text-muted-foreground">Loading users…</div>
+        ) : isError ? (
+          <div className="p-10 text-center text-sm text-destructive">Failed to load users.</div>
+        ) : (
+          <>
+            <UserTable users={data!.data} />
+            <Pager page={page} totalPages={totalPages} onChange={setPage} />
+          </>
+        )}
+      </section>
     </div>
   )
 }

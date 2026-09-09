@@ -1,47 +1,52 @@
+import type { ChangeEvent } from 'react'
+import { ChevronDown } from 'lucide-react'
 import { toast } from 'sonner'
-import { useAppSelector } from '@/store'
-import { selectUser } from '@/store/slices/authSlice'
-import {
-  useUpdateUserRoleMutation,
-  type AdminUser,
-} from '@/services/adminApi'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { cn } from 'cn'
+import { useUpdateUserRoleMutation, type AdminUser } from '@/services/adminApi'
 
-const ROLE_OPTIONS: AdminUser['role'][] = ['CUSTOMER', 'USER', 'ADMIN']
+type SelectableRole = 'CUSTOMER' | 'USER' | 'ADMIN'
+
+const ROLE_TINTS: Record<SelectableRole, string> = {
+  ADMIN: 'bg-primary/15 text-primary',
+  USER: 'bg-chart-3/15 text-chart-3',
+  CUSTOMER: 'bg-chart-2/15 text-chart-2',
+}
 
 export default function RoleSelector({ user }: { user: AdminUser }) {
   const [updateUserRole, { isLoading }] = useUpdateUserRoleMutation()
-  const currentUser = useAppSelector(selectUser)
-  const isSelf = currentUser?.id === user.id
 
-  async function handleChange(role: AdminUser['role']) {
+  async function handleChange(e: ChangeEvent<HTMLSelectElement>) {
+    const role = e.target.value as AdminUser['role']
     try {
       await updateUserRole({ id: user.id, role }).unwrap()
-      toast.success('Role updated', { description: `${user.email} is now ${role}` })
+      toast.success(`${user.name} → ${role}`, { description: 'Role updated.' })
     } catch (err) {
       const message = (err as { message?: string })?.message ?? 'Something went wrong'
       toast.error('Role update failed', { description: message })
     }
   }
 
+  const disabled = isLoading || user.role === 'ADMIN'
+
   return (
-    <Select value={user.role} onValueChange={handleChange} disabled={isSelf || isLoading}>
-      <SelectTrigger size="sm" className="w-32">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {ROLE_OPTIONS.map((option) => (
-          <SelectItem key={option} value={option}>
-            {option}
-          </SelectItem>
+    <span className="relative inline-block">
+      <select
+        value={user.role}
+        onChange={handleChange}
+        disabled={disabled}
+        aria-label={`Role for ${user.name}`}
+        className={cn(
+          'h-[34px] cursor-pointer appearance-none rounded-full border border-border py-0 pl-3 pr-8 font-mono text-xs font-semibold tracking-[0.02em] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50',
+          ROLE_TINTS[user.role as SelectableRole],
+        )}
+      >
+        {(['CUSTOMER', 'USER', 'ADMIN'] as const).map((r) => (
+          <option key={r} value={r}>
+            {r}
+          </option>
         ))}
-      </SelectContent>
-    </Select>
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 size-3.5 -translate-y-1/2 text-current" />
+    </span>
   )
 }
