@@ -262,7 +262,7 @@
 
 ### 1.29 Phase 1 — Full Verification
 - [x] Backend starts without errors
-- [ ] Frontend starts without errors (headless/browser + API e2e verified — pending Lightpanda click-through)
+- [x] Frontend starts without errors (headless Lightpanda: all routes render; login click-through — wrong-password stays on /auth/login + error toast, success redirects to /)
 - [x] Register a new user
 - [x] Login with new user
 - [x] Access protected route with token
