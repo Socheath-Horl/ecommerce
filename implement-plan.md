@@ -346,20 +346,20 @@
 - [x] Verify: `npm run build` compiles
 
 ### 2.9 Frontend — Admin Layout
-- [ ] Create AdminLayout (`src/pages/admin/AdminLayout.tsx`)
-- [ ] Add sidebar navigation
-- [ ] Add main content area
-- [ ] Wrap with AuthGuard and RoleGuard
-- [ ] Verify: `npm run build` compiles
+- [x] Create AdminLayout (`src/pages/admin/AdminLayout.tsx`)
+- [x] Add sidebar navigation
+- [x] Add main content area
+- [x] Wrap with AuthGuard and RoleGuard
+- [x] Verify: `npm run build` compiles
 
 ### 2.10 Frontend — Admin Sidebar
-- [ ] Create Sidebar component (`src/components/layout/Sidebar.tsx`)
-- [ ] Add Dashboard link
-- [ ] Add Products link
-- [ ] Add Categories link
-- [ ] Add Orders link
-- [ ] Add Users link
-- [ ] Verify: `npm run build` compiles
+- [x] Create Sidebar component (`src/components/layout/Sidebar.tsx`)
+- [x] Add Dashboard link
+- [x] Add Products link
+- [x] Add Categories link
+- [x] Add Orders link
+- [x] Add Users link
+- [x] Verify: `npm run build` compiles
 
 ### 2.11 Frontend — User Table Component
 - [ ] Create UserTable (`src/components/admin/UserTable.tsx`)

@@ -1,14 +1,19 @@
 import { Outlet } from 'react-router-dom'
+import AuthGuard from '@/components/guards/AuthGuard'
+import RoleGuard from '@/components/guards/RoleGuard'
+import Sidebar from '@/components/layout/Sidebar'
 
 export default function AdminLayout() {
   return (
-    <div className="min-h-screen bg-muted/40">
-      <aside className="fixed inset-y-0 left-0 hidden w-60 border-r bg-background lg:flex lg:flex-col">
-        <p className="px-6 py-4 font-serif text-lg">Admin</p>
-      </aside>
-      <main className="lg:pl-60">
-        <Outlet />
-      </main>
-    </div>
+    <AuthGuard>
+      <RoleGuard roles={['ADMIN']}>
+        <div className="min-h-screen bg-muted/40">
+          <Sidebar />
+          <main className="lg:pl-60">
+            <Outlet />
+          </main>
+        </div>
+      </RoleGuard>
+    </AuthGuard>
   )
 }
