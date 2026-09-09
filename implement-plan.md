@@ -4,6 +4,15 @@
 
 ---
 
+## Frontend Verification Standard (headless)
+
+**All end-to-end frontend checks use the Lightpanda headless browser** (per AGENTS.md — a standalone binary from lightpanda.io, NOT an npm package; on Windows run it via the `lightpanda/browser` Docker image):
+
+- **Serve the app:** `npm run dev` bound to `0.0.0.0` (or `preview` of a production build) with `VITE_API_URL` set so the app can reach the backend; use Vite's `server.proxy` (`'/api' -> http://localhost:3000`) so all API calls are same-origin (the backend CORS allows only `http://localhost:5173`).
+- **Render check:** `docker run --rm --add-host=host.docker.internal:host-gateway lightpanda/browser:latest /bin/lightpanda fetch http://host.docker.internal:<port>/<path> --dump html` — assert the rendered DOM markers, not just HTTP 200.
+- **Flow check (click-through):** a PandaScript run via `/bin/lightpanda run /script.js` using `new Page()` + `page.goto/fill/click` and `page.waitForScript`/`page.evaluate`, asserting client flows — login (bad creds stay on the page + error, good creds redirect), register, routing, protected redirects.
+- Every frontend `Verify:` bullet below ("loads / works / redirected / responsive") is performed this way and read from Lightpanda's dumped DOM/output.
+
 ## Phase 1: Project Setup, DB Schema, Auth + Password, MinIO
 
 **Duration:** 2-3 days
@@ -248,7 +257,7 @@
 - [x] Redirect to home on success
 - [x] Show error message on failure (401 → "Invalid email or password" toast)
 - [x] Add link to register page
-- [x] Verify: Login works end-to-end
+- [x] Verify: Login works end-to-end (Lightpanda: bad creds stay on /auth/login + error toast; good creds redirect to /)
 
 ### 1.28 Frontend — Register Page
 - [x] Create Register page (`src/pages/auth/Register.tsx`) — follow `ux-ui/register-page.html`
@@ -258,7 +267,7 @@
 - [x] Redirect to login on success (409 → "Email already exists" toast)
 - [x] Show error message on failure (inline field errors + toast)
 - [x] Add link to login page
-- [x] Verify: Register works end-to-end
+- [x] Verify: Register works end-to-end (Lightpanda)
 
 ### 1.29 Phase 1 — Full Verification
 - [x] Backend starts without errors
@@ -375,7 +384,7 @@
 ### 2.14 Frontend — Protect Admin Routes
 - [ ] Wrap `/admin/*` routes with AuthGuard
 - [ ] Wrap `/admin/*` routes with RoleGuard (ADMIN/USER)
-- [ ] Verify: Non-admin users redirected
+- [ ] Verify: Non-admin users redirected (Lightpanda: CUSTOMER login → /admin blocked/redirected)
 
 ### 2.15 Phase 2 — Full Verification
 - [ ] Backend admin endpoints work
@@ -575,7 +584,7 @@
 - [ ] Add results count + "Filters (n)" active count
 - [ ] Add search banner ("Results for "q"" + "Clear search ×") when query present
 - [ ] Add empty state (no results → "Clear filters" button)
-- [ ] Verify: Products page loads with data
+- [ ] Verify: Products page loads with data (Lightpanda: product grid renders)
 
 ### 3.26 Frontend — ProductDetail Page
 - [ ] Create ProductDetail page (`src/pages/customer/ProductDetail.tsx`) — follow `ux-ui/product-detail-page.html`
@@ -587,7 +596,7 @@
 - [ ] Quantity stepper (1–stock max, disabled out of stock)
 - [ ] Add to Cart button (disabled when out of stock)
 - [ ] Display reviews section (list + per-item Review CTA / "Reviewed" state)
-- [ ] Verify: Product detail page loads correctly
+- [ ] Verify: Product detail page loads correctly (Lightpanda)
 
 ### 3.27 Frontend — Admin Product API (RTK Query)
 - [ ] Add createProduct mutation to adminApi
@@ -870,7 +879,7 @@
 - [ ] Display list of CartItems
 - [ ] Display OrderSummary
 - [ ] Empty cart message
-- [ ] Verify: Cart page loads correctly
+- [ ] Verify: Cart page loads correctly (Lightpanda)
 
 ### 5.15 Frontend — CartDrawer Component
 - [ ] Create CartDrawer (`src/components/cart/CartDrawer.tsx`) — follow `ux-ui/` drawer (`min(420px, 100vw)` right slide-over)
@@ -884,7 +893,7 @@
 ### 5.16 Frontend — Header Integration
 - [ ] Add CartDrawer trigger to Header
 - [ ] Update cart count on add/remove
-- [ ] Verify: Cart count updates in real-time
+- [ ] Verify: Cart count updates in real-time (Lightpanda: add to cart → count badge updates)
 
 ### 5.17 Phase 5 — Full Verification
 - [ ] Add to cart from product page
@@ -996,7 +1005,7 @@
 - [ ] Step 1: Shipping address (AddressForm)
 - [ ] Step 2: Review & Pay (OrderSummary + Payment)
 - [ ] Submit: create order → create session → redirect to Stripe
-- [ ] Verify: Checkout flow works
+- [ ] Verify: Checkout flow works (Lightpanda: order → Stripe checkout URL reached)
 
 ### 6.14 Frontend — OrderConfirmation Page
 - [ ] Create OrderConfirmation page (`src/pages/customer/OrderConfirmation.tsx`)
@@ -1005,7 +1014,7 @@
 - [ ] Display order number
 - [ ] Display order summary (authoritative snapshot: total, shipping, tax)
 - [ ] Continue shopping button
-- [ ] Verify: Confirmation page displays
+- [ ] Verify: Confirmation page displays (Lightpanda)
 
 ### 6.15 Phase 6 — Full Verification
 - [ ] Complete checkout flow works (order-first: POST /api/orders → create-session → Stripe redirect)
@@ -1124,13 +1133,13 @@
 - [ ] Fetch orders with ordersApi
 - [ ] Display OrderList
 - [ ] Empty orders message
-- [ ] Verify: Orders page loads
+- [ ] Verify: Orders page loads (Lightpanda)
 
 ### 7.15 Frontend — OrderDetail Page
 - [ ] Create OrderDetail page (`src/pages/customer/OrderDetail.tsx`)
 - [ ] Fetch order by ID
 - [ ] Display OrderDetail component
-- [ ] Verify: Order detail page loads
+- [ ] Verify: Order detail page loads (Lightpanda)
 
 ### 7.16 Frontend — UserInfo Component
 - [ ] Create UserInfo (`src/components/profile/UserInfo.tsx`)
@@ -1166,7 +1175,7 @@
 - [ ] Display UserInfo
 - [ ] Display AddressList
 - [ ] Display PasswordForm
-- [ ] Verify: Profile page loads
+- [ ] Verify: Profile page loads (Lightpanda)
 
 ### 7.21 Phase 7 — Full Verification
 - [ ] Order history displays correctly
@@ -1289,7 +1298,7 @@
 ### 8.15 Frontend — Integrate Reviews in ProductDetail
 - [ ] Add ReviewSection to ProductDetail page
 - [ ] Fetch reviews for product
-- [ ] Verify: Reviews show on product page
+- [ ] Verify: Reviews show on product page (Lightpanda)
 
 ### 8.16 Phase 8 — Full Verification
 - [ ] Create review works
@@ -1382,7 +1391,7 @@
 - [ ] Display StatsCards
 - [ ] Display SalesChart
 - [ ] Display RecentOrders
-- [ ] Verify: Dashboard page loads
+- [ ] Verify: Dashboard page loads (Lightpanda)
 
 ### 9.10 Frontend — Admin OrderTable Component
 - [ ] Create OrderTable (`src/components/admin/OrderTable.tsx`)
@@ -1396,7 +1405,7 @@
 - [ ] Fetch orders with adminApi
 - [ ] Display OrderTable
 - [ ] Add pagination
-- [ ] Verify: Order list page loads
+- [ ] Verify: Order list page loads (Lightpanda)
 
 ### 9.12 Frontend — Admin Order Status Update
 - [ ] Add status update to order detail
@@ -1509,19 +1518,19 @@
 - [ ] Mobile: full width items
 - [ ] Tablet: side by side
 - [ ] Desktop: standard layout
-- [ ] Verify: Cart responsive
+- [ ] Verify: Cart responsive (Lightpanda: narrow viewport)
 
 ### 10.14 Frontend — Responsive Admin
 - [ ] Mobile: collapsible sidebar
 - [ ] Tablet: narrow sidebar
 - [ ] Desktop: full sidebar
-- [ ] Verify: Admin responsive
+- [ ] Verify: Admin responsive (Lightpanda: narrow viewport)
 
 ### 10.15 Frontend — 404 Page
 - [ ] Create NotFound page (`src/pages/NotFound.tsx`)
 - [ ] Display 404 message
 - [ ] Link to home
-- [ ] Verify: 404 page works
+- [ ] Verify: 404 page works (Lightpanda: unknown route renders 404)
 
 ### 10.16 Frontend — SEO Metadata
 - [ ] Add title to index.html
