@@ -376,11 +376,11 @@
 - [x] Verify: `npm run build` compiles
 
 ### 2.13 Frontend — User List Page
-- [ ] Create UserList page (`src/pages/admin/users/UserList.tsx`)
-- [ ] Fetch users with adminApi
-- [ ] Display UserTable
-- [ ] Add pagination controls
-- [ ] Verify: `npm run build` compiles
+- [x] Create UserList page (`src/pages/admin/users/UserList.tsx`)
+- [x] Fetch users with adminApi
+- [x] Display UserTable
+- [x] Add pagination controls
+- [x] Verify: `npm run build` compiles
 
 ### 2.14 Frontend — Protect Admin Routes
 - [ ] Wrap `/admin/*` routes with AuthGuard

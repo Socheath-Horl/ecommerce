@@ -10,7 +10,7 @@ import Login from '@/pages/auth/Login'
 import Register from '@/pages/auth/Register'
 import NotFound from '@/pages/NotFound'
 import AdminLayout from '@/pages/admin/AdminLayout'
-import AdminUsers from '@/pages/admin/AdminUsers'
+import UserList from '@/pages/admin/users/UserList'
 import { ThemeToaster } from '@/components/theme-toaster'
 
 const router = createBrowserRouter([
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
     element: <AdminLayout />,
     children: [
       { index: true, element: <Navigate to="/admin/users" replace /> },
-      { path: 'users', element: <AdminUsers /> },
+      { path: 'users', element: <UserList /> },
     ],
   },
   { path: '*', element: <NotFound /> },
