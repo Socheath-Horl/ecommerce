@@ -301,15 +301,15 @@
 - [x] Verify: `npm run build` compiles
 
 ### 2.3 Backend — Admin List Users Endpoint
-- [ ] Implement `findAll()` in UsersService
-- [ ] Add pagination support (page, limit)
-- [ ] Add search by name/email
-- [ ] Add filter by role
-- [ ] Return users with total count and order count
-- [ ] Add GET `/api/admin/users` route (ADMIN only)
-- [ ] Apply AdminGuard
-- [ ] OpenAPI: document GET /api/admin/users (@ApiBearerAuth, @ApiOkResponse, @ApiForbiddenResponse)
-- [ ] Verify: Admin can list users
+- [x] Implement `findAll()` in UsersService
+- [x] Add pagination support (page, limit)
+- [x] Add search by name/email
+- [x] Add filter by role
+- [x] Return users with total count and order count
+- [x] Add GET `/api/admin/users` route (ADMIN only)
+- [x] Apply AdminGuard
+- [x] OpenAPI: document GET /api/admin/users (@ApiBearerAuth, @ApiOkResponse, @ApiForbiddenResponse)
+- [x] Verify: Admin can list users
 
 ### 2.4 Backend — Admin Update Role Endpoint
 - [ ] Implement `updateRole()` in UsersService
