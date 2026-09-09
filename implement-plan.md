@@ -334,16 +334,16 @@
 - [x] Verify: `npm run build` compiles
 
 ### 2.7 Frontend — Auth Guard Component
-- [ ] Create AuthGuard (`src/components/guards/AuthGuard.tsx`)
-- [ ] Check if user is authenticated
-- [ ] Redirect to login if not
-- [ ] Verify: `npm run build` compiles
+- [x] Create AuthGuard (`src/components/guards/AuthGuard.tsx`)
+- [x] Check if user is authenticated
+- [x] Redirect to login if not
+- [x] Verify: `npm run build` compiles
 
 ### 2.8 Frontend — Role Guard Component
-- [ ] Create RoleGuard (`src/components/guards/RoleGuard.tsx`)
-- [ ] Check if user has required role
-- [ ] Redirect to home if not authorized
-- [ ] Verify: `npm run build` compiles
+- [x] Create RoleGuard (`src/components/guards/RoleGuard.tsx`)
+- [x] Check if user has required role
+- [x] Redirect to home if not authorized
+- [x] Verify: `npm run build` compiles
 
 ### 2.9 Frontend — Admin Layout
 - [ ] Create AdminLayout (`src/pages/admin/AdminLayout.tsx`)
