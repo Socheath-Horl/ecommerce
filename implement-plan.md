@@ -362,10 +362,10 @@
 - [x] Verify: `npm run build` compiles
 
 ### 2.11 Frontend — User Table Component
-- [ ] Create UserTable (`src/components/admin/UserTable.tsx`)
-- [ ] Display user email, name, role, created date
-- [ ] Add role selector dropdown
-- [ ] Verify: `npm run build` compiles
+- [x] Create UserTable (`src/components/admin/UserTable.tsx`)
+- [x] Display user email, name, role, created date
+- [x] Add role selector dropdown
+- [x] Verify: `npm run build` compiles
 
 ### 2.12 Frontend — Role Selector Component
 - [ ] Create RoleSelector (`src/components/admin/RoleSelector.tsx`)
