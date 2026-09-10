@@ -13,711 +13,251 @@
       } catch (e) {}
     })();
   </script>
-  <style>
-    /* ─── tokens ─────────────────────────────────────────────────────────
-       Identical values to brand-spec.md (source of truth). Selector is
-       html.dark to match shadcn/ui's `darkMode: ['class']` strategy.
-       Reference hexes: light fg #09090B · bg #FFFFFF · border #E4E4E7 ·
-       muted #71717A · accent/dark-fg #FAFAFA · dark bg #09090B ·
-       dark surface #18181B · dark border #27272A. */
-    :root {
-      --bg:      oklch(1 0 89.9);
-      --surface: oklch(1 0 89.9);
-      --fg:      oklch(0.1408 0.0044 285.8);
-      --muted:   oklch(0.5517 0.0138 285.9);
-      --border:  oklch(0.9197 0.004 286.3);
-      --accent:  oklch(0.2103 0.0059 285.9);
-
-      --accent-soft: color-mix(in oklch, var(--accent) 14%, transparent);
-      --fg-soft:     color-mix(in oklch, var(--fg) 6%, transparent);
-      --shadow-soft: 0 1px 2px color-mix(in oklch, var(--fg) 8%, transparent),
-                     0 16px 40px -18px color-mix(in oklch, var(--fg) 14%, transparent);
-      --on-accent:  oklch(0.9851 0 89.9);
-      --hover-fill: oklch(0.9674 0.0013 286.4);
-      --success:     oklch(0.6271 0.1699 149.2);
-      --warning:     oklch(0.6806 0.1423 75.8);
-      --info:        oklch(0.5461 0.2152 262.9);
-      --destructive: oklch(0.5771 0.2152 27.3);
-      --success-soft:     color-mix(in oklch, var(--success) 14%, transparent);
-      --warning-soft:     color-mix(in oklch, var(--warning) 14%, transparent);
-      --info-soft:        color-mix(in oklch, var(--info) 14%, transparent);
-      --destructive-soft: color-mix(in oklch, var(--destructive) 14%, transparent);
-
-      --font-display: 'Iowan Old Style', 'Charter', Georgia, 'Times New Roman', serif;
-      --font-body:    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      --font-mono:    ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
-
-      --fs-h1: clamp(42px, 6vw, 64px);
-      --fs-h2: clamp(30px, 4vw, 44px);
-      --fs-h3: 20px;
-      --fs-lead: 18px;
-      --fs-body: 16px;
-      --fs-meta: 13px;
-
-      --gap-xs: 8px;
-      --gap-sm: 12px;
-      --gap-md: 20px;
-      --gap-lg: 32px;
-      --gap-xl: 56px;
-      --gap-2xl: 88px;
-      --container: 1280px;
-      --gutter: 32px;
-      --radius: 10px;
-      --radius-lg: 16px;
-
-      color-scheme: light;
-    }
-
-    .dark {
-      --bg:      oklch(0.1408 0.0044 285.8);
-      --surface: oklch(0.2103 0.0059 285.9);
-      --fg:      oklch(0.9851 0 89.9);
-      --muted:   oklch(0.7118 0.0129 286.1);
-      --border:  oklch(0.2739 0.0055 286);
-      --accent:  oklch(0.9851 0 89.9);
-      --on-accent:  oklch(0.2103 0.0059 285.9);
-      --hover-fill: oklch(0.2103 0.0059 285.9);
-      --success:     oklch(0.7227 0.192 149.6);
-      --warning:     oklch(0.8606 0.1731 91.9);
-      --info:        oklch(0.6231 0.188 259.8);
-      --destructive: oklch(0.6368 0.2078 25.3);
-      color-scheme: dark;
-    }
-
-    /* ─── reset & base ──────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; }
-    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-    [hidden] { display: none !important; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--fg);
-      font-family: var(--font-body);
-      font-size: var(--fs-body);
-      line-height: 1.55;
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-    }
-    img, svg { display: block; max-width: 100%; }
-    a { color: inherit; text-decoration: none; }
-    button { font: inherit; cursor: pointer; }
-    p { text-wrap: pretty; }
-    h1, h2, h3, h4 { text-wrap: balance; }
-
-    /* ─── layout primitives ─────────────────────────────────────────── */
-    .container { max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
-    .row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-md); }
-
-    /* ─── type ──────────────────────────────────────────────────────── */
-    h1 { font-family: var(--font-display); font-size: var(--fs-h1); line-height: 1.06; letter-spacing: -0.02em; margin: 0; }
-    h2 { font-family: var(--font-display); font-size: var(--fs-h2); line-height: 1.12; letter-spacing: -0.015em; margin: 0; }
-    h3 { font-size: var(--fs-h3); font-weight: 600; line-height: 1.3; letter-spacing: -0.005em; margin: 0; }
-    .eyebrow {
-      font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--accent); margin: 0 0 var(--gap-md);
-    }
-    .meta { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--muted); }
-    .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-
-    /* ─── chrome ────────────────────────────────────────────────────── */
-    .topnav {
-      position: sticky; top: 0; z-index: 10;
-      background: color-mix(in oklch, var(--bg) 92%, transparent);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .topnav-inner { display: flex; align-items: center; gap: 28px; padding-block: 13px; }
-    .topnav .logo { font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; color: var(--fg); flex: none; }
-    .topnav nav { display: flex; align-items: center; gap: 24px; }
-    .topnav nav a {
-      position: relative;
-      font-size: 15px; font-weight: 500; color: var(--fg);
-      padding: 6px 2px;
-    }
-    .topnav nav a::after {
-      content: ""; position: absolute; left: 2px; right: 2px; bottom: 0; height: 1px;
-      background: var(--accent);
-      transform: scaleX(0); transform-origin: left;
-      transition: transform 0.18s ease;
-    }
-    .topnav nav a:hover { color: var(--fg); }
-    .topnav nav a:hover::after { transform: scaleX(1); }
-    .topnav .cluster { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-    .topnav .cluster .searchbar { width: min(320px, 100%); }
-    .nav-cart { position: relative; }
-    .cart-badge {
-      position: absolute; top: -2px; right: -2px; min-width: 16px; height: 16px;
-      padding: 0 4px; border-radius: 999px;
-      background: var(--accent); color: var(--on-accent);
-      font-family: var(--font-mono); font-size: 10px; line-height: 16px; text-align: center;
-    }
-    .theme-toggle { display: inline-flex; align-items: center; gap: 8px; }
-    .theme-toggle .theme-icon { display: grid; place-items: center; }
-    .theme-toggle .moon { display: none; }
-    html.dark .theme-toggle .sun  { display: none; }
-    html.dark .theme-toggle .moon { display: block; }
-    .topnav .menu-btn { display: none; }
-    @media (max-width: 1100px) {
-      .topnav .cluster .searchbar,
-      .topnav .usermenu { display: none; }
-    }
-    @media (max-width: 900px) {
-      .topnav nav { display: none; }
-      .topnav .menu-btn { display: inline-grid; }
-    }
-
-    /* ─── searchbar (composite) ─────────────────────────────────────── */
-    .searchbar {
-      display: flex; align-items: center; gap: 6px;
-      height: 44px;
-      border: 1px solid var(--border); border-radius: 999px;
-      background: var(--surface);
-      padding: 0 6px 0 16px;
-      width: min(420px, 100%);
-      transition: border-color 0.15s ease;
-    }
-    .searchbar:focus-within { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
-    .searchbar input { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--fg); font: inherit; font-size: 14px; padding: 10px 0; }
-    .searchbar input:focus { outline: none; }
-    .searchbar input::placeholder { color: var(--muted); }
-    .searchbar .icon-btn { width: 40px; height: 40px; }
-
-    /* ─── breadcrumb ────────────────────────────────────────────────── */
-    .crumbs { padding: 18px 0 4px; }
-    .crumbs ol { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; list-style: none; margin: 0; padding: 0; }
-    .crumbs li { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.03em; color: var(--muted); }
-    .crumbs li + li::before { content: "/"; color: var(--muted); }
-    .crumbs a { color: var(--muted); }
-    .crumbs a:hover { color: var(--fg); }
-
-    /* ─── user menu (header dropdown) ──────────────────────────────── */
-    .usermenu { position: relative; }
-    .usermenu-panel {
-      position: absolute; right: 0; top: calc(100% + 10px);
-      width: 236px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-soft);
-      padding: 8px;
-      z-index: 30;
-    }
-    .usermenu-head { padding: 10px 12px 10px; margin-bottom: 6px; border-bottom: 1px solid var(--border); }
-    .usermenu-head p { margin: 0; font-size: 13px; }
-    .usermenu-head .meta { font-size: 11px; }
-    .menu-item {
-      display: flex; align-items: center; gap: 10px;
-      width: 100%; padding: 10px 12px;
-      border: 0; border-radius: 8px;
-      background: transparent; color: var(--fg);
-      font: inherit; font-size: 14px; text-align: left;
-    }
-    .menu-item:hover { background: var(--hover-fill); }
-    .menu-item + .menu-item { margin-top: 2px; }
-
-    /* ─── slide-over panels (mobile menu) ───────────────────────────── */
-    .menu-overlay { position: fixed; inset: 0; background: color-mix(in oklch, var(--fg) 35%, transparent); z-index: 80; }
-    .menu-panel {
-      position: fixed; left: 0; top: 0; bottom: 0;
-      width: min(320px, 86vw);
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      z-index: 81;
-      display: flex; flex-direction: column;
-      gap: 20px; padding: 14px 20px 24px;
-      overflow-y: auto;
-      box-shadow: var(--shadow-soft);
-    }
-    .menu-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .menu-links { display: flex; flex-direction: column; gap: 4px; }
-    .menu-links a { padding: 10px 12px; border-radius: 8px; font-size: 15px; color: var(--fg); }
-    .menu-links a:hover { background: var(--hover-fill); }
-    .menu-sec-label {
-      font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--muted); margin: 0 0 8px;
-    }
-    .menu-account { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .menu-theme .theme-toggle { width: 100%; justify-content: flex-start; }
-    .theme-label { font-size: 14px; }
-
-    .pagefoot { padding-block: var(--gap-xl); border-top: 1px solid var(--border); }
-    .foot-grid { display: grid; grid-template-columns: 1.7fr 1fr 1fr 1.2fr; gap: var(--gap-xl); }
-    @media (max-width: 920px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
-    .foot-brand p { color: var(--muted); font-size: 14px; max-width: 40ch; margin: 12px 0 0; }
-    .foot-col h3 { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 var(--gap-sm); }
-    .foot-col h3 + h3 { margin-top: 20px; }
-    .foot-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-    .foot-col a { font-size: 14px; color: var(--muted); }
-    .foot-col a:hover { color: var(--fg); }
-    .foot-social { display: flex; gap: 8px; }
-    .foot-social .icon-btn { font-family: var(--font-mono); font-size: 12px; }
-    .foot-social .icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
-    .foot-pay { display: flex; flex-wrap: wrap; gap: 8px; }
-    .pay-chip {
-      display: inline-flex; align-items: center;
-      padding: 5px 12px;
-      border: 1px solid var(--border); border-radius: 8px;
-      font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em;
-      color: var(--muted); background: var(--surface);
-    }
-    .foot-bar {
-      margin-top: var(--gap-xl); padding-top: var(--gap-md);
-      border-top: 1px solid var(--border);
-      display: flex; justify-content: space-between; gap: var(--gap-md); flex-wrap: wrap;
-    }
-
-    /* ─── button (shadcn anatomy) ───────────────────────────────────── */
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 11px 20px;
-      border-radius: var(--radius);
-      border: 1px solid transparent;
-      font-size: 15px; font-weight: 500; letter-spacing: -0.005em; line-height: 1.4;
-      white-space: nowrap;
-      transition: transform 0.05s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-    }
-    .btn:active { transform: translateY(1px); }
-    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-    .btn[data-variant="default"]     { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
-    .btn[data-variant="default"]:hover { background: color-mix(in oklch, var(--accent) 86%, black); }
-    .btn[data-variant="secondary"]   { background: var(--hover-fill); color: var(--fg); border-color: transparent; }
-    .btn[data-variant="secondary"]:hover { background: color-mix(in oklch, var(--hover-fill) 88%, var(--fg)); }
-    .btn[data-variant="outline"]     { background: var(--surface); color: var(--fg); border-color: var(--border); }
-    .btn[data-variant="outline"]:hover { background: var(--hover-fill); border-color: var(--fg); }
-    .btn[data-variant="ghost"]       { background: transparent; color: var(--fg); border-color: transparent; padding-inline: 8px; }
-    .btn[data-variant="ghost"]:hover { background: var(--hover-fill); }
-    .btn[data-variant="link"]        { background: transparent; color: var(--fg); border-color: transparent; padding: 0; text-decoration: underline; text-underline-offset: 4px; }
-    .btn[data-size="sm"]  { padding: 7px 14px; font-size: 13px; }
-    .btn[data-size="lg"]  { padding: 14px 28px; font-size: 16px; }
-    .btn[data-size="icon"]{ padding: 0; width: 44px; height: 44px; }
-    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-      outline: 2px solid var(--accent); outline-offset: 2px;
-    }
-    .icon-btn {
-      width: 44px; height: 44px;
-      display: inline-grid; place-items: center;
-      border: 1px solid transparent; border-radius: 999px;
-      background: transparent; color: var(--fg);
-    }
-    .icon-btn:hover { background: var(--hover-fill); }
-    .icon-btn--bordered { border-color: var(--border); border-radius: var(--radius); }
-    .icon-btn svg { width: 18px; height: 18px; }
-    .btn--block { width: 100%; justify-content: center; }
-
-    /* ─── form field (shadcn input anatomy) ─────────────────────────── */
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field label { font-size: 13px; font-weight: 500; }
-    .field .req { color: var(--destructive); }
-    .field input, .field select {
-      height: 44px;
-      border: 1px solid var(--border); border-radius: var(--radius);
-      background: var(--surface); color: var(--fg);
-      font: inherit; font-size: 14px;
-      padding: 0 12px;
-      transition: border-color 0.15s ease;
-    }
-    .field select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) 19px, calc(100% - 13px) 19px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 34px; }
-    .field input:focus, .field select:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
-    .field input::placeholder { color: var(--muted); }
-    .field .hint { font-size: 12px; color: var(--muted); }
-    .field input[aria-invalid="true"], .field select[aria-invalid="true"] { border-color: var(--destructive); }
-    .field .err { font-size: 12px; color: var(--destructive); min-height: 16px; }
-    .check {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 14px;
-    }
-    .check input {
-      width: 18px; height: 18px; flex: none;
-      accent-color: var(--accent);
-      cursor: pointer;
-    }
-
-    /* ─── stepper (checkout) ────────────────────────────────────────── */
-    .stepper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-block: 4px 0; }
-    .step-chip {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 14px;
-      border: 1px solid var(--border); border-radius: 999px;
-      background: var(--surface);
-      font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.03em;
-      color: var(--muted);
-    }
-    .step-chip .n {
-      width: 20px; height: 20px;
-      display: grid; place-items: center;
-      border-radius: 50%;
-      font-size: 11px; font-weight: 600;
-      background: var(--hover-fill); color: var(--muted);
-    }
-    .step-chip[data-state="active"] { border-color: var(--accent); color: var(--fg); }
-    .step-chip[data-state="active"] .n { background: var(--accent); color: var(--on-accent); }
-    .step-chip[data-state="done"] { color: var(--fg); }
-    .step-chip[data-state="done"] .n { background: var(--success-soft); color: color-mix(in oklch, var(--success) 45%, var(--fg)); }
-    .step-arrow { color: var(--muted); font-size: 14px; }
-
-    /* ─── checkout layout ───────────────────────────────────────────── */
-    .checkout-head { padding-block: var(--gap-lg) var(--gap-md); }
-    .checkout-head h1 { font-size: clamp(30px, 4vw, 42px); }
-    .checkout-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 340px;
-      gap: var(--gap-xl);
-      align-items: start;
-      padding-top: var(--gap-md);
-      padding-bottom: var(--gap-2xl);
-    }
-    @media (max-width: 920px) { .checkout-layout { grid-template-columns: 1fr; } }
-
-    .checkout-steps { display: flex; flex-direction: column; gap: var(--gap-md); }
-    .panel {
-      border: 1px solid var(--border); border-radius: var(--radius-lg);
-      background: var(--surface); box-shadow: var(--shadow-soft);
-      padding: 24px;
-      display: flex; flex-direction: column; gap: var(--gap-md);
-    }
-    .panel h2 { font-family: var(--font-display); font-size: 20px; letter-spacing: -0.01em; }
-    .panel .sub { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
-    .addr-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .addr-city { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-    @media (max-width: 560px) { .addr-row, .addr-city { grid-template-columns: 1fr; } }
-    .form-actions { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-sm); flex-wrap: wrap; }
-
-    .pay-methods { display: flex; flex-direction: column; gap: 10px; }
-    .pay-method {
-      display: flex; align-items: flex-start; gap: 12px;
-      border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 16px;
-      cursor: pointer;
-      transition: border-color 0.15s ease, background 0.15s ease;
-    }
-    .pay-method[data-active="true"] { border-color: var(--accent); background: var(--accent-soft); }
-    .pay-method input { margin: 3px 0 0; accent-color: var(--accent); width: 18px; height: 18px; flex: none; }
-    .pay-method .pm-name { font-weight: 600; font-size: 15px; }
-    .pay-method .pm-desc { color: var(--muted); font-size: 13px; margin-top: 2px; }
-    .stripe-note {
-      display: flex; gap: 10px; align-items: flex-start;
-      border: 1px dashed var(--border); border-radius: var(--radius);
-      padding: 12px 14px; font-size: 13px; color: var(--muted);
-    }
-    .test-card {
-      font-family: var(--font-mono); font-size: 12.5px; color: var(--fwfg, var(--muted));
-      background: var(--hover-fill);
-      border-radius: 8px; padding: 10px 14px;
-      display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-    }
-    .test-card code { font-family: var(--font-mono); }
-
-    /* ─── OrderSummary (read-only, sticky right) ────────────────────── */
-    .summary { position: sticky; top: 84px; }
-    .summary-inner {
-      border: 1px solid var(--border); border-radius: var(--radius-lg);
-      background: var(--surface); box-shadow: var(--shadow-soft);
-      padding: 24px;
-      display: flex; flex-direction: column;
-    }
-    .summary h3 { font-size: 18px; margin: 0 0 14px; }
-    .sum-lines { display: flex; flex-direction: column; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 4px; }
-    .sum-line { display: flex; gap: 12px; padding: 8px 0; }
-    .sum-line-thumb {
-      width: 48px; height: 48px; flex: none;
-      border-radius: 8px; border: 1px solid var(--border);
-      background: linear-gradient(135deg, var(--accent-soft), var(--fg-soft)), var(--surface);
-      display: grid; place-items: center;
-      color: var(--muted); font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.02em;
-    }
-    .sum-line-body { flex: 1; min-width: 0; }
-    .sum-line-name { font-size: 13px; font-weight: 600; margin: 0; line-height: 1.35; }
-    .sum-line-qty { font-size: 12px; color: var(--muted); margin: 1px 0 0; }
-    .sum-line-price { font-family: var(--font-mono); font-size: 13px; font-weight: 600; white-space: nowrap; }
-    .sum-row { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; padding: 6px 0; }
-    .sum-row--total { margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--border); font-weight: 600; }
-    .sum-label { color: var(--muted); }
-    .sum-value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-    .sum-value--total { font-size: 18px; font-weight: 600; }
-    .summary .note { margin: var(--gap-md) 0 0; font-size: 11px; line-height: 1.7; color: var(--muted); }
-
-    /* ─── empty / guard state ───────────────────────────────────────── */
-    .empty-cart {
-      border: 1px solid var(--border); border-radius: var(--radius-lg);
-      background: var(--surface);
-      text-align: center; padding: 64px 24px; margin-bottom: var(--gap-2xl);
-    }
-    .empty-cart .ic { width: 44px; height: 44px; margin-inline: auto; color: var(--muted); opacity: 0.6; }
-    .empty-cart h2 { font-family: var(--font-display); font-size: 22px; margin: var(--gap-md) 0 0; }
-    .empty-cart p { color: var(--muted); margin: 8px 0 var(--gap-md); }
-
-    /* ─── sheet (cart drawer) ───────────────────────────────────────── */
-    .sheet-overlay { position: fixed; inset: 0; background: color-mix(in oklch, var(--fg) 35%, transparent); z-index: 50; }
-    .sheet {
-      position: fixed; top: 0; right: 0; bottom: 0;
-      width: min(420px, 100vw);
-      background: var(--surface);
-      border-left: 1px solid var(--border);
-      z-index: 51;
-      display: flex; flex-direction: column;
-      box-shadow: var(--shadow-soft);
-    }
-    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--border); }
-    .sheet-head h3 { font-size: 18px; }
-    .sheet-body { flex: 1; overflow-y: auto; padding: 8px 20px; }
-    .sheet-foot { padding: 16px 20px; border-top: 1px solid var(--border); }
-    .cart-line { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
-    .cart-line-thumb {
-      width: 56px; height: 56px; flex: none;
-      border-radius: 8px; border: 1px solid var(--border);
-      background: linear-gradient(135deg, var(--accent-soft), var(--fg-soft)), var(--surface);
-      display: grid; place-items: center;
-      color: var(--muted); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.03em;
-    }
-    .cart-line-body { flex: 1; min-width: 0; }
-    .cart-line-name { font-size: 14px; font-weight: 600; margin: 0 0 2px; }
-    .cart-line-meta { color: var(--muted); font-size: 12px; margin: 0 0 6px; }
-    .cart-line-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-    .cart-line-price { font-family: var(--font-mono); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
-    .cart-empty { text-align: center; padding: 40px 0 48px; }
-    .cart-empty p { color: var(--muted); font-size: 14px; margin: 8px 0 20px; }
-
-    /* ─── toasts (sonner anatomy) ───────────────────────────────────── */
-    .toast-stack {
-      position: fixed; right: 16px; bottom: 16px; z-index: 60;
-      display: flex; flex-direction: column; gap: 10px;
-      max-width: min(360px, calc(100vw - 32px));
-      width: 100%;
-    }
-    .toast {
-      display: flex; gap: 12px; align-items: flex-start;
-      padding: 12px 14px;
-      border: 1px solid var(--border); border-radius: var(--radius-lg);
-      background: var(--surface);
-      box-shadow: var(--shadow-soft);
-    }
-    .toast--out { opacity: 0; transform: translateY(4px); transition: opacity 0.2s ease, transform 0.2s ease; }
-    .toast-icon {
-      width: 20px; height: 20px; flex: none; border-radius: 50%;
-      display: grid; place-items: center;
-      font-family: var(--font-mono); font-size: 12px; font-weight: 600;
-    }
-    .toast--success .toast-icon { background: var(--success-soft); color: color-mix(in oklch, var(--success) 45%, var(--fg)); }
-    .toast--info    .toast-icon { background: var(--info-soft);    color: color-mix(in oklch, var(--info) 50%, var(--fg)); }
-    .toast--error   .toast-icon { background: var(--destructive-soft); color: color-mix(in oklch, var(--destructive) 60%, var(--fg)); }
-    .toast-body { display: block; }
-    .toast-title { display: block; font-size: 14px; font-weight: 600; }
-    .toast-msg { display: block; color: var(--muted); font-size: 13px; margin-top: 1px; }
-  </style>
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <script src="assets/tailwind.js" onerror="(function(){var s=document.createElement('script');s.src='https://cdn.tailwindcss.com';document.head.appendChild(s);})()"></script>
+  <script src="assets/tailwind.config.js"></script>
+  <script>
+(function (d) {
+  var q = [], pumped = false;
+  var fake = function (o) { q.push(o || {}); };
+  var L = window.lucide = window.lucide || {};
+  if (!L.createIcons) L.createIcons = fake;
+  function pump() {
+    var now = window.lucide;
+    if (!now || !now.createIcons || now.createIcons === fake || pumped) return;
+    pumped = true;
+    for (var i = 0; i < q.length; i++) { try { now.createIcons(q[i]); } catch (e) {} }
+    q = [];
+  }
+  function load(src) {
+    var s = d.createElement('script');
+    s.src = src;
+    s.onload = pump;
+    s.onerror = function () {
+      if (src.indexOf('assets/') === 0) load('https://unpkg.com/lucide@latest');
+      else pump();
+    };
+    d.head.appendChild(s);
+  }
+  load('assets/lucide.min.js');
+  var iv = setInterval(function () { pump(); if (pumped) clearInterval(iv); }, 300);
+})(document);
+  </script>
 </head>
-<body>
-  <header class="topnav" data-od-id="topnav">
-    <div class="container topnav-inner">
-      <a class="logo" href="home-page.html" data-od-id="logo" aria-label="Horizon Supply Co. — home">Horizon Supply Co.</a>
-      <nav aria-label="Primary">
-        <a href="home-page.html#collections">Collections</a>
-        <a href="home-page.html#featured">New in</a>
+<body class="min-h-screen bg-background font-sans text-foreground antialiased">
+
+  <header class="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur-md" data-od-id="topnav">
+    <div class="mx-auto flex w-full max-w-[1280px] items-center gap-7 px-8 py-[13px]">
+      <a class="flex-none font-serif text-[19px] font-semibold tracking-[-0.01em] text-foreground" href="home-page.html" data-od-id="logo" aria-label="Horizon Supply Co. — home">Horizon Supply Co.</a>
+      <nav class="flex items-center gap-6 max-[900px]:hidden" aria-label="Primary">
+        <a class="relative px-0.5 py-1.5 text-[15px] font-medium text-foreground transition-colors after:absolute after:bottom-0 after:left-0.5 after:right-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-primary after:transition-transform after:duration-200 hover:after:scale-x-100" href="home-page.html#collections">Collections</a>
+        <a class="relative px-0.5 py-1.5 text-[15px] font-medium text-foreground transition-colors after:absolute after:bottom-0 after:left-0.5 after:right-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-primary after:transition-transform after:duration-200 hover:after:scale-x-100" href="home-page.html#featured">New in</a>
       </nav>
-      <div class="cluster">
-        <button class="icon-btn icon-btn--bordered menu-btn" type="button" id="menu-open" aria-label="Open menu" aria-expanded="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <div class="ml-auto flex items-center gap-2.5">
+        <button class="hidden inline-grid size-11 place-items-center rounded-md border border-border text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 max-[900px]:inline-grid" type="button" id="menu-open" aria-label="Open menu" aria-expanded="false">
+          <i data-lucide="menu" class="size-[18px]"></i>
         </button>
-        <form class="searchbar search-form" role="search" id="search-form">
-          <input type="search" placeholder="Search products…" aria-label="Search products" />
-          <button class="icon-btn" type="submit" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+        <form class="search-form flex h-11 w-[min(320px,100%)] items-center gap-1.5 rounded-full border border-border bg-card py-0 pl-4 pr-1.5 transition-colors hover:border-foreground focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15 max-[1100px]:hidden" role="search" id="search-form">
+          <input class="min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none" type="search" placeholder="Search products…" aria-label="Search products" />
+          <button class="inline-grid size-10 flex-none place-items-center rounded-full text-foreground transition-colors hover:bg-muted" type="submit" aria-label="Search"><i data-lucide="search" class="size-[18px]"></i></button>
         </form>
-        <button class="icon-btn icon-btn--bordered theme-toggle" type="button" id="theme-toggle" aria-label="Toggle light and dark theme">
-          <span class="theme-icon">
-            <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-            <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
-          </span>
+        <button class="theme-toggle inline-grid size-11 place-items-center rounded-md border border-border text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" type="button" id="theme-toggle" aria-label="Toggle light and dark theme">
+          <i data-lucide="sun" class="size-[18px] dark:hidden"></i>
+          <i data-lucide="moon" class="hidden size-[18px] dark:block"></i>
         </button>
-        <div class="usermenu" data-od-id="usermenu">
-          <button class="icon-btn icon-btn--bordered" type="button" id="user-toggle" aria-label="Account menu" aria-haspopup="true" aria-expanded="false">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>
+        <div class="relative max-[1100px]:hidden" data-od-id="usermenu">
+          <button class="inline-grid size-11 place-items-center rounded-md border border-border text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" type="button" id="user-toggle" aria-label="Account menu" aria-haspopup="true" aria-expanded="false">
+            <i data-lucide="user" class="size-[18px]"></i>
           </button>
-          <div class="usermenu-panel" id="user-panel" hidden>
-            <div class="usermenu-head">
-              <p>Guest</p>
-              <p class="meta">sign in to see orders</p>
+          <div class="absolute right-0 top-[calc(100%+10px)] z-30 w-[236px] rounded-lg border border-border bg-card p-2 shadow-soft" id="user-panel" hidden>
+            <div class="mb-1.5 border-b border-border p-2.5 pb-2">
+              <p class="m-0 text-[13px]">Guest</p>
+              <p class="font-mono text-[11px] text-muted-foreground">sign in to see orders</p>
             </div>
-            <a class="menu-item" href="orders-page.html">My Orders</a>
-            <a class="menu-item" href="profile-page.html">My Profile</a>
-            <a class="menu-item" href="login-page.html">Sign in</a>
-            <a class="menu-item" href="register-page.html">Create account</a>
+            <a class="flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted" href="orders-page.html">My Orders</a>
+            <a class="flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted" href="profile-page.html">My Profile</a>
+            <a class="flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted" href="login-page.html">Sign in</a>
+            <a class="flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted" href="register-page.html">Create account</a>
           </div>
         </div>
-        <a class="icon-btn icon-btn--bordered nav-cart" href="cart-page.html" id="cart-open" aria-label="Cart, 0 items">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-          <span class="cart-badge" id="cart-count" hidden>0</span>
+        <a class="relative inline-grid size-11 place-items-center rounded-md border border-border text-foreground transition-colors hover:bg-muted" href="cart-page.html" id="cart-open" aria-label="Cart, 0 items">
+          <i data-lucide="shopping-bag" class="size-[18px]"></i>
+          <span class="absolute -right-0.5 -top-0.5 inline-grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 font-mono text-[10px] leading-4 text-primary-foreground" id="cart-count" hidden>0</span>
         </a>
       </div>
     </div>
   </header>
 
   <!-- MOBILE MENU -->
-  <div class="menu-overlay" id="menu-overlay" hidden></div>
-  <nav class="menu-panel" id="menu-panel" hidden aria-label="Mobile">
-    <div class="menu-head">
-      <span class="logo" style="font-family: var(--font-display); font-size: 19px; font-weight: 600;">Horizon Supply Co.</span>
-      <button class="icon-btn" type="button" id="menu-close" aria-label="Close menu">×</button>
+  <div class="fixed inset-0 z-[80] bg-foreground/35" id="menu-overlay" hidden></div>
+  <nav class="fixed left-0 top-0 z-[81] flex h-full w-[min(320px,86vw)] flex-col gap-5 overflow-y-auto border-r border-border bg-card p-5 shadow-soft" id="menu-panel" hidden aria-label="Mobile">
+    <div class="flex items-center justify-between gap-3">
+      <span class="font-serif text-[19px] font-semibold tracking-[-0.01em] text-foreground">Horizon Supply Co.</span>
+      <button class="inline-grid size-11 flex-none place-items-center rounded-full text-foreground transition-colors hover:bg-muted" type="button" id="menu-close" aria-label="Close menu"><i data-lucide="x" class="size-4"></i></button>
     </div>
-    <form class="searchbar search-form" role="search" id="search-form-menu">
-      <input type="search" placeholder="Search products…" aria-label="Search products" />
-      <button class="icon-btn" type="submit" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+    <form class="search-form flex h-11 w-full items-center gap-1.5 rounded-full border border-border bg-card py-0 pl-4 pr-1.5 transition-colors hover:border-foreground focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15" role="search" id="search-form-menu">
+      <input class="min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none" type="search" placeholder="Search products…" aria-label="Search products" />
+      <button class="inline-grid size-10 flex-none place-items-center rounded-full text-foreground transition-colors hover:bg-muted" type="submit" aria-label="Search"><i data-lucide="search" class="size-[18px]"></i></button>
     </form>
-    <div class="menu-links">
-      <a href="home-page.html#collections">Collections</a>
-      <a href="home-page.html#featured">New in</a>
+    <div class="flex flex-col gap-2">
+      <a class="rounded-lg px-3 py-2.5 text-[15px] text-foreground transition-colors hover:bg-muted" href="home-page.html#collections">Collections</a>
+      <a class="rounded-lg px-3 py-2.5 text-[15px] text-foreground transition-colors hover:bg-muted" href="home-page.html#featured">New in</a>
     </div>
-    <hr style="height: 1px; background: var(--border); border: 0; margin: 0;" />
+    <hr class="m-1 h-px border-0 bg-border" />
     <div>
-      <p class="menu-sec-label">Account</p>
-      <div class="menu-account">
-        <a class="btn" data-variant="outline" data-size="sm" href="login-page.html">Sign in</a>
-        <a class="btn" data-variant="default" data-size="sm" href="register-page.html">Create account</a>
+      <p class="mb-2 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Account</p>
+      <div class="grid grid-cols-2 gap-2.5">
+        <a class="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-border bg-card px-3.5 text-[13px] font-medium tracking-tight text-foreground transition-colors hover:border-foreground hover:bg-muted active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" href="login-page.html">Sign in</a>
+        <a class="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-3.5 text-[13px] font-medium tracking-tight text-primary-foreground transition-colors hover:bg-primary/90 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" href="register-page.html">Create account</a>
       </div>
     </div>
-    <div class="menu-theme">
-      <p class="menu-sec-label">Theme</p>
-      <button class="btn theme-toggle" type="button" data-variant="outline" aria-label="Toggle light and dark theme">
-        <span class="theme-icon">
-          <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-          <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
-        </span>
-        <span class="theme-label">Light</span>
+    <div>
+      <p class="mb-2 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Theme</p>
+      <button class="theme-toggle flex h-11 w-full items-center justify-start gap-2.5 rounded-md border border-border bg-card px-4 text-[15px] font-medium tracking-tight text-foreground transition-colors hover:border-foreground hover:bg-muted active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" type="button" aria-label="Toggle light and dark theme">
+        <i data-lucide="sun" class="size-[18px] dark:hidden"></i>
+        <i data-lucide="moon" class="hidden size-[18px] dark:block"></i>
+        <span class="theme-label text-sm">Light</span>
       </button>
     </div>
   </nav>
 
   <main id="content">
     <!-- BREADCRUMB -->
-    <nav class="container crumbs" aria-label="Breadcrumb" data-od-id="breadcrumb">
-      <ol>
-        <li><a href="home-page.html">Home</a></li>
-        <li><a href="cart-page.html">Cart</a></li>
-        <li aria-current="page">Checkout</li>
+    <nav class="mx-auto w-full max-w-[1280px] px-8 pt-[18px] pb-1" aria-label="Breadcrumb" data-od-id="breadcrumb">
+      <ol class="m-0 flex list-none flex-wrap items-center gap-2 p-0">
+        <li class="inline-flex items-center gap-2 font-mono text-xs tracking-wide text-muted-foreground [&+li]:before:content-['/']">
+          <a class="text-muted-foreground hover:text-foreground" href="home-page.html">Home</a>
+        </li>
+        <li class="inline-flex items-center gap-2 font-mono text-xs tracking-wide text-muted-foreground [&+li]:before:content-['/']">
+          <a class="text-muted-foreground hover:text-foreground" href="cart-page.html">Cart</a>
+        </li>
+        <li class="inline-flex items-center gap-2 font-mono text-xs tracking-wide text-muted-foreground" aria-current="page">Checkout</li>
       </ol>
     </nav>
 
     <!-- CHECKOUT HEAD -->
-    <div class="container checkout-head" data-od-id="checkout-head">
-      <div class="row-between">
+    <div class="mx-auto w-full max-w-[1280px] px-8 py-8 pb-5" data-od-id="checkout-head">
+      <div class="flex items-center justify-between gap-5">
         <div>
-          <p class="eyebrow">Checkout</p>
-          <h1>Secure checkout</h1>
+          <p class="mb-5 font-mono text-xs uppercase tracking-[0.08em] text-primary">Checkout</p>
+          <h1 class="m-0 font-serif text-[clamp(30px,4vw,42px)] leading-[1.12] tracking-[-0.015em]">Secure checkout</h1>
         </div>
       </div>
-      <div class="stepper" data-od-id="stepper">
-        <span class="step-chip" id="chip-1" data-state="active"><span class="n">1</span> Address</span>
-        <span class="step-arrow" aria-hidden="true">→</span>
-        <span class="step-chip" id="chip-2" data-state=""><span class="n">2</span> Review &amp; Pay</span>
+      <div class="flex items-center gap-2.5 flex-wrap pt-1 pb-0" data-od-id="stepper">
+        <span class="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-2 font-mono text-xs tracking-[0.03em] text-muted-foreground" id="chip-1" data-state="active"><span class="inline-grid size-5 place-items-center rounded-full bg-muted text-[11px] font-semibold text-muted-foreground">1</span> Address</span>
+        <span class="text-muted-foreground text-sm" aria-hidden="true">→</span>
+        <span class="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-2 font-mono text-xs tracking-[0.03em] text-muted-foreground" id="chip-2" data-state=""><span class="inline-grid size-5 place-items-center rounded-full bg-muted text-[11px] font-semibold text-muted-foreground">2</span> Review &amp; Pay</span>
       </div>
     </div>
 
-    <div class="container">
-      <!-- EMPTY GUARD (cart empty on load → redirect to /cart per §5.7) -->
-      <div class="empty-cart" id="empty-guard" hidden data-od-id="empty-state">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-        <h2>Your cart is empty.</h2>
-        <p>Checkout needs at least one item before you can place an order.</p>
-        <a class="btn" data-variant="default" href="products-page.html">Back to the catalog</a>
+    <div class="mx-auto w-full max-w-[1280px] px-8">
+      <!-- EMPTY GUARD -->
+      <div class="rounded-lg border border-border bg-card text-center py-16 px-6 mb-[88px]" id="empty-guard" hidden data-od-id="empty-state">
+        <i data-lucide="shopping-bag" class="mx-auto mb-5 size-11 text-muted-foreground opacity-60"></i>
+        <h2 class="m-0 font-serif text-[22px] font-semibold">Your cart is empty.</h2>
+        <p class="text-muted-foreground mt-2 mb-5">Checkout needs at least one item before you can place an order.</p>
+        <a class="inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-5 text-[15px] font-medium tracking-tight text-primary-foreground transition-colors hover:bg-primary/90 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" href="products-page.html">Back to the catalog</a>
       </div>
 
-      <div class="checkout-layout" id="checkout-layout">
+      <div class="grid grid-cols-[minmax(0,1fr)_340px] gap-[56px] items-start pt-5 pb-[88px] max-[920px]:grid-cols-1" id="checkout-layout">
         <!-- LEFT · STEPS -->
-        <div class="checkout-steps" id="steps-col">
+        <div class="flex flex-col gap-5" id="steps-col">
 
           <!-- STEP ① AddressForm -->
-          <section class="panel" id="step-1" data-od-id="address-form">
+          <section class="rounded-lg border border-border bg-card shadow-soft p-6 flex flex-col gap-5" id="step-1" data-od-id="address-form">
             <div>
-              <h2>Shipping address</h2>
-              <p class="sub">Saved addresses appear below — pick one or add a new one.</p>
+              <h2 class="m-0 font-serif text-lg tracking-[-0.01em]">Shipping address</h2>
+              <p class="m-0 mt-0.5 text-[13px] text-muted-foreground">Saved addresses appear below — pick one or add a new one.</p>
             </div>
-            <div class="field">
-              <label for="addr-label">Label</label>
-              <select id="addr-label" aria-label="Choose a saved address">
+            <div class="flex flex-col gap-1.5">
+              <label for="addr-label" class="text-[13px] font-medium">Label</label>
+              <select class="h-10 cursor-pointer rounded-md border border-border bg-card px-2.5 text-sm text-foreground transition-colors hover:border-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15" id="addr-label" aria-label="Choose a saved address">
                 <option value="home">Home (default)</option>
                 <option value="office">Office</option>
                 <option value="new">+ New address…</option>
               </select>
             </div>
-            <div class="field">
-              <label for="addr-line1">Street address <span class="req">*</span></label>
-              <input id="addr-line1" type="text" autocomplete="address-line1" aria-invalid="false" />
-              <span class="err" id="err-line1"></span>
+            <div class="flex flex-col gap-1.5">
+              <label for="addr-line1" class="text-[13px] font-medium">Street address <span class="text-destructive">*</span></label>
+              <input class="flex h-11 w-full rounded-md border border-input bg-card px-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 aria-invalid:border-destructive" id="addr-line1" type="text" autocomplete="address-line1" aria-invalid="false" />
+              <span class="min-h-4 text-xs text-destructive" id="err-line1"></span>
             </div>
-            <div class="field">
-              <label for="addr-line2">Apt, suite, etc. <span class="meta">(optional)</span></label>
-              <input id="addr-line2" type="text" autocomplete="address-line2" />
+            <div class="flex flex-col gap-1.5">
+              <label for="addr-line2" class="text-[13px] font-medium">Apt, suite, etc. <span class="font-mono text-[13px] text-muted-foreground">(optional)</span></label>
+              <input class="flex h-11 w-full rounded-md border border-input bg-card px-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15" id="addr-line2" type="text" autocomplete="address-line2" />
             </div>
-            <div class="addr-city">
-              <div class="field">
-                <label for="addr-city">City <span class="req">*</span></label>
-                <input id="addr-city" type="text" autocomplete="address-level2" aria-invalid="false" />
-                <span class="err" id="err-city"></span>
+            <div class="grid grid-cols-3 gap-3.5 max-[560px]:grid-cols-1">
+              <div class="flex flex-col gap-1.5">
+                <label for="addr-city" class="text-[13px] font-medium">City <span class="text-destructive">*</span></label>
+                <input class="flex h-11 w-full rounded-md border border-input bg-card px-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 aria-invalid:border-destructive" id="addr-city" type="text" autocomplete="address-level2" aria-invalid="false" />
+                <span class="min-h-4 text-xs text-destructive" id="err-city"></span>
               </div>
-              <div class="field">
-                <label for="addr-state">State <span class="req">*</span></label>
-                <input id="addr-state" type="text" autocomplete="address-level1" aria-invalid="false" />
-                <span class="err" id="err-state"></span>
+              <div class="flex flex-col gap-1.5">
+                <label for="addr-state" class="text-[13px] font-medium">State <span class="text-destructive">*</span></label>
+                <input class="flex h-11 w-full rounded-md border border-input bg-card px-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 aria-invalid:border-destructive" id="addr-state" type="text" autocomplete="address-level1" aria-invalid="false" />
+                <span class="min-h-4 text-xs text-destructive" id="err-state"></span>
               </div>
-              <div class="field">
-                <label for="addr-zip">ZIP <span class="req">*</span></label>
-                <input id="addr-zip" type="text" inputmode="numeric" autocomplete="postal-code" aria-invalid="false" />
-                <span class="err" id="err-zip"></span>
+              <div class="flex flex-col gap-1.5">
+                <label for="addr-zip" class="text-[13px] font-medium">ZIP <span class="text-destructive">*</span></label>
+                <input class="flex h-11 w-full rounded-md border border-input bg-card px-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 aria-invalid:border-destructive" id="addr-zip" type="text" inputmode="numeric" autocomplete="postal-code" aria-invalid="false" />
+                <span class="min-h-4 text-xs text-destructive" id="err-zip"></span>
               </div>
             </div>
-            <div class="field">
-              <label for="addr-country">Country</label>
-              <select id="addr-country">
+            <div class="flex flex-col gap-1.5">
+              <label for="addr-country" class="text-[13px] font-medium">Country</label>
+              <select class="h-10 cursor-pointer rounded-md border border-border bg-card px-2.5 text-sm text-foreground transition-colors hover:border-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15" id="addr-country">
                 <option>United States</option>
                 <option>Canada</option>
                 <option>United Kingdom</option>
               </select>
             </div>
-            <label class="check">
-              <input type="checkbox" id="addr-default" />
+            <label class="flex items-center gap-2.5 text-sm">
+              <input type="checkbox" id="addr-default" class="size-[18px] flex-none cursor-pointer accent-primary" />
               <span>Set as default address</span>
             </label>
-            <div class="form-actions">
-              <button class="btn" data-variant="ghost" type="button" id="back-to-cart">← Back to cart</button>
-              <button class="btn" data-variant="default" type="button" id="addr-continue">Continue →</button>
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+              <button class="inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-transparent px-5 text-[15px] font-medium tracking-tight text-foreground transition-colors hover:bg-muted active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" type="button" id="back-to-cart">← Back to cart</button>
+              <button class="inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-5 text-[15px] font-medium tracking-tight text-primary-foreground transition-colors hover:bg-primary/90 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" type="button" id="addr-continue">Continue →</button>
             </div>
           </section>
 
-          <!-- STEP ② Review & Pay · PaymentForm -->
-          <section class="panel" id="step-2" hidden data-od-id="payment-form">
+          <!-- STEP ② Review & Pay -->
+          <section class="rounded-lg border border-border bg-card shadow-soft p-6 flex flex-col gap-5" id="step-2" hidden data-od-id="payment-form">
             <div>
-              <h2>Review &amp; pay</h2>
-              <p class="sub">Shipping to: <span id="ship-recap"></span></p>
+              <h2 class="m-0 font-serif text-lg tracking-[-0.01em]">Review &amp; pay</h2>
+              <p class="m-0 mt-0.5 text-[13px] text-muted-foreground">Shipping to: <span id="ship-recap"></span></p>
             </div>
-            <div class="pay-methods" role="radiogroup" aria-label="Payment method">
-              <label class="pay-method" data-active="true">
-                <input type="radio" name="pay" value="card" checked />
+            <div class="flex flex-col gap-2.5" role="radiogroup" aria-label="Payment method">
+              <label class="flex items-start gap-3 rounded-lg border border-border p-4 cursor-pointer transition-colors hover:bg-muted">
+                <input type="radio" name="pay" value="card" checked class="mt-[3px] size-[18px] flex-none cursor-pointer accent-primary" />
                 <span>
-                  <span class="pm-name">Credit / Debit Card</span>
-                  <span class="pm-desc">Secure card fields hosted by Stripe — you never enter them here.</span>
+                  <span class="font-semibold text-[15px]">Credit / Debit Card</span>
+                  <span class="block mt-0.5 text-[13px] text-muted-foreground">Secure card fields hosted by Stripe — you never enter them here.</span>
                 </span>
               </label>
             </div>
-            <div class="stripe-note">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" style="flex: none; margin-top: 1px;"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+            <div class="flex gap-2.5 items-start rounded-lg border border-dashed border-border p-3.5 text-[13px] text-muted-foreground">
+              <i data-lucide="info" class="size-4 flex-none mt-[1px]"></i>
               <span>Card fields are handled on the Stripe page. After you pay you'll be redirected to Stripe's hosted checkout, then back to the confirmation page.</span>
             </div>
-            <div class="test-card">Test card <code>4242&nbsp;4242&nbsp;4242&nbsp;4242</code></div>
-            <div class="form-actions">
-              <button class="btn" data-variant="ghost" type="button" id="back-to-addr">← Back to address</button>
-              <button class="btn" data-variant="default" data-size="lg" type="button" id="pay-btn">Pay <span id="pay-total" class="num">$0.00</span></button>
+            <div class="font-mono text-[12.5px] text-muted-foreground bg-muted/60 rounded-lg p-3.5 flex justify-between gap-3 flex-wrap">Test card <code class="font-mono">4242&nbsp;4242&nbsp;4242&nbsp;4242</code></div>
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+              <button class="inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-transparent px-5 text-[15px] font-medium tracking-tight text-foreground transition-colors hover:bg-muted active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" type="button" id="back-to-addr">← Back to address</button>
+              <button class="inline-flex h-14 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-7 text-base font-medium tracking-tight text-primary-foreground transition-colors hover:bg-primary/90 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" type="button" id="pay-btn">Pay <span id="pay-total" class="font-mono tabular-nums">$0.00</span></button>
             </div>
           </section>
         </div>
 
-        <!-- RIGHT · OrderSummary (read-only) -->
-        <aside class="summary" data-od-id="order-summary">
-          <div class="summary-inner">
-            <h3>Order summary</h3>
-            <div class="sum-lines" id="sum-lines"></div>
-            <div class="sum-row"><span class="sum-label">Subtotal</span><span class="sum-value num" id="sum-subtotal">$0.00</span></div>
-            <div class="sum-row"><span class="sum-label">Shipping</span><span class="sum-value num" id="sum-shipping">—</span></div>
-            <div class="sum-row"><span class="sum-label">Tax (8.25%)</span><span class="sum-value num" id="sum-tax">$0.00</span></div>
-            <div class="sum-row sum-row--total"><span class="sum-label">Total</span><span class="sum-value num sum-value--total" id="sum-total">$0.00</span></div>
-            <p class="note meta">Shipping $5, free at $100+; tax 8.25% applied at checkout.</p>
+        <!-- RIGHT · OrderSummary -->
+        <aside class="sticky top-[84px]" data-od-id="order-summary">
+          <div class="rounded-lg border border-border bg-card shadow-soft p-6 flex flex-col">
+            <h3 class="m-0 mb-3.5 text-lg font-semibold">Order summary</h3>
+            <div class="flex flex-col border-b border-border pb-3 mb-1" id="sum-lines"></div>
+            <div class="flex items-center justify-between gap-4 py-1.5 text-sm"><span class="text-muted-foreground">Subtotal</span><span class="font-mono tabular-nums" id="sum-subtotal">$0.00</span></div>
+            <div class="flex items-center justify-between gap-4 py-1.5 text-sm"><span class="text-muted-foreground">Shipping</span><span class="font-mono tabular-nums" id="sum-shipping">—</span></div>
+            <div class="flex items-center justify-between gap-4 py-1.5 text-sm"><span class="text-muted-foreground">Tax (8.25%)</span><span class="font-mono tabular-nums" id="sum-tax">$0.00</span></div>
+            <div class="mt-2 flex items-center justify-between gap-4 border-t border-border py-1.5 pt-3 text-sm font-semibold"><span>Total</span><span class="font-mono text-lg font-semibold tabular-nums" id="sum-total">$0.00</span></div>
+            <p class="mt-5 text-[11px] leading-[1.7] text-muted-foreground">Shipping $5, free at $100+; tax 8.25% applied at checkout.</p>
           </div>
         </aside>
       </div>
@@ -725,80 +265,78 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="pagefoot" data-od-id="pagefoot">
-    <!-- Photography: Pexels · Pexels License (free to use, attribution not required). Social brand logos: Simple Icons · CC0. -->
-    <div class="container">
-      <div class="foot-grid">
-        <div class="foot-brand">
-          <a class="logo" href="home-page.html" style="font-family: var(--font-display); font-size: 19px; font-weight: 600;">Horizon Supply Co.</a>
-          <p>Objects with a point of view, made to outlast the route. Designed against the shadcn/ui blueprint — tokens from brand-spec.md.</p>
+  <footer class="border-t border-border py-14" data-od-id="pagefoot">
+    <div class="mx-auto w-full max-w-[1280px] px-8">
+      <div class="grid grid-cols-[1.7fr_1fr_1fr_1.2fr] gap-14 max-[920px]:grid-cols-2">
+        <div>
+          <a class="font-serif text-[19px] font-semibold tracking-[-0.01em] text-foreground" href="home-page.html">Horizon Supply Co.</a>
+          <p class="mt-3 max-w-[40ch] text-sm leading-normal text-muted-foreground">Objects with a point of view, made to outlast the route. Designed against the shadcn/ui blueprint — tokens from brand-spec.md.</p>
         </div>
-        <div class="foot-col">
-          <h3>Quick Links</h3>
-          <ul>
-            <li><a href="home-page.html">Home</a></li>
-            <li><a href="products-page.html">Products</a></li>
-            <li><a href="orders-page.html">My Orders</a></li>
-            <li><a href="profile-page.html">My Profile</a></li>
+        <div>
+          <h3 class="m-0 mb-3 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Quick Links</h3>
+          <ul class="m-0 flex list-none flex-col gap-2.5 p-0 text-sm">
+            <li><a class="text-muted-foreground transition-colors hover:text-foreground" href="home-page.html">Home</a></li>
+            <li><a class="text-muted-foreground transition-colors hover:text-foreground" href="products-page.html">Products</a></li>
+            <li><a class="text-muted-foreground transition-colors hover:text-foreground" href="orders-page.html">My Orders</a></li>
+            <li><a class="text-muted-foreground transition-colors hover:text-foreground" href="profile-page.html">My Profile</a></li>
           </ul>
         </div>
-        <div class="foot-col">
-          <h3>Support</h3>
-          <ul>
-            <li><a href="404-page.html">Help Center</a></li>
-            <li><a href="404-page.html">Contact Us</a></li>
-            <li><a href="home-page.html#top">Shipping</a></li>
-            <li><a href="404-page.html">Returns</a></li>
+        <div>
+          <h3 class="m-0 mb-3 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Support</h3>
+          <ul class="m-0 flex list-none flex-col gap-2.5 p-0 text-sm">
+            <li><a class="text-muted-foreground transition-colors hover:text-foreground" href="404-page.html">Help Center</a></li>
+            <li><a class="text-muted-foreground transition-colors hover:text-foreground" href="404-page.html">Contact Us</a></li>
+            <li><a class="text-muted-foreground transition-colors hover:text-foreground" href="home-page.html#top">Shipping</a></li>
+            <li><a class="text-muted-foreground transition-colors hover:text-foreground" href="404-page.html">Returns</a></li>
           </ul>
         </div>
-        <div class="foot-col">
-          <h3>Follow us</h3>
-          <div class="foot-social">
-            <a class="icon-btn icon-btn--bordered" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Follow us on Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12C0 18.01 4.388 22.945 10.125 23.854V15.56H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
-            <a class="icon-btn icon-btn--bordered" href="https://x.com" target="_blank" rel="noopener" aria-label="Follow us on X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
-            <a class="icon-btn icon-btn--bordered" href="https://instagram.com" target="_blank" rel="noopener" aria-label="Follow us on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg></a>
+        <div>
+          <h3 class="m-0 mb-3 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Follow us</h3>
+          <div class="mb-3 flex gap-2">
+            <a class="inline-grid size-11 place-items-center rounded-md border border-border text-foreground transition-colors hover:bg-muted" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Follow us on Facebook"><i data-lucide="facebook" class="size-[18px]"></i></a>
+            <a class="inline-grid size-11 place-items-center rounded-md border border-border text-foreground transition-colors hover:bg-muted" href="https://x.com" target="_blank" rel="noopener" aria-label="Follow us on X"><i data-lucide="twitter" class="size-[18px]"></i></a>
+            <a class="inline-grid size-11 place-items-center rounded-md border border-border text-foreground transition-colors hover:bg-muted" href="https://instagram.com" target="_blank" rel="noopener" aria-label="Follow us on Instagram"><i data-lucide="instagram" class="size-[18px]"></i></a>
           </div>
-          <h3>Payment</h3>
-          <div class="foot-pay">
-            <span class="pay-chip">VISA</span>
-            <span class="pay-chip">MASTERCARD</span>
+          <h3 class="m-0 mb-3 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Payment</h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="inline-flex items-center rounded-md border border-border bg-card px-3 py-1 font-mono text-[11px] tracking-[0.04em] text-muted-foreground">VISA</span>
+            <span class="inline-flex items-center rounded-md border border-border bg-card px-3 py-1 font-mono text-[11px] tracking-[0.04em] text-muted-foreground">MASTERCARD</span>
           </div>
         </div>
       </div>
-      <div class="foot-bar">
-        <span class="meta">Copyright © 2026 Horizon Supply Co. — All rights reserved.</span>
-        <span class="meta">Light + dark via <code style="font-family: var(--font-mono);">html.dark</code> · OKLCH tokens · serif display</span>
+      <div class="mt-14 flex flex-wrap items-center justify-between gap-5 border-t border-border pt-5">
+        <span class="font-mono text-[13px] text-muted-foreground">Copyright © 2026 Horizon Supply Co. — All rights reserved.</span>
       </div>
     </div>
   </footer>
 
   <!-- CART SHEET -->
-  <div class="sheet-overlay" id="cart-overlay" hidden></div>
-  <div class="sheet" id="cart-sheet" hidden role="dialog" aria-modal="true" aria-label="Your cart" data-od-id="cart-sheet">
-    <div class="sheet-head">
-      <h3>Your cart</h3>
-      <button class="icon-btn" type="button" id="cart-close" aria-label="Close cart">×</button>
+  <div class="fixed inset-0 z-50 bg-foreground/35" id="cart-overlay" hidden></div>
+  <div class="fixed bottom-0 right-0 top-0 z-[51] flex w-[min(420px,100vw)] flex-col border-l border-border bg-card shadow-soft" id="cart-sheet" hidden role="dialog" aria-modal="true" aria-label="Your cart" data-od-id="cart-sheet">
+    <div class="flex items-center justify-between gap-3 border-b border-border px-5 py-3.5">
+      <h3 class="m-0 text-lg font-semibold">Your cart</h3>
+      <button class="inline-grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted" type="button" id="cart-close" aria-label="Close cart"><i data-lucide="x" class="size-4"></i></button>
     </div>
-    <div class="sheet-body">
+    <div class="flex-1 overflow-y-auto px-5 py-2">
       <div id="cart-lines"></div>
-      <div class="cart-empty" id="cart-empty" hidden>
-        <h3 style="font-size: 17px;">Your cart is empty.</h3>
-        <p>Start with the new-in drop, or pick a category above.</p>
-        <button class="btn" data-variant="outline" type="button" id="empty-shop">Shop the collection</button>
+      <div class="py-10 text-center" id="cart-empty" hidden>
+        <h3 class="m-0 text-[17px] font-semibold">Your cart is empty.</h3>
+        <p class="mx-auto mb-5 mt-2 max-w-[28ch] text-sm text-muted-foreground">Start with the new-in drop, or pick a category above.</p>
+        <button class="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-border bg-card px-3.5 text-[13px] font-medium tracking-tight text-foreground transition-colors hover:border-foreground hover:bg-muted active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" type="button" id="empty-shop">Shop the collection</button>
       </div>
       <div id="cart-summary" hidden>
-        <div class="sum-row"><span class="sum-label">Subtotal</span><span class="sum-value num" id="cart-subtotal">$0.00</span></div>
-        <div class="sum-row"><span class="sum-label">Shipping</span><span class="sum-value num">$5 / Free over $100</span></div>
-        <hr style="height: 1px; background: var(--border); border: 0; margin: 10px 0;" />
-        <div class="sum-row sum-row--total"><span class="sum-label">Total</span><span class="sum-value num sum-value--total" id="cart-total">$0.00</span></div>
+        <div class="flex items-center justify-between gap-4 py-1.5 text-sm"><span class="text-muted-foreground">Subtotal</span><span class="font-mono tabular-nums" id="cart-subtotal">$0.00</span></div>
+        <div class="flex items-center justify-between gap-4 py-1.5 text-sm"><span class="text-muted-foreground">Shipping</span><span class="font-mono tabular-nums">$5 / Free over $100</span></div>
+        <hr class="m-2 h-px border-0 bg-border" />
+        <div class="mt-2 flex items-center justify-between gap-4 border-t border-border py-1.5 pt-3 text-sm font-semibold"><span>Total</span><span class="font-mono text-lg font-semibold tabular-nums" id="cart-total">$0.00</span></div>
       </div>
     </div>
-    <div class="sheet-foot" id="cart-foot-actions" hidden>
-      <a class="btn" data-variant="default" href="checkout-page.html" style="width: 100%; justify-content: center;" id="sheet-checkout">Checkout →</a>
+    <div class="border-t border-border px-5 py-4" id="cart-foot-actions" hidden>
+      <a class="inline-flex h-11 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-5 text-[15px] font-medium tracking-tight text-primary-foreground transition-colors hover:bg-primary/90 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" href="checkout-page.html" id="sheet-checkout">Checkout →</a>
     </div>
   </div>
 
-  <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="false"></div>
+  <div class="pointer-events-none fixed bottom-4 right-4 z-[60] flex w-full max-w-[min(360px,calc(100vw_-_32px))] flex-col gap-2.5" id="toast-stack" aria-live="polite" aria-atomic="false"></div>
 
   <script>
     (function () {
@@ -812,7 +350,6 @@
         p7: { name: 'Insulated Tumbler — 16oz',    price: 34.00,  code: 'TMB-16', stock: 18, slug: '/products/insulated-tumbler-16oz',     img: 'assets/prod-tumbler.jpg', w: 900, h: 1125 },
         p8: { name: 'Merino Crew — Heavy',         price: 88.00,  code: 'MRN-HV', stock: 0,  slug: '/products/merino-crew-heavy',          img: 'assets/prod-crew.jpg',    w: 900, h: 506 }
       };
-      // Same seed as the Cart page — Subtotal $498 ≥ $100 → Free shipping.
       var cart = { p1: 2, p4: 1, p3: 1 };
       var fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
       var SHIP_FLAT = 5, SHIP_FREE_MIN = 100, TAX_RATE = 0.0825;
@@ -821,7 +358,6 @@
         office: { line1: '8 N Michigan Ave',                     line2: '',       city: 'Chicago',  state: 'IL', zip: '60601' }
       };
 
-      /* ─── theme ─────────────────────────────────────────────────────── */
       var themeBtns = document.querySelectorAll('.theme-toggle');
       function applyTheme() {
         var dark = document.documentElement.classList.contains('dark');
@@ -840,33 +376,39 @@
       });
       applyTheme();
 
-      /* ─── toasts ────────────────────────────────────────────────────── */
       var toastStack = document.getElementById('toast-stack');
       function toast(type, title, msg) {
+        var isSuccess = type === 'success', isError = type === 'error';
+        if (type === '') type = 'info'; isSuccess = type === 'success'; isError = type === 'error';
         var el = document.createElement('div');
-        el.className = 'toast toast--' + (type === '' ? 'info' : type);
+        el.className = 'flex items-start gap-3 rounded-lg border border-border bg-card p-3 shadow-soft';
+        el.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
         var icon = document.createElement('span');
-        icon.className = 'toast-icon';
-        icon.textContent = type === 'success' ? '✓' : type === 'error' ? '!' : 'i';
-        el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+        icon.className = 'flex size-5 shrink-0 items-center justify-center rounded-full font-mono text-xs font-semibold ' +
+          (isSuccess
+            ? 'bg-chart-1/15 text-[color-mix(in_oklch,var(--chart-1)_45%,var(--foreground))]'
+            : isError
+              ? 'bg-destructive/15 text-[color-mix(in_oklch,var(--destructive)_60%,var(--foreground))]'
+              : 'bg-chart-3/15 text-[color-mix(in_oklch,var(--chart-3)_50%,var(--foreground))]');
+        icon.textContent = isSuccess ? '✓' : isError ? '!' : 'i';
+        el.setAttribute('role', isError ? 'alert' : 'status');
         var body = document.createElement('span');
-        body.className = 'toast-body';
+        body.className = 'block min-w-0';
         var t = document.createElement('span');
-        t.className = 'toast-title';
+        t.className = 'block text-sm font-semibold';
         t.textContent = title;
         var m = document.createElement('span');
-        m.className = 'toast-msg';
+        m.className = 'mt-0.5 block text-[13px] text-muted-foreground';
         m.textContent = msg;
         body.appendChild(t); body.appendChild(m);
         el.appendChild(icon); el.appendChild(body);
         toastStack.appendChild(el);
         setTimeout(function () {
-          el.classList.add('toast--out');
+          el.style.opacity = '0'; el.style.transform = 'translateY(4px)';
           setTimeout(function () { el.remove(); }, 220);
         }, 3400);
       }
 
-      /* ─── totals ────────────────────────────────────────────────────── */
       function cartTotals() {
         var qty = 0, subtotal = 0;
         Object.keys(cart).forEach(function (id) { qty += cart[id]; subtotal += cart[id] * PRODUCTS[id].price; });
@@ -875,7 +417,6 @@
         return { qty: qty, subtotal: subtotal, shipping: shipping, tax: tax, total: subtotal + shipping + tax };
       }
 
-      /* ─── cart drawer + badge ──────────────────────────────────────── */
       var countEl = document.getElementById('cart-count');
       var linesEl = document.getElementById('cart-lines');
       var emptyEl = document.getElementById('cart-empty');
@@ -895,22 +436,22 @@
         Object.keys(cart).forEach(function (id) {
           var p = PRODUCTS[id];
           var line = document.createElement('div');
-          line.className = 'cart-line';
+          line.className = 'flex gap-3 border-b border-border py-3.5';
           var th = document.createElement('div');
-          th.className = 'cart-line-thumb';
+          th.className = 'grid size-14 flex-none place-items-center rounded-md border border-border bg-muted font-mono text-[10px] uppercase tracking-[0.03em] text-muted-foreground';
           th.textContent = p.code;
           var body = document.createElement('div');
-          body.className = 'cart-line-body';
+          body.className = 'min-w-0 flex-1';
           var name = document.createElement('p');
-          name.className = 'cart-line-name';
+          name.className = 'm-0 mb-0.5 text-sm font-semibold';
           name.textContent = p.name;
           var meta = document.createElement('p');
-          meta.className = 'cart-line-meta';
+          meta.className = 'm-0 mb-1.5 text-xs text-muted-foreground';
           meta.textContent = 'Qty ' + cart[id] + ' × ' + fmt.format(p.price);
           var foot = document.createElement('div');
-          foot.className = 'cart-line-foot';
+          foot.className = 'flex items-center justify-between gap-3';
           var price = document.createElement('span');
-          price.className = 'cart-line-price num';
+          price.className = 'font-mono text-sm font-semibold tracking-[-0.01em]';
           price.textContent = fmt.format(cart[id] * p.price);
           foot.appendChild(price);
           body.appendChild(name); body.appendChild(meta); body.appendChild(foot);
@@ -942,7 +483,6 @@
         window.location.href = 'products-page.html';
       });
 
-      /* ─── user menu ─────────────────────────────────────────────────── */
       var userToggle = document.getElementById('user-toggle');
       var userPanel = document.getElementById('user-panel');
       function setUserMenu(open) {
@@ -954,7 +494,6 @@
         if (!userPanel.hidden && !userPanel.contains(e.target) && !userToggle.contains(e.target)) setUserMenu(false);
       });
 
-      /* ─── mobile menu ──────────────────────────────────────────────── */
       var menuPanelEl = document.getElementById('menu-panel');
       var menuOverlayEl = document.getElementById('menu-overlay');
       var menuOpenBtn = document.getElementById('menu-open');
@@ -974,7 +513,6 @@
         if (e.target.closest('a')) setMenu(false);
       });
 
-      /* ─── search ────────────────────────────────────────────────────── */
       document.querySelectorAll('.search-form').forEach(function (form) {
         form.addEventListener('submit', function (e) {
           e.preventDefault();
@@ -984,7 +522,6 @@
         });
       });
 
-      /* ─── OrderSummary (read-only) ──────────────────────────────────── */
       var sumLines = document.getElementById('sum-lines');
       function renderSummary() {
         var t = cartTotals();
@@ -992,21 +529,21 @@
         Object.keys(cart).forEach(function (id) {
           var p = PRODUCTS[id];
           var row = document.createElement('div');
-          row.className = 'sum-line';
+          row.className = 'flex gap-3 py-2';
           var th = document.createElement('div');
-          th.className = 'sum-line-thumb';
+          th.className = 'grid size-12 flex-none place-items-center rounded-md border border-border bg-muted font-mono text-[9px] tracking-[0.02em] text-muted-foreground';
           th.textContent = p.code;
           var body = document.createElement('div');
-          body.className = 'sum-line-body';
+          body.className = 'min-w-0 flex-1';
           var name = document.createElement('p');
-          name.className = 'sum-line-name';
+          name.className = 'm-0 text-[13px] font-semibold leading-[1.35]';
           name.textContent = p.name;
           var qty = document.createElement('p');
-          qty.className = 'sum-line-qty';
+          qty.className = 'm-0 mt-[1px] text-xs text-muted-foreground';
           qty.textContent = 'Qty ' + cart[id] + ' · ' + fmt.format(p.price) + ' each';
           body.appendChild(name); body.appendChild(qty);
           var pr = document.createElement('span');
-          pr.className = 'sum-line-price num';
+          pr.className = 'font-mono text-[13px] font-semibold whitespace-nowrap tabular-nums';
           pr.textContent = fmt.format(cart[id] * p.price);
           row.appendChild(th); row.appendChild(body); row.appendChild(pr);
           sumLines.appendChild(row);
@@ -1019,17 +556,26 @@
         return t;
       }
 
-      /* ─── stepper + forms ──────────────────────────────────────────── */
       var step1 = document.getElementById('step-1');
       var step2 = document.getElementById('step-2');
       var chip1 = document.getElementById('chip-1');
       var chip2 = document.getElementById('chip-2');
+      var chip1n = chip1.querySelector('span');
+      var chip2n = chip2.querySelector('span');
 
       function setStep(n) {
         step1.hidden = n !== 1;
         step2.hidden = n !== 2;
         chip1.setAttribute('data-state', n === 1 ? 'active' : 'done');
         chip2.setAttribute('data-state', n === 2 ? 'active' : '');
+        chip1n.style.background = n === 1 ? 'var(--primary)' : 'var(--success)';
+        chip1n.style.color = n === 1 ? 'var(--primary-foreground)' : 'color-mix(in oklch, var(--success) 45%, var(--foreground))';
+        chip2n.style.background = n === 2 ? 'var(--primary)' : n > 2 ? 'var(--success)' : 'var(--muted)';
+        chip2n.style.color = n === 2 ? 'var(--primary-foreground)' : n > 2 ? 'color-mix(in oklch, var(--success) 45%, var(--foreground))' : 'var(--muted-foreground)';
+        chip1.style.borderColor = n === 1 ? 'var(--primary)' : n > 1 ? 'var(--primary)' : 'var(--border)';
+        chip1.style.color = n >= 1 ? 'var(--foreground)' : 'var(--muted-foreground)';
+        chip2.style.borderColor = n === 2 ? 'var(--primary)' : 'var(--border)';
+        chip2.style.color = n >= 2 ? 'var(--foreground)' : 'var(--muted-foreground)';
       }
 
       var line1 = document.getElementById('addr-line1');
@@ -1092,17 +638,15 @@
       });
       document.getElementById('back-to-addr').addEventListener('click', function () { setStep(1); });
 
-      /* ─── payment (order-first flow, §5.7) ─────────────────────────── */
       var payBtn = document.getElementById('pay-btn');
       var paying = false;
       function setStep2() {
-        // Continue disabled until address valid (spec guard) — re-check on step advance.
         validateAndFlag();
         document.getElementById('addr-continue').disabled = !validAddress();
       }
       payBtn.addEventListener('click', function () {
         if (!validAddress()) { setStep(1); toast('error', 'Address incomplete', 'Please finish the address step first.'); return; }
-        if (paying) return; // double-submit lock
+        if (paying) return;
         var t = cartTotals();
         if (t.qty === 0) {
           toast('error', 'Cart empty', 'Checkout needs items before placing an order.');
@@ -1115,14 +659,12 @@
         setTimeout(function () {
           toast('info', '2/2 · Redirecting to payment', 'Taking you to secure payment…');
           setTimeout(function () {
-            // Demo: redirect to confirmation (real flow returns here via ?session_id= after Stripe).
             var orderId = 'ord_' + Math.random().toString(16).slice(2, 10);
             window.location.href = 'order-success.html?session_id=demo_stripe_ses_' + Math.random().toString(16).slice(2, 8) + '&orderId=' + orderId;
           }, 900);
         }, 900);
       });
 
-      /* ─── guard: cart empty on load → redirect to /cart (§5.7) ─────── */
       var guard = document.getElementById('empty-guard');
       var layout = document.getElementById('checkout-layout');
       if (cartTotals().qty === 0) {
@@ -1130,7 +672,6 @@
         guard.hidden = false;
       }
 
-      /* ─── Escape ───────────────────────────────────────────────────── */
       document.addEventListener('keydown', function (e) {
         if (e.key !== 'Escape') return;
         if (!menuPanelEl.hidden) { setMenu(false); menuOpenBtn.focus(); return; }
@@ -1142,10 +683,10 @@
       renderCart();
       renderSummary();
       setStep(1);
-      // Pre-fill default address (Home).
       document.getElementById('addr-label').dispatchEvent(new Event('change'));
       document.getElementById('addr-continue').disabled = false;
     })();
   </script>
+  <script>lucide.createIcons();</script>
 </body>
 </html>

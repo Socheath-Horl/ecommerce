@@ -1,0 +1,108 @@
+/* ────────────────────────────────────────────────────────────────
+   Horizon Supply Co. — shared design tokens (static Tailwind build)
+   Source of truth: brand-spec.md · values mirror frontend/src/index.css
+   Usage: every ux-ui page links this file, then loads the Tailwind
+   CDN and assets/tailwind.config.js (in that order).
+
+   Tailwind color/font/radius/shadow utilities (bg-background,
+   text-foreground, border-border, shadow-soft, ...) resolve through
+   the CSS variables below, so dark mode is automatic via the
+   `html.dark` class — no dark: prefixes are needed for colors.
+   ──────────────────────────────────────────────────────────────── */
+
+:root {
+  --background: oklch(1 0 89.9);
+  --foreground: oklch(0.1408 0.0044 285.8);
+
+  --card: oklch(1 0 89.9);
+  --card-foreground: oklch(0.1408 0.0044 285.8);
+
+  --popover: oklch(1 0 89.9);
+  --popover-foreground: oklch(0.1408 0.0044 285.8);
+
+  --primary: oklch(0.2103 0.0059 285.9);
+  --primary-foreground: oklch(0.9851 0 89.9);
+
+  --secondary: oklch(0.9674 0.0013 286.4);
+  --secondary-foreground: oklch(0.1408 0.0044 285.8);
+
+  --muted: oklch(0.9674 0.0013 286.4);
+  --muted-foreground: oklch(0.5517 0.0138 285.9);
+
+  --accent: oklch(0.9674 0.0013 286.4);
+  --accent-foreground: oklch(0.1408 0.0044 285.8);
+
+  --destructive: oklch(0.5771 0.2152 27.3);
+  --destructive-foreground: oklch(0.9851 0 89.9);
+
+  --border: oklch(0.9197 0.004 286.3);
+  --input: oklch(0.9197 0.004 286.3);
+  --ring: oklch(0.2103 0.0059 285.9);
+
+  --chart-1: oklch(0.6271 0.1699 149.2);
+  --chart-2: oklch(0.6806 0.1423 75.8);
+  --chart-3: oklch(0.5461 0.2152 262.9);
+  --chart-4: oklch(0.5771 0.2152 27.3);
+  --chart-5: oklch(0.1408 0.0044 285.8);
+
+  --radius: 10px;
+  --radius-lg: 16px;
+
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-display: "Iowan Old Style", "Charter", Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, monospace;
+
+  --container: 1280px;
+  --gutter: 32px;
+
+  color-scheme: light;
+}
+
+.dark {
+  --background: oklch(0.1408 0.0044 285.8);
+  --foreground: oklch(0.9851 0 89.9);
+
+  --card: oklch(0.2103 0.0059 285.9);
+  --card-foreground: oklch(0.9851 0 89.9);
+
+  --popover: oklch(0.2103 0.0059 285.9);
+  --popover-foreground: oklch(0.9851 0 89.9);
+
+  --primary: oklch(0.9851 0 89.9);
+  --primary-foreground: oklch(0.2103 0.0059 285.9);
+
+  --secondary: oklch(0.2103 0.0059 285.9);
+  --secondary-foreground: oklch(0.9851 0 89.9);
+
+  --muted: oklch(0.2103 0.0059 285.9);
+  --muted-foreground: oklch(0.7118 0.0129 286.1);
+
+  --accent: oklch(0.2103 0.0059 285.9);
+  --accent-foreground: oklch(0.9851 0 89.9);
+
+  --destructive: oklch(0.6368 0.2078 25.3);
+  --destructive-foreground: oklch(0.9851 0 89.9);
+
+  --border: oklch(0.2739 0.0055 286);
+  --input: oklch(0.2739 0.0055 286);
+  --ring: oklch(0.9851 0 89.9);
+
+  --chart-1: oklch(0.7227 0.192 149.6);
+  --chart-2: oklch(0.8606 0.1731 91.9);
+  --chart-3: oklch(0.6231 0.188 259.8);
+  --chart-4: oklch(0.6368 0.2078 25.3);
+  --chart-5: oklch(0.9851 0 89.9);
+
+  color-scheme: dark;
+}
+
+/* ─── base ───────────────────────────────────────────────────── */
+[hidden] { display: none !important; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; }
+p { text-wrap: pretty; }
+h1, h2, h3, h4 { text-wrap: balance; }
+
+/* ─── shared keyframes (used via animate-[…] utilities) ───────── */
+@keyframes shimmer { 100% { transform: translateX(100%); } }
