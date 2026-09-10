@@ -1,14 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff } from 'lucide-react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { useRegisterMutation } from '@/services/authApi'
 import { selectIsAuthenticated } from '@/store/slices/authSlice'
 import { useAppSelector } from '@/store'
 import { AuthShell } from '@/pages/auth/AuthShell'
+import { PasswordToggle } from '@/pages/auth/PasswordToggle'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -66,20 +63,16 @@ export default function Register() {
 
   return (
     <AuthShell>
-      <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-primary">
-        Account
-      </p>
-      <h1 className="font-serif text-[26px] tracking-tight">Create account</h1>
-      <p className="-mt-2 text-sm text-muted-foreground">
-        One account for orders, addresses, and reviews.
-      </p>
+      <form className="auth-card" noValidate onSubmit={handleSubmit}>
+        <p className="eyebrow">Account</p>
+        <h1>Create account</h1>
+        <p className="sub">One account for orders, addresses, and reviews.</p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="name">
-            Name <span className="text-destructive">*</span>
-          </Label>
-          <Input
+        <div className="field">
+          <label htmlFor="name">
+            Name <span className="req">*</span>
+          </label>
+          <input
             id="name"
             type="text"
             autoComplete="name"
@@ -92,14 +85,14 @@ export default function Register() {
             }}
             aria-invalid={Boolean(errors.name)}
           />
-          {errors.name && <span className="text-xs text-destructive">{errors.name}</span>}
+          <span className="err">{errors.name ?? ''}</span>
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="email">
-            Email <span className="text-destructive">*</span>
-          </Label>
-          <Input
+        <div className="field">
+          <label htmlFor="email">
+            Email <span className="req">*</span>
+          </label>
+          <input
             id="email"
             type="email"
             autoComplete="email"
@@ -112,15 +105,15 @@ export default function Register() {
             }}
             aria-invalid={Boolean(errors.email)}
           />
-          {errors.email && <span className="text-xs text-destructive">{errors.email}</span>}
+          <span className="err">{errors.email ?? ''}</span>
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="password">
-            Password <span className="text-destructive">*</span>
-          </Label>
-          <div className="relative">
-            <Input
+        <div className="field">
+          <label htmlFor="password">
+            Password <span className="req">*</span>
+          </label>
+          <div className="password-wrap" aria-invalid={Boolean(errors.password)}>
+            <input
               id="password"
               type={showPassword ? 'text' : 'password'}
               autoComplete="new-password"
@@ -133,39 +126,38 @@ export default function Register() {
                 setErrors((s) => ({ ...s, password: undefined }))
               }}
               aria-invalid={Boolean(errors.password)}
-              className="pr-10"
+              aria-describedby="pw-toggle pw-hint"
             />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="absolute right-0 top-0 h-full px-3 text-muted-foreground"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </Button>
+            <PasswordToggle show={showPassword} onToggle={() => setShowPassword((v) => !v)} />
           </div>
-          <span className="text-xs text-muted-foreground">min 6 characters</span>
-          {errors.password && (
-            <span className="text-xs text-destructive">{errors.password}</span>
-          )}
+          <span className="hint" id="pw-hint">
+            min 6 characters
+          </span>
+          <span className="err">{errors.password ?? ''}</span>
         </div>
 
-        <Button type="submit" size="lg" className="mt-1 w-full" disabled={isLoading}>
-          {isLoading ? 'Creating account…' : 'Create account'}
-        </Button>
-      </form>
-
-      <div className="flex justify-center gap-1.5 border-t pt-4 text-sm text-muted-foreground">
-        <span>Already have an account?</span>
-        <Link
-          to="/auth/login"
-          className="font-semibold text-foreground hover:underline underline-offset-[3px]"
+        <button
+          className="btn btn--block"
+          data-variant="default"
+          data-size="lg"
+          type="submit"
+          disabled={isLoading}
         >
-          Sign in
-        </Link>
-      </div>
+          {isLoading ? (
+            <>
+              <span className="btn-spinner" aria-hidden="true" />
+              Creating account…
+            </>
+          ) : (
+            'Create account'
+          )}
+        </button>
+
+        <div className="auth-foot">
+          <span>Already have an account?</span>
+          <Link to="/auth/login">Sign in →</Link>
+        </div>
+      </form>
     </AuthShell>
   )
 }

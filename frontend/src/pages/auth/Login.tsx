@@ -1,14 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff } from 'lucide-react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { useLoginMutation } from '@/services/authApi'
 import { loginSuccess, selectIsAuthenticated } from '@/store/slices/authSlice'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { AuthShell } from '@/pages/auth/AuthShell'
+import { PasswordToggle } from '@/pages/auth/PasswordToggle'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -66,18 +63,14 @@ export default function Login() {
 
   return (
     <AuthShell>
-      <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-primary">
-        Account
-      </p>
-      <h1 className="font-serif text-[26px] tracking-tight">Sign in</h1>
-      <p className="-mt-2 text-sm text-muted-foreground">
-        Welcome back — your cart and orders are waiting.
-      </p>
+      <form className="auth-card" noValidate onSubmit={handleSubmit}>
+        <p className="eyebrow">Account</p>
+        <h1>Sign in</h1>
+        <p className="sub">Welcome back — your cart and orders are waiting.</p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input
+        <div className="field">
+          <label htmlFor="email">Email</label>
+          <input
             id="email"
             type="email"
             autoComplete="email"
@@ -90,13 +83,13 @@ export default function Login() {
             }}
             aria-invalid={Boolean(errors.email)}
           />
-          {errors.email && <span className="text-xs text-destructive">{errors.email}</span>}
+          <span className="err">{errors.email ?? ''}</span>
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="password">Password</Label>
-          <div className="relative">
-            <Input
+        <div className="field">
+          <label htmlFor="password">Password</label>
+          <div className="password-wrap" aria-invalid={Boolean(errors.password)}>
+            <input
               id="password"
               type={showPassword ? 'text' : 'password'}
               autoComplete="current-password"
@@ -108,38 +101,35 @@ export default function Login() {
                 setErrors((s) => ({ ...s, password: undefined }))
               }}
               aria-invalid={Boolean(errors.password)}
-              className="pr-10"
+              aria-describedby="pw-toggle"
             />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="absolute right-0 top-0 h-full px-3 text-muted-foreground"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </Button>
+            <PasswordToggle show={showPassword} onToggle={() => setShowPassword((v) => !v)} />
           </div>
-          {errors.password && (
-            <span className="text-xs text-destructive">{errors.password}</span>
-          )}
+          <span className="err">{errors.password ?? ''}</span>
         </div>
 
-        <Button type="submit" size="lg" className="mt-1 w-full" disabled={isLoading}>
-          {isLoading ? 'Signing in…' : 'Sign in'}
-        </Button>
-      </form>
-
-      <div className="flex justify-center gap-1.5 border-t pt-4 text-sm text-muted-foreground">
-        <span>No account?</span>
-        <Link
-          to="/auth/register"
-          className="font-semibold text-foreground hover:underline underline-offset-[3px]"
+        <button
+          className="btn btn--block"
+          data-variant="default"
+          data-size="lg"
+          type="submit"
+          disabled={isLoading}
         >
-          Create one
-        </Link>
-      </div>
+          {isLoading ? (
+            <>
+              <span className="btn-spinner" aria-hidden="true" />
+              Signing in…
+            </>
+          ) : (
+            'Sign in'
+          )}
+        </button>
+
+        <div className="auth-foot">
+          <span>No account?</span>
+          <Link to="/auth/register">Create one</Link>
+        </div>
+      </form>
     </AuthShell>
   )
 }
